@@ -1,0 +1,67 @@
+﻿<view class="page">
+  <home-back-button></home-back-button>
+  <view class="container">
+    <view class="upload-card" bindtap="chooseAndUploadImage">
+      <block wx:if="{{avatarUrl}}">
+        <image class="avatar-image" src="{{avatarUrl}}" mode="aspectFill"></image>
+      </block>
+      <block wx:else>
+        <view class="upload-inner">
+          <text class="upload-icon">上传</text>
+          <text class="upload-text">请上传个人肖像</text>
+        </view>
+      </block>
+    </view>
+
+    <view class="group-title">
+      <text class="group-title-text">视频风格类别选项</text>
+    </view>
+
+    <view
+      wx:for="{{styleOptions}}"
+      wx:key="id"
+      class="option-item {{item.themeClass}} {{selectedStyleId === item.id ? 'is-selected' : ''}}"
+      bindtap="selectStyle"
+      data-id="{{item.id}}"
+    >
+      <view class="dot"></view>
+      <text class="option-text">{{item.name}}</text>
+      <view class="status-dot {{selectedStyleId === item.id ? 'is-active' : ''}}"></view>
+    </view>
+
+    <view class="group-title second-group">
+      <text class="group-title-text">选择生成配文</text>
+    </view>
+
+    <view
+      wx:for="{{optimizationOptions}}"
+      wx:key="id"
+      class="option-item {{item.themeClass}} {{selectedOptimizationId === item.id ? 'is-selected' : ''}}"
+      bindtap="toggleOptimization"
+      data-id="{{item.id}}"
+    >
+      <view class="dot"></view>
+      <text class="option-text">{{item.name}}</text>
+      <view class="status-dot {{selectedOptimizationId === item.id ? 'is-active' : ''}}"></view>
+    </view>
+
+    <view class="bottom-area">
+      <view class="wave-box">
+        <view class="wave-bar h1"></view>
+        <view class="wave-bar h2"></view>
+        <view class="wave-bar h3"></view>
+        <view class="wave-bar h4"></view>
+        <view class="wave-bar h5"></view>
+      </view>
+
+      <button
+        class="generate-btn"
+        bindtap="generateVideo"
+        loading="{{generating}}"
+        disabled="{{generating}}"
+      >
+        <text class="generate-btn-text">{{generating ? '生成中...' : '视频生成'}}</text>
+      </button>
+    </view>
+  </view>
+</view>

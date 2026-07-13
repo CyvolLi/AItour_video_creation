@@ -1,0 +1,229 @@
+.template-scroll {
+  height: 100vh;
+  margin-top: 0;
+  padding: 112rpx 8rpx 180rpx;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.template-scroll {
+  background: transparent;
+}
+home-back-button {
+  position: fixed;
+  top: 50rpx;
+  left: 20rpx;
+  z-index: 100;
+}
+
+.headline-row {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  margin: 0 0 42rpx;
+}
+
+.landscape-pill {
+  flex-shrink: 0;
+  min-width: 238rpx;
+  max-width: 292rpx;
+  height: 54rpx;
+  padding: 0 22rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.92);
+  border-radius: 28rpx;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 48rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #62c9c4;
+  box-shadow:
+    0 7rpx 12rpx rgba(35, 104, 105, 0.24),
+    inset 0 -3rpx 0 rgba(32, 156, 166, 0.35);
+  box-sizing: border-box;
+}
+
+.headline-pill,
+.recommend-pill {
+  min-width: 150rpx;
+  height: 56rpx;
+  padding: 0 26rpx;
+  border-radius: 0 0 30rpx 30rpx;
+  color: #ffffff;
+  font-size: 29rpx;
+  line-height: 56rpx;
+  text-align: center;
+  background: rgba(113, 211, 209, 0.78);
+  box-shadow: 0 3rpx 0 #2bbfd3;
+  box-sizing: border-box;
+}
+
+.headline-pill {
+  margin-left: 20rpx;
+  color: rgba(77, 95, 96, 0.62);
+  background: transparent;
+  box-shadow: 0 3rpx 0 #2bbfd3;
+}
+
+.trend {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 4rpx;
+  border-bottom: 5rpx solid rgba(99, 174, 176, 0.45);
+  color: rgba(86, 91, 92, 0.48);
+  font-size: 28rpx;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.trend-fire {
+  margin-right: 12rpx;
+  color: #e84a2f;
+}
+
+.feature-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.feature-grid {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 24rpx;
+  padding: 0 30rpx;
+}
+
+.feature-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 340rpx;
+  border: 7rpx solid #ffffff;
+  border-radius: 30rpx;
+  background: #ffffff;
+  box-shadow: 0 9rpx 15rpx rgba(38, 54, 54, 0.28);
+  box-sizing: border-box;
+}
+
+.feature-card.active,
+.template-card.active {
+  border-color: #227dec;
+  box-shadow: 0 9rpx 15rpx rgba(38, 54, 54, 0.28),
+              0 4rpx 0 #0350a8;   /* 底部蓝色条 */
+}
+
+.feature-image {
+  display: block;
+  width: 100%;
+  height: 318rpx;
+  border-radius: 23rpx 23rpx 18rpx 18rpx;
+}
+
+.tag {
+  min-height: 65rpx;
+  padding: 12rpx 14rpx 10rpx;
+  color: #070b0c;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.25;
+  background: #ffffff;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.recommend-panel {
+  margin-top: 28rpx;
+  padding: 0 24rpx 0;
+  border-radius: 34rpx;
+  background: rgba(177, 233, 226, 0.9);
+  box-shadow: 0 10rpx 16rpx rgba(57, 100, 99, 0.24);
+  box-sizing: border-box;
+}
+
+.recommend-head {
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.recommend-pill {
+  margin-left: 0;
+  color: #ffffff;
+  background: transparent;
+  box-shadow: 0 3rpx 0 #ffffff;
+}
+
+.search-bar {
+  position: relative;
+  flex: 1;
+  height: 52rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6rpx 9rpx rgba(29, 58, 60, 0.18);
+}
+
+.panel-search-symbol {
+  position: absolute;
+  left: 19rpx;
+  top: 12rpx;
+  width: 20rpx;
+  height: 20rpx;
+  border: 4rpx solid #6d7c7d;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.panel-search-symbol::after {
+  content: "";
+  position: absolute;
+  right: -10rpx;
+  bottom: -7rpx;
+  width: 13rpx;
+  height: 4rpx;
+  border-radius: 4rpx;
+  background: #6d7c7d;
+  transform: rotate(45deg);
+}
+
+.recommend-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx 28rpx;
+}
+
+.template-image {
+  display: block;
+  width: 100%;
+  height: 146rpx;
+  border-radius: 22rpx;
+}
+
+.confirm-btn {
+  position: fixed;
+  left: 50%;
+  bottom: 80rpx;
+  z-index: 31;
+  width: 316rpx;
+  height: 56rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 0 30rpx 30rpx;
+  color: rgba(75, 86, 88, 0.62);
+  font-size: 26rpx;
+  line-height: 56rpx;
+  text-align: center;
+  background: #ffffff;
+  box-shadow: 0 3rpx 0 #2bbfd3;
+  transform: translateX(-50%);
+}
+
+.confirm-btn::after {
+  border: 0;
+}
+
+
+

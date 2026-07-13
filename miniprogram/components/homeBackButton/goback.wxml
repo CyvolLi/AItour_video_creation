@@ -1,0 +1,3 @@
+<view class="home-back-btn" bindtap="handleTap" aria-label="返回主页">
+  <image class="home-back-icon" src="/images/icons/home.png" mode="aspectFit"></image>
+</view>

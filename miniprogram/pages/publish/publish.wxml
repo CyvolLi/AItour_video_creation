@@ -1,0 +1,60 @@
+<view class="page">
+  <view class="empty-panel" wx:if="{{!hasVideo}}">
+    <view class="empty-illustration" aria-hidden="true">
+      <view class="scenery-card">
+        <view class="scenery-sun"></view>
+        <view class="scenery-cloud cloud-one"></view>
+        <view class="scenery-cloud cloud-two"></view>
+        <view class="scenery-mountain mountain-back"></view>
+        <view class="scenery-mountain mountain-front"></view>
+        <view class="scenery-field">
+          <view class="scenery-path"></view>
+        </view>
+        <view class="spark spark-one"></view>
+      </view>
+      <view class="postcard-shadow"></view>
+    </view>
+    <view class="empty-title">还没有可发布的作品</view>
+    <view class="empty-desc">先AI生成景区短剧，完成后可在此发布分享</view>
+    <button class="main-btn empty-main-btn" bindtap="goCreateVideo">
+      <image class="empty-btn-icon" src="/images/icons/top-video.png" mode="aspectFit"></image>
+      <text>去制作视频</text>
+    </button>
+    <button class="sub-btn empty-sub-btn" bindtap="backToCommunity">返回社区广场</button>
+  </view>
+
+  <view class="panel" wx:else>
+    <view class="media-frame">
+      <video class="video" src="{{videoUrl}}" poster="{{coverUrl}}" controls></video>
+    </view>
+
+    <view class="content-box">
+      <input class="title-input" value="{{title}}" bindinput="onTitleInput" placeholder="添加标题" placeholder-class="title-placeholder" />
+      <textarea class="textarea" value="{{shareText}}" bindinput="onShareInput" placeholder="输入正文内容" placeholder-class="text-placeholder" maxlength="-1"></textarea>
+    </view>
+
+    <view class="option-pill location-pill">
+      <image class="option-icon" src="/assets/post_publish/location.png" mode="aspectFit"></image>
+      <input class="location-input" value="{{locationName}}" bindinput="onLocationInput" placeholder="标记地点" placeholder-class="option-placeholder" />
+    </view>
+
+    <view class="option-pill">
+      <image class="option-icon" src="/assets/post_publish/visibility.png" mode="aspectFit"></image>
+      <text class="option-text">公开可见</text>
+    </view>
+
+    <button class="main-btn publish-btn" loading="{{publishing}}" disabled="{{publishing}}" bindtap="publishPost">发布笔记</button>
+  </view>
+
+  <view class="bottom-dock">
+    <view class="nav-icon" bindtap="backToCommunity">
+      <image class="dock-icon-img stack-img" src="/images/icons/post-stack.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon compose">
+      <image class="dock-icon-img compose-img" src="/images/icons/post-compose.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon" bindtap="goProfile">
+      <image class="dock-icon-img user-img" src="/images/icons/post-user.png" mode="aspectFit"></image>
+    </view>
+  </view>
+</view>

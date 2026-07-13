@@ -1,0 +1,19 @@
+@import "../publish/publish.wxss";
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 38rpx;
+  color: #6c7375;
+  font-size: 34rpx;
+  background: #d9eee7;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 38rpx;
+}

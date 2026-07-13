@@ -1,0 +1,33 @@
+<!--index.wxml-->
+<view class="home-page">
+  <image
+    class="hero-image"
+    src="https://data.ruralv.cn/asset/home-hero.gif"
+    mode="aspectFill"
+  />
+
+  <view class="login-area">
+    <view class="slogan">
+      <text>-- Your Story</text>
+      <text class="slogan-gap"></text>
+      <text>Our Scenery--</text>
+    </view>
+
+    <button class="avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image class="avatar" src="{{avatarUrl}}" mode="aspectFill" />
+    </button>
+
+    <input
+      class="login-input"
+      type="nickname"
+      placeholder="怎么称呼您"
+      placeholder-class="input-placeholder"
+      value="{{nickName}}"
+      bindinput="onNicknameInput"
+    />
+
+    <button class="start-button" loading="{{entering}}" disabled="{{entering}}" bindtap="enterCommunity">
+      开始创作
+    </button>
+  </view>
+</view>

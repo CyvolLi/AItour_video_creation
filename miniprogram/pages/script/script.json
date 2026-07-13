@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "home-back-button": "../../components/homeBackButton/goback"
+  }
+}

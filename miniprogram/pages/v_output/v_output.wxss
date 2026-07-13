@@ -1,0 +1,220 @@
+page {
+  min-height: 100vh;
+  background: #eaf9f3;
+  color: #1c2a2b;
+}
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: calc(34rpx + env(safe-area-inset-top)) 22rpx 140rpx;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at 16% 84%, rgba(255, 255, 255, 0.66) 0 20%, transparent 21%),
+    linear-gradient(180deg, #f2fff2 0%, #ddf8ef 50%, #cbeff1 100%);
+}
+
+.content-scroll {
+  height: calc(100vh - 176rpx - env(safe-area-inset-top));
+}
+
+.content-shell {
+  padding: 6rpx 0 150rpx;
+}
+
+.video-shell {
+  position: relative;
+  padding-top: 44rpx;
+  margin-bottom: 20rpx;
+}
+
+.petal {
+  position: absolute;
+  top: 0;
+  width: 34rpx;
+  height: 90rpx;
+  border-radius: 50% 50% 10rpx 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(211, 214, 216, 0.92) 100%);
+  box-shadow: 0 2rpx 6rpx rgba(70, 70, 70, 0.12);
+  z-index: 1;
+}
+home-back-button {
+  position: fixed;
+  top: 50rpx;
+  left: 20rpx;
+  z-index: 100;
+}
+.petal-left {
+  left: 296rpx;
+  transform: rotate(-24deg);
+}
+
+.petal-right {
+  right: 296rpx;
+  transform: scaleX(-1) rotate(-24deg);
+}
+
+.video-card {
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  padding: 16rpx;
+  border-radius: 34rpx;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10rpx 18rpx rgba(50, 78, 73, 0.18);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 320rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.copy-card,
+.tag-card {
+  margin: 0 auto 18rpx;
+  padding: 22rpx 30rpx;
+  border-radius: 20rpx;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 6rpx 10rpx rgba(58, 80, 78, 0.14);
+  box-sizing: border-box;
+}
+
+.copy-title {
+  margin-bottom: 10rpx;
+  color: #1b2527;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.copy-scroll {
+  max-height: 200rpx;
+}
+
+.copy-text {
+  display: block;
+  color: #2b3538;
+  font-size: 28rpx;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.tag-card {
+  background: rgba(168, 234, 236, 0.72);
+}
+
+.tag-text {
+  display: block;
+  color: #153237;
+  font-size: 27rpx;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.actions-panel {
+  width: 470rpx;
+  margin: 26rpx auto 0;
+  padding: 18rpx 0;
+  border-radius: 28rpx;
+  background: rgba(186, 216, 216, 0.82);
+  box-shadow: 0 10rpx 18rpx rgba(75, 100, 99, 0.14);
+}
+
+.action-pill {
+  width: 390rpx;
+  height: 76rpx;
+  margin: 0 auto 16rpx;
+  padding: 0 30rpx;
+  border-radius: 24rpx;
+  color: #111;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 76rpx;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6rpx 10rpx rgba(63, 82, 82, 0.12);
+  box-sizing: border-box;
+}
+
+.action-pill::after {
+  border: 0;
+}
+
+.action-pill:last-child {
+  margin-bottom: 0;
+}
+
+.action-pill-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+}
+
+.action-pill-secondary {
+  text-align: center;
+}
+
+.download-icon {
+  position: relative;
+  width: 28rpx;
+  height: 32rpx;
+}
+
+.download-icon::before {
+  content: "";
+  position: absolute;
+  left: 12rpx;
+  top: 0;
+  width: 4rpx;
+  height: 22rpx;
+  background: #111;
+}
+
+.download-icon::after {
+  content: "";
+  position: absolute;
+  left: 5rpx;
+  bottom: 0;
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid #111;
+  border-bottom: 4rpx solid #111;
+  transform: rotate(45deg);
+}
+
+.publish-bar {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: calc(40rpx + env(safe-area-inset-bottom));
+  z-index: 30;
+}
+
+.publish-btn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 44rpx;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 88rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #e4b37b 0%, #a3e5d7 100%);
+  box-shadow: 0 8rpx 20rpx rgba(238, 90, 36, 0.35);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.publish-btn::after {
+  border: 0;
+}
+
+.publish-btn:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}

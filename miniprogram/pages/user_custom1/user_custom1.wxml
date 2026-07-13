@@ -1,0 +1,54 @@
+<view class="page">
+  <home-back-button></home-back-button>
+  <swiper
+    class="img-strip"
+    current="{{currentThumbIndex}}"
+    previous-margin="100rpx"
+    next-margin="100rpx"
+    circular="true"
+    bindchange="handleThumbChange"
+  >
+    <block wx:for="{{imglist}}" wx:key="id">
+      <swiper-item class="img-cell">
+        <view
+          class="img-thumb-wrap {{index === currentThumbIndex ? 'img-thumb-wrap--active' : ''}}"
+          data-id="{{item.id}}"
+          data-url="{{item.url}}"
+          data-index="{{index}}"
+          bindtap="chooseImglist"
+        >
+          <image
+            class="img-thumb"
+            src="{{item.url}}"
+            mode="aspectFill"
+          ></image>
+        </view>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <view class="mascot-row">
+    <view class="mascot-stage">
+      <view class="mascot-track">
+        <image
+          class="mascot-img"
+          src="{{currentFrame}}"
+          style="transform: translateX({{mascotOffset}}rpx); transition: transform {{transitionDuration}}s ease-in-out;"
+          mode="aspectFit"
+        ></image>
+      </view>
+      <view class="guide-bubble">
+        <text class="bubble-text">{{guidePhrase}}</text>
+      </view>
+    </view>
+
+    <view class="camera-wrap">
+      <image class="camera-icon" src="https://data.ruralv.cn/asset/camera.gif" bindtap="chooseAndUploadImage"></image>
+      <text class="camera-text">上传照片</text>
+    </view>
+  </view>
+
+  <button class="bottom-tip" bindtap="gotowrite">
+    <text class="bottom-tip-text">这张可以✌️</text>
+  </button>
+</view>

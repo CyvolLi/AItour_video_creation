@@ -1,0 +1,137 @@
+page {
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    #a1e3ed 0%,
+    #b6d3d3 45%,
+    #9bf5f5 100%
+  );
+}
+
+home-back-button {
+  position: fixed;
+  top: 50rpx;
+  left: 20rpx;
+  z-index: 100;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 60rpx 16rpx 48rpx;
+  box-sizing: border-box;
+}
+/* ========== 羊皮卷输入区（中间偏上） ========== */
+.parchment-card {
+  position: relative;
+  width: 100%;
+  min-height: 700rpx;
+  margin-top: rpx;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.parchment-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.feeling-input {
+  position: relative;
+  z-index: 1;
+  width: 80%;
+  min-height: 340rpx;
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: #3b2a1a;
+  background: transparent;
+  border: none;
+  border-radius: 24rpx;
+  box-sizing: border-box;
+  padding-top: 120rpx;
+  padding-left: 240rpx;
+  padding-right: 10rpx;
+  padding-bottom: 120rpx;
+}
+
+/* ========== 吉祥物运动舞台（左右并排） ========== */
+.mascot-stage {
+  width: 100%;
+  margin-top: 56rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+}
+
+/* 吉祥物轨道（限制运动范围） */
+.mascot-track {
+  width: 340rpx;
+  min-height: 300rpx;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.mascot-img {
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+}
+
+/* 引导语气泡 */
+.guide-bubble {
+  flex: 1;
+  border-radius: 28rpx;
+  padding: 24rpx 48rpx;
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(16rpx);
+  -webkit-backdrop-filter: blur(16rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.34);
+  box-shadow: 0 10rpx 24rpx rgba(30, 54, 53, 0.12);
+  word-break: break-word;
+}
+
+.bubble-text {
+  font-size: 30rpx;
+  line-height: 1.5;
+  color: #163636;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ========== 确认按钮（中间偏下） ========== */
+.confirm-btn {
+  width: 320rpx;
+  height: 80rpx;
+  margin-top: auto;
+  margin-bottom: 80rpx;
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 16rpx 36rpx rgba(28, 56, 58, 0.14),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(18rpx) saturate(145%);
+  -webkit-backdrop-filter: blur(18rpx) saturate(145%);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08)),
+    linear-gradient(90deg, rgba(143, 229, 255, 0.60) 0%, rgba(171, 186, 238, 0.54) 52%, rgba(235, 226, 184, 0.58) 100%);
+}
+
+.confirm-btn-text {
+  position: relative;
+  z-index: 1;
+  font-size: 28rpx;
+  color: #214344;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 1rpx 6rpx rgba(255, 255, 255, 0.22);
+}

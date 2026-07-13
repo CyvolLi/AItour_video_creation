@@ -1,0 +1,36 @@
+<view class="page">
+  <view class="panel">
+    <view class="media-frame upload" bindtap="chooseImage">
+      <image wx:if="{{imageUrl}}" class="preview" src="{{imageUrl}}" mode="aspectFill"></image>
+      <view wx:else class="placeholder">上传图片</view>
+    </view>
+
+    <view class="content-box">
+      <textarea class="textarea" value="{{emotionText}}" bindinput="onTextInput" placeholder="输入正文内容" placeholder-class="text-placeholder" maxlength="-1"></textarea>
+    </view>
+
+    <view class="option-pill location-pill">
+      <image class="option-icon" src="/assets/post_publish/location.png" mode="aspectFit"></image>
+      <input class="location-input" value="{{locationName}}" bindinput="onLocationInput" placeholder="标记地点" placeholder-class="option-placeholder" />
+    </view>
+
+    <view class="option-pill">
+      <image class="option-icon" src="/assets/post_publish/visibility.png" mode="aspectFit"></image>
+      <text class="option-text">公开可见</text>
+    </view>
+
+    <button class="main-btn publish-btn" loading="{{publishing}}" disabled="{{publishing}}" bindtap="publishCard">发布笔记</button>
+  </view>
+
+  <view class="bottom-dock">
+    <view class="nav-icon" bindtap="backToCommunity">
+      <image class="dock-icon-img stack-img" src="/images/icons/post-stack.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon compose">
+      <image class="dock-icon-img compose-img" src="/images/icons/post-compose.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon" bindtap="goProfile">
+      <image class="dock-icon-img user-img" src="/images/icons/post-user.png" mode="aspectFit"></image>
+    </view>
+  </view>
+</view>

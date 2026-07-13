@@ -1,0 +1,126 @@
+/**index.wxss**/
+page {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.home-page {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: 66vh;
+  flex-shrink: 0;
+  display: block;
+  background: #f9fbf7;
+}
+
+.login-area {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  margin-top: 0;
+  padding: 10rpx 74rpx 48rpx;
+  box-sizing: border-box;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slogan {
+  width: 100%;
+  margin-bottom: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38rpx;
+  line-height: 1.2;
+  font-weight: 700;
+  font-style: italic;
+  color: #075b2f;
+  text-align: center;
+  text-shadow: 0 8rpx 10rpx rgba(0, 0, 0, 0.18);
+}
+
+.slogan-gap {
+  width: 60rpx;
+  flex-shrink: 0;
+}
+
+.avatar-button {
+  width: 164rpx;
+  height: 164rpx;
+  margin: 0 0 32rpx;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: none;
+  line-height: 1;
+}
+
+.avatar-button::after {
+  border: none;
+}
+
+.avatar {
+  width: 164rpx;
+  height: 164rpx;
+  border-radius: 50%;
+  display: block;
+  background: #edf7f3;
+  box-shadow: 0 14rpx 26rpx rgba(25, 82, 75, 0.16);
+}
+
+.login-input {
+  width: 100%;
+  height: 88rpx;
+  margin-bottom: 34rpx;
+  padding: 0 54rpx;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-left: 4rpx solid #26c8dd;
+  border-right: 4rpx solid #26c8dd;
+  border-bottom: 4rpx solid #26c8dd;
+  border-top: 4rpx solid #26c8dd;
+  border-radius: 42rpx 42rpx 42rpx 42rpx;
+  color: #263f45;
+  font-size: 34rpx;
+  box-shadow: 0 14rpx 26rpx rgba(0, 0, 0, 0.13);
+}
+
+.input-placeholder {
+  color: #9ba7aa;
+}
+
+.start-button {
+  width: 420rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  margin-top: 4rpx;
+  padding: 0;
+  border-radius: 50rpx;
+  background: #3da2bf;
+  color: #ffffff;
+  font-size: 42rpx;
+  font-weight: 700;
+  box-shadow: 0 16rpx 26rpx rgba(0, 0, 0, 0.18);
+}
+
+.start-button::after {
+  border: none;
+}
+
+.start-button:active {
+  background: #338eaa;
+  transform: translateY(2rpx);
+}

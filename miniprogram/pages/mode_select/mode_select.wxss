@@ -1,0 +1,108 @@
+/* pages/mode_select/mode_select.wxss */
+page {
+  min-height: 100vh;
+  background: #eafbea;
+}
+
+.container {
+  position: relative;
+  min-height: 100vh;
+  padding: calc(112rpx + env(safe-area-inset-top)) 36rpx 88rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 255, 255, 0.52) 0 16%, transparent 17%),
+    linear-gradient(180deg, #e9fbe9 0%, #d8f2ee 44%, #d0eeee 100%);
+}
+
+home-back-button {
+  position: fixed;
+  top: 50rpx;
+  left: 20rpx;
+  z-index: 100;
+}
+
+.intro-card {
+  position: relative;
+  width: 640rpx;
+  min-height: 360rpx;
+  margin-top: 70rpx;
+  padding: 42rpx 44rpx;
+  border-radius: 38rpx;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32rpx;
+  background: #cdf3ff;
+  border: 0;
+  box-shadow: 0 8rpx 12rpx rgba(58, 73, 70, 0.24);
+  box-sizing: border-box;
+}
+
+.page-title {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  color: #14262d;
+  font-size: 42rpx;
+  font-weight: 900;
+  line-height: 1.16;
+  letter-spacing: 9rpx;
+}
+
+.page-desc {
+  max-height: 300rpx;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  color: #66767b;
+  font-size: 30rpx;
+  line-height: 1.55;
+  letter-spacing: 3rpx;
+}
+
+.action-group {
+  width: 640rpx;
+  margin-top: 92rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 34rpx;
+}
+
+.mode-btn {
+  width: 100%;
+  height: 92rpx;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 46rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #18252d;
+  font-size: 32rpx;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 2rpx;
+  box-shadow: 0 8rpx 10rpx rgba(58, 73, 70, 0.22);
+  box-sizing: border-box;
+}
+
+.mode-btn::after {
+  border: 0;
+}
+
+.primary-btn {
+  background: #9cd9fb;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.mode-btn:active {
+  transform: translateY(2rpx);
+}

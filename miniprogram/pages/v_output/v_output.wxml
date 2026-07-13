@@ -1,0 +1,46 @@
+<view class="page">
+  <home-back-button></home-back-button>
+  <scroll-view class="content-scroll" scroll-y show-scrollbar="{{false}}">
+    <view class="content-shell">
+      <view class="video-shell">
+        <view class="petal petal-left"></view>
+        <view class="petal petal-right"></view>
+        <view class="video-card">
+          <video
+            class="video"
+            src="{{videoUrl}}"
+            poster="{{coverUrl}}"
+            controls
+            show-center-play-btn
+            object-fit="cover"
+          ></video>
+        </view>
+      </view>
+
+      <view class="copy-card">
+        <view class="copy-title">文案推荐：</view>
+        <scroll-view class="copy-scroll" scroll-y>
+          <text class="copy-text" selectable="{{true}}">{{finalResponse || "暂无生成文案"}}</text>
+        </scroll-view>
+      </view>
+
+      <view class="tag-card">
+        <text class="tag-text">{{"#我的旅行视频 #AI旅拍 #记录此刻"}}</text>
+      </view>
+
+      <view class="actions-panel">
+        <button class="action-pill action-pill-primary" bindtap="saveVideo">
+          <text>下载视频</text>
+          <view class="download-icon"></view>
+        </button>
+        <button class="action-pill action-pill-secondary" bindtap="backToGenerate">重新生成</button>
+        <!--<button class="action-pill action-pill-secondary" bindtap="backToExtend">扩展视频</button>-->
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 发布作品按钮 - 固定在底部 -->
+  <view class="publish-bar">
+    <button class="publish-btn" bindtap="publishPost">发布作品</button>
+  </view>
+</view>

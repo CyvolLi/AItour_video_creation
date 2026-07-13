@@ -1,0 +1,4 @@
+﻿<view style="padding:40rpx;">
+  <button type="primary" bindtap="openStore">半屏打开小店</button>
+  <text style="display:block;margin-top:30rpx;color:#999;font-size:28rpx;">{{result}}</text>
+</view>

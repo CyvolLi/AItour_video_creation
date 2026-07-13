@@ -1,0 +1,126 @@
+<view class="page">
+  <view class="publish-overlay {{showPublishMenu ? 'show' : ''}}" bindtap="hidePublishMenu" catchtouchmove="preventMove"></view>
+  <view class="publish-menu {{showPublishMenu ? 'show' : ''}}">
+    <view class="menu-item" bindtap="goPostPublish">
+      <view class="menu-icon">
+        <view class="post-symbol">
+          <view class="post-symbol-play"></view>
+        </view>
+      </view>
+      <text class="menu-text">发布视频帖子</text>
+    </view>
+    <view class="menu-item" bindtap="goCardPublish">
+      <view class="menu-icon">
+        <view class="template-symbol">
+          <view class="template-symbol-grid"></view>
+        </view>
+      </view>
+      <text class="menu-text">制作视频模板</text>
+    </view>
+  </view>
+  <view class="top-dock-wrapper">
+    <view class="dock-label-row">
+      <text class="dock-label {{activeTab === 'post' ? 'active' : ''}}">帖子</text>
+      <text class="dock-label {{activeTab === 'card' ? 'active' : ''}}">模板</text>
+      <text class="dock-label">搜索</text>
+    </view>
+    <view class="top-dock">
+      <view class="dock-icon {{activeTab === 'post' ? 'active' : ''}}" data-tab="post" bindtap="switchTab">
+        <image class="top-icon-img video-img" src="/images/icons/top-video.png" mode="aspectFit"></image>
+      </view>
+      <view class="dock-icon {{activeTab === 'card' ? 'active' : ''}}" data-tab="card" bindtap="switchTab">
+        <image class="top-icon-img camera-img" src="/images/icons/top-camera-refresh.png" mode="aspectFit"></image>
+      </view>
+      <view class="dock-icon" bindtap="refreshCurrent">
+        <image class="top-icon-img search-img" src="/images/icons/top-search.png" mode="aspectFit"></image>
+      </view>
+    </view>
+  </view>
+
+  <view class="landscape-hero">
+    <scroll-view class="landscape-tabs" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="landscape-track">
+        <block wx:for="{{landscapeOptions}}" wx:key="id">
+          <view class="landscape-tab {{currentLandscape.id === item.id ? 'active' : ''}}" data-landscape="{{item.id}}" bindtap="switchLandscape">
+            {{item.shortName || item.name}}
+          </view>
+        </block>
+      </view>
+    </scroll-view>
+
+    <swiper class="landscape-swiper" circular current="{{landscapeIndex}}" bindchange="onLandscapeSwiperChange">
+      <block wx:for="{{landscapeOptions}}" wx:key="id">
+        <swiper-item>
+          <view class="landscape-banner {{currentLandscape.id === item.id ? 'active' : ''}}" data-landscape="{{item.id}}" bindtap="switchLandscape">
+            <image class="landscape-banner-image" src="{{item.cover}}" mode="aspectFill"></image>
+            <view class="landscape-banner-mask"></view>
+            <view class="landscape-banner-copy">
+              <view class="landscape-banner-title">{{item.name}}</view>
+              <view class="landscape-banner-desc">{{item.desc}}</view>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <view class="landscape-dots">
+      <block wx:for="{{landscapeOptions}}" wx:key="id">
+        <view class="landscape-dot {{currentLandscape.id === item.id ? 'active' : ''}}"></view>
+      </block>
+    </view>
+  </view>
+
+  <scroll-view class="masonry" scroll-y bindscrolltolower="loadMore">
+    <view class="feed-panel">
+      <view class="columns">
+        <view class="column">
+          <block wx:for="{{leftList}}" wx:key="target_id">
+            <view class="content-card {{index % 3 === 1 ? 'short' : ''}}" bindtap="openDetail" data-type="{{activeTab}}" data-index="{{item.__index}}">
+              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill"></image>
+              <view wx:if="{{activeTab === 'post'}}" class="play-dot"></view>
+              <view class="caption">
+                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
+                <view class="caption-text">
+                  <view class="title">{{activeTab === 'post' ? (item.title || '旅行作品') : (item.emotion_text || '我的旅行卡片')}}</view>
+                  <view class="name">{{item.author_name || '忆景创影'}}</view>
+                </view>
+              </view>
+            </view>
+          </block>
+        </view>
+
+        <view class="column offset">
+          <block wx:for="{{rightList}}" wx:key="target_id">
+            <view class="content-card {{index % 3 === 0 ? 'short' : ''}}" bindtap="openDetail" data-type="{{activeTab}}" data-index="{{item.__index}}">
+              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill"></image>
+              <view wx:if="{{activeTab === 'post'}}" class="play-dot"></view>
+              <view class="caption">
+                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
+                <view class="caption-text">
+                  <view class="title">{{activeTab === 'post' ? (item.title || '旅行作品') : (item.emotion_text || '我的旅行卡片')}}</view>
+                  <view class="name">{{item.author_name || '用户'}}</view>
+                </view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{!loading && currentListLength === 0}}">暂无内容</view>
+    <view class="loading" wx:if="{{loading}}">加载中...</view>
+    <view class="loading bottom-space" wx:if="{{!hasMore && currentListLength > 0}}">没有更多了</view>
+  </scroll-view>
+
+  <view class="bottom-dock">
+    <view class="nav-icon {{activeTab === 'post' ? 'active' : ''}}" data-tab="post" bindtap="switchTab">
+      <image class="dock-icon-img stack-img" src="/images/icons/post-stack.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon compose" bindtap="goPublishCurrent">
+      <image class="dock-icon-img compose-img" src="/images/icons/post-compose.png" mode="aspectFit"></image>
+    </view>
+    <view class="nav-icon" bindtap="goProfile">
+      <image class="dock-icon-img user-img" src="/images/icons/post-user.png" mode="aspectFit"></image>
+    </view>
+  </view>
+</view>

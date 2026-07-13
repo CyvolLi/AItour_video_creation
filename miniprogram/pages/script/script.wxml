@@ -1,0 +1,30 @@
+<view class="page">
+  <home-back-button></home-back-button>
+  <scroll-view class="scrollarea" scroll-y>
+    <view class="page-shell">
+      <view class="top-bar">
+        <view class="title-pill">视频脚本生成啦~</view>
+      </view>
+
+      <view class="script-card">
+        <textarea
+          class="script-text"
+          value="{{scriptContent}}"
+          bindinput="onScriptInput"
+          placeholder="脚本生成中..."
+          placeholder-class="script-placeholder"
+          maxlength="-1"
+        />
+      </view>
+
+      <view class="action-group">
+        <button class="action-btn primary-btn" bindtap="goConfigPage" disabled="{{loading}}">
+          <text class="action-btn-text">开始生成</text>
+        </button>
+        <button class="action-btn secondary-btn" bindtap="goBack">
+          <text class="action-btn-text">返回修改</text>
+        </button>
+      </view>
+    </view>
+  </scroll-view>
+</view>

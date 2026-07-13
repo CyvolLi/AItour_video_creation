@@ -1,0 +1,20 @@
+<!--pages/mode_select/mode_select.wxml-->
+<view class="container">
+  <home-back-button></home-back-button>
+  <view class="intro-card">
+    <text class="page-title">游览小引</text>
+    <text class="page-desc">
+      选择官方模板或个人描述定制，完成作品创作。
+    </text>
+  </view>
+
+  <view class="action-group">
+    <button class="mode-btn primary-btn" bindtap="official">
+      采用优选模板
+    </button>
+
+    <button class="mode-btn secondary-btn" bindtap="personalize">
+      个人描述定制
+    </button>
+  </view>
+</view>
