@@ -67,7 +67,7 @@ git commit -m "feat: add demo commerce products"
 
 **Step 1: Write the failing test**
 
-捕获 `Page` 定义并断言页面数据包含演示商品，WXML 在发布栏之前包含商品条幅、远程图片绑定和演示标签；点击处理函数只显示本地提示，不调用购买/跳转 API。
+捕获 `Page` 定义并断言页面数据包含演示商品；WXML 在横屏 `<video>` 上使用 `cover-view` / `cover-image` 悬浮商品条，包含远程图片绑定、价格和演示标签；点击处理函数只显示本地提示，不调用购买/跳转 API。
 
 Run: `node test/demoCommercePages.test.js`
 
@@ -77,8 +77,8 @@ Expected: FAIL because the current result page has no demo product state or prod
 
 - `onLoad` 使用 `pickProduct(videoUrl || finalResponse)` 设置 `featuredProduct`。
 - 增加 `showDemoProduct()`，调用 `wx.showToast({ title: "演示商品，暂不支持购买", icon: "none" })`。
-- WXML 将商品条幅放在内容滚动区末尾、固定发布按钮之前；显示远程图片、标题、卖点、演示价格和标签。
-- WXSS 采用现有浅绿背景和白色圆角面板，商品条幅高度稳定，不遮住固定发布按钮。
+- WXML 将商品条放在 `.video-card` 内，作为 `<video>` 上方的 `cover-view` 覆盖层；内部用 `cover-image` 显示公开图片，并显示标题、演示价格和“同款”按钮。
+- WXSS 将悬浮条定位在横屏画面底部偏左并上移到系统视频控制栏上方，宽高稳定；保留现有视频 controls，不遮住进度、全屏等操作。
 
 **Step 3: Run test to verify it passes**
 
@@ -93,7 +93,7 @@ git add miniprogram/pages/v_output/v_output.js miniprogram/pages/v_output/v_outp
 git commit -m "feat: add demo product banner to video output"
 ```
 
-### Task 3: 视频详情评论区上方好物列表
+### Task 3: 视频详情三 Tab 与同款好物网格
 
 **Files:**
 - Modify: `miniprogram/pages/detail/detail.js`
@@ -103,7 +103,7 @@ git commit -m "feat: add demo product banner to video output"
 
 **Step 1: Write the failing test**
 
-断言详情页 `onLoad` 设置三个演示商品，WXML 将商品列表放在评论标题之后、评论循环之前，并包含横向滚动容器、远程图片绑定和点击事件。
+断言详情页 `onLoad` 设置三个演示商品并默认 `activeDetailTab: "products"`；点击 Tab 只更新本地状态。WXML 对视频帖子提供“简介 / 同款好物·3 / 评论”三个 Tab，同款商品为双列网格；卡片类型详情仍可看到原评论区域。
 
 Run: `node test/demoCommercePages.test.js`
 
@@ -111,11 +111,11 @@ Expected: FAIL because the current comments section has no product list.
 
 **Step 2: Write minimal implementation**
 
-- 详情页数据增加 `demoProducts: []`。
+- 详情页数据增加 `demoProducts: []` 和 `activeDetailTab: "products"`。
 - `onLoad` 在现有内容初始化时设置 `getFeaturedProducts(3)`，不改变评论加载 Promise。
-- 增加 `showDemoProduct()`，只显示演示提示。
-- WXML 在 `.comments` 的评论标题下插入横向 `scroll-view` 好物列表，再保留原评论循环和输入框。
-- WXSS 使用紧凑卡片、固定图片尺寸和 `white-space: nowrap`，移动端可横向滑动。
+- 增加 `switchDetailTab(e)` 和 `showDemoProduct()`；前者只接受 `intro/products/comments`，后者只显示演示提示。
+- 视频帖 hero 保留视频、标题和作者；原文案与“使用绑定卡片”移动到“简介”面板。“同款好物·3”显示三张双列商品卡；“评论”显示原评论列表和输入框。非视频卡片维持现有详情与评论布局。
+- WXSS 使用两列稳定网格和大图卡片；商品名最多两行，下面显示卖点、红色演示价格和模拟销量。第三张商品自然落到下一行；Tab 采用下划线激活态。
 
 **Step 3: Run test to verify it passes**
 
@@ -207,9 +207,8 @@ Expected: every demo product image is HTTPS and no local image file is added。
 
 **Step 5: Manual visual verification**
 
-In WeChat DevTools and phone preview, check the generated video page banner, detail-page horizontal list above comments, publish-page toggle/preview, remote image loading, bottom fixed button spacing, and that the publish request still contains only its original fields。
+In WeChat DevTools and phone preview, check the landscape video overlay above native controls, detail-page three-tab switching and two-column product grid, card-detail comment compatibility, publish-page toggle/preview, remote image loading, and that the publish request still contains only its original fields。
 
 **Step 6: Commit**
 
 Commit any final test-only adjustments with a focused message; do not add image binaries or real commerce API calls。
-
