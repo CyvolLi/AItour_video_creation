@@ -271,16 +271,21 @@ async sendUserMessage() {
 },
 
 finishDrawing() {
-  wx.navigateTo({
-    url: "../script/script",
-    fail(err) {
-      console.error("跳转 script 失败：", err);
-      wx.showToast({
-        title: "页面跳转失败",
-        icon: "none"
-      });
-    }
-  });
+  const pages = getCurrentPages();
+  if (pages.length >= 8) { // 留点余量
+    // 超过限制时用 redirectTo 替换当前页
+    wx.redirectTo({
+      url: '/pages/script/script'
+    });
+  } else {
+    wx.navigateTo({
+      url: '/pages/script/script',
+      fail(err) {
+        console.error("跳转 script 失败：", err);
+        wx.showToast({ title: "页面跳转失败", icon: "none" });
+      }
+    });
+  }
 },
 
   

@@ -4,7 +4,7 @@
     <view class="title">{{item.title || '旅行作品'}}</view>
     <view class="author-line">
       <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshDetailAvatarOnError"></image>
-      <text class="author">{{item.author_name || '用户'}}</text>
+      <text class="author">{{item.author_name || '忆景创影'}}</text>
     </view>
     <view class="copy">{{item.share_text || '暂无文案'}}</view>
     <button class="main-btn" bindtap="usePostCard">使用绑定卡片</button>

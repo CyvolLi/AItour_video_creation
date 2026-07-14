@@ -18,15 +18,22 @@
       <text class="menu-text">制作视频模板</text>
     </view>
   </view>
-  <view class="top-dock">
-    <view class="dock-icon {{activeTab === 'post' ? 'active' : ''}}" data-tab="post" bindtap="switchTab">
-      <image class="top-icon-img video-img" src="/images/icons/top-video.png" mode="aspectFit"></image>
+  <view class="top-dock-wrapper">
+    <view class="dock-label-row">
+      <text class="dock-label {{activeTab === 'post' ? 'active' : ''}}">帖子</text>
+      <text class="dock-label {{activeTab === 'card' ? 'active' : ''}}">模板</text>
+      <text class="dock-label">搜索</text>
     </view>
-    <view class="dock-icon {{activeTab === 'card' ? 'active' : ''}}" data-tab="card" bindtap="switchTab">
-      <image class="top-icon-img camera-img" src="/images/icons/top-camera-refresh.png" mode="aspectFit"></image>
-    </view>
-    <view class="dock-icon" bindtap="refreshCurrent">
-      <image class="top-icon-img search-img" src="/images/icons/top-search.png" mode="aspectFit"></image>
+    <view class="top-dock">
+      <view class="dock-icon {{activeTab === 'post' ? 'active' : ''}}" data-tab="post" bindtap="switchTab">
+        <image class="top-icon-img video-img" src="/images/icons/top-video.png" mode="aspectFit"></image>
+      </view>
+      <view class="dock-icon {{activeTab === 'card' ? 'active' : ''}}" data-tab="card" bindtap="switchTab">
+        <image class="top-icon-img camera-img" src="/images/icons/top-camera-refresh.png" mode="aspectFit"></image>
+      </view>
+      <view class="dock-icon" bindtap="refreshCurrent">
+        <image class="top-icon-img search-img" src="/images/icons/top-search.png" mode="aspectFit"></image>
+      </view>
     </view>
   </view>
 
@@ -75,7 +82,7 @@
                 <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
                 <view class="caption-text">
                   <view class="title">{{activeTab === 'post' ? (item.title || '旅行作品') : (item.emotion_text || '我的旅行卡片')}}</view>
-                  <view class="name">{{item.author_name || '用户'}}</view>
+                  <view class="name">{{item.author_name || '忆景创影'}}</view>
                 </view>
               </view>
             </view>

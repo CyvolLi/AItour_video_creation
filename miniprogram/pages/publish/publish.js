@@ -52,13 +52,13 @@ Page({
   },
 
   backToCommunity() {
-    wx.redirectTo({
+    wx.reLaunch({
       url: "/pages/community/community"
     });
   },
 
   goProfile() {
-    wx.redirectTo({
+    wx.reLaunch({
       url: "/pages/profile/profile"
     });
   },
@@ -93,11 +93,14 @@ Page({
         location_name: (this.data.locationName || "").trim()
       })
       .then(() => {
+        app.globalData.video_url = "";
+        app.globalData.final_response = "";
+        
         wx.showToast({
           title: "发布成功",
           icon: "success"
         });
-        wx.redirectTo({
+        wx.reLaunch({
           url: "/pages/community/community"
         });
       })

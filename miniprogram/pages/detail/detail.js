@@ -6,7 +6,7 @@ const avatarRefresh = require("../../utils/avatarRefresh.js");
 const landscapeUtil = require("../../utils/landscape.js");
 const app = getApp();
 
-const DEFAULT_USER_AVATAR = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
+const DEFAULT_USER_AVATAR = "../../images/default.jpg";
 
 Page({
   data: {
@@ -92,7 +92,7 @@ Page({
             if (!profile) {
               return {
                 ...item,
-                author_name: item.author_name || "用户",
+                author_name: item.author_name || "忆景创影",
                 author_avatar: item.author_avatar || DEFAULT_USER_AVATAR,
                 author_avatar_file_id: item.author_avatar_file_id || ""
               };
@@ -100,7 +100,7 @@ Page({
 
             return {
               ...item,
-              author_name: profile.nickName || item.author_name || "用户",
+              author_name: profile.nickName || item.author_name || "忆景创影",
               author_avatar:
                 avatarUrlMap[profile.avatarFileID] ||
                 profile.avatarUrl ||

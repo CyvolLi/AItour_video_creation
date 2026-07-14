@@ -1,25 +1,15 @@
 /* pages/script/script.wxss */
-page {
-  min-height: 100vh;
-  background: #f2fff2;
-}
-
 .page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
+  min-height: 100vh;       /* height → min-height */
+  /* 删除: display: flex, flex-direction: column, overflow: hidden, padding-bottom, box-sizing */
   background:
-    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.55) 0 10%, transparent 11%),
-    radial-gradient(circle at 30% 86%, rgba(255, 255, 255, 0.44) 0 18%, transparent 19%),
+    radial-gradient(circle at 20% 18%, rgba(255,255,255,0.55) 0 10%, transparent 11%),
+    radial-gradient(circle at 30% 86%, rgba(255,255,255,0.44) 0 18%, transparent 19%),
     linear-gradient(180deg, #f3fff2 0%, #dff8ef 52%, #cceef1 100%);
 }
 
 .scrollarea {
-  flex: 1;
-  overflow-y: auto;
-  /* 不需要显式 height */
+  height: 100vh;
 }
 home-back-button {
   position: fixed;
@@ -28,10 +18,7 @@ home-back-button {
   z-index: 100;
 }
 .page-shell {
-  min-height: 80vh; /* ★ 控制卡片区域占屏幕75% */
-  display: flex;
-  flex-direction: column;
-  padding: calc(24rpx + env(safe-area-inset-top)) 24rpx 16rpx;
+  padding: calc(24rpx + env(safe-area-inset-top)) 24rpx 176rpx;
   box-sizing: border-box;
 }
 .top-bar {
@@ -57,7 +44,6 @@ home-back-button {
 }
 
 .script-card {
-  flex: 1;
   min-height: 660rpx;
   display: flex;
   padding: 18rpx;
@@ -70,10 +56,8 @@ home-back-button {
 }
 
 .script-text {
-  flex: 1;
   width: 100%;
-  height: 100%;
-  min-height: 60vh;
+  min-height: 70vh;
   font-size: 28rpx;
   line-height: 1.68;
   color: #1f2c30;

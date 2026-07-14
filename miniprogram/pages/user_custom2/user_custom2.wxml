@@ -1,7 +1,7 @@
 <view class="page">
   <home-back-button></home-back-button>
   <view class="parchment-card">
-    <image class="parchment-bg" src="../../images/scroll.gif" mode="aspectFill"></image>
+    <image class="parchment-bg" src="https://data.ruralv.cn/asset/scroll.gif" mode="aspectFill"></image>
     <textarea
       class="feeling-input"
       value="{{inputValue}}"

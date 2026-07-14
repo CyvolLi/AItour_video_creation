@@ -6,7 +6,7 @@ App({
   onLaunch: function () {
     // 1. 初始化全局数据
     this.globalData = {
-      env: "cloud1-5g34ybsmbfe89727", // 请确保此 ID 与你云开发控制台一致
+      env: "cloudbase-d2g8dvtluc8d8face", // 请确保此 ID 与你云开发控制台一致
       userInfo: null,
       hasNavigated: false,
       video_extend: false,

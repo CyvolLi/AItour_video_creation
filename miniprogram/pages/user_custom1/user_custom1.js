@@ -1,9 +1,9 @@
 // pages/user_custom1/user_custom1.js
 const app = getApp();
 const FRAMES = {
-  left: "../../images/left.gif",
-  front: "../../images/front.gif",
-  right: "../../images/right.gif",
+  left: "https://data.ruralv.cn/asset/left.gif",
+  front: "https://data.ruralv.cn/asset/front.gif",
+  right: "https://data.ruralv.cn/asset/right.gif",
 };
 const GUIDE_PHRASES = [
   "快来记录下📸你眼前的风景呀！",
@@ -41,7 +41,7 @@ Page({
   onShow() {
     const defaultItem = {
       id: "default",
-      url: "https://img95.699pic.com/photo/50695/3391.jpg_wh300.jpg!/fh/300/quality/90"
+      url: "https://ns-strategy.cdn.bcebos.com/ns-strategy/upload/fc_big_pic/part-00694-1576.jpg"
     };
 
     if (!this.data.imglist || this.data.imglist.length === 0) {

@@ -1,7 +1,9 @@
 {
-  "entryPagePath": "pages/index/index",
+  "entryPagePath": "pages/adver/adver",
   "pages": [
     "pages/index/index",
+    "pages/adver/adver",
+    "pages/navigate/navigate",
     "pages/example/index",
     "pages/mode_select/mode_select",
     "pages/user_custom1/user_custom1",
@@ -30,5 +32,6 @@
     "chooseAddress"
   ],
   "style": "v2",
+  "embeddedAppIdList": ["wxde7b459287c6bc1b"],
   "lazyCodeLoading": "requiredComponents"
 }

@@ -11,14 +11,14 @@ const LANDSCAPE_OPTIONS = [
     name: "越秀风行",
     shortName: "越秀",
     desc: "城市风景专区正在更新",
-    cover: "https://ts3.tc.mm.bing.net/th/id/OIP-C.LLcSqgYu2fp1e19RmkgoMgHaFi?cb=thfc1falcon&rs=1&pid=ImgDetMain&o=7&rm=3"
+    cover: "https://data.ruralv.cn/asset/yue.jpg"
   },
   {
     id: "002",
     name: "哈工深",
     shortName: "哈工深",
     desc: "校园影像与青春故事",
-    cover: "https://img.pconline.com.cn/images/upload/upc/tx/photoblog/1311/06/c5/28377535_28377535_1383725037413.jpg"
+    cover: "https://n.sinaimg.cn/sinacn01/786/w980h606/20181117/b503-hnyuqhh2236078.png"
   }
 ];
 

@@ -37,7 +37,7 @@ Page({
         icon: "none"
       });
       app.globalData.task_data.count = 0;
-      wx.redirectTo({
+      wx.reLaunchTo({
         url: "/pages/mode_select/mode_select"
       });
       return;
@@ -45,7 +45,7 @@ Page({
 
     app.globalData.task_data.count = newCount;
     app.globalData.task_data.request = this.data.script;
-    wx.redirectTo({
+    wx.reLaunchTo({
       url: "/pages/dialogue/dialogue"
     });
   },

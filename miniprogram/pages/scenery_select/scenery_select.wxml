@@ -1,62 +1,56 @@
-<view class="page">
-  <home-back-button></home-back-button>
-  <scroll-view class="template-scroll" scroll-y>
-    <view class="top-dock">
-      <view class="nav-icon" bindtap="goCommunity">
-        <image class="top-icon-img video-img" src="/images/icons/top-video.png" mode="aspectFit"></image>
-      </view>
-      <view class="nav-icon compose" bindtap="goPublish">
-        <image class="top-icon-img camera-img" src="/images/icons/top-camera-refresh.png" mode="aspectFit"></image>
-      </view>
-      <view class="nav-icon" bindtap="goProfile">
-        <image class="top-icon-img search-img" src="/images/icons/top-search.png" mode="aspectFit"></image>
-      </view>
-    </view>
-
+<scroll-view class="template-scroll" scroll-y>
+ <home-back-button></home-back-button>
     <view class="headline-row">
       <view class="headline-pill">猜你喜欢</view>
       <view class="landscape-pill">当前景区：{{currentLandscape.name}}</view>
       <view class="trend">
         <text class="trend-fire">🔥🔥🔥</text>
-        <text>520视频限定同款模板！</text>
+        <text>景区选择</text>
       </view>
     </view>
 
-    <view class="feature-grid">
-      <block wx:for="{{spotList}}" wx:key="id">
-        <view wx:if="{{index < 2}}" class="feature-card {{current === index ? 'active' : ''}}" data-index="{{index}}" bindtap="selectSpot">
-          <image class="feature-image" src="{{item.cover}}" mode="aspectFill"></image>
-          <view class="tag">#{{item.text}}</view>
-        </view>
-      </block>
-    </view>
+<scroll-view class="feature-scroll" scroll-x>
+  <view class="feature-grid">
+    <block wx:for="{{spotList}}" wx:key="id">
+      <view
+        class="feature-card {{current === index ? 'active' : ''}}"
+        data-index="{{index}}"
+        bindtap="selectSpot"
+      >
+        <image class="feature-image" src="{{item.cover}}" mode="aspectFill"></image>
+        <view class="tag">#{{item.text}}</view>
+      </view>
+    </block>
+  </view>
+</scroll-view>
 
     <view class="recommend-panel">
       <view class="recommend-head">
         <view class="recommend-pill">推荐模板</view>
-        <view class="search-bar">
+        <view class="search-bar" bindtap="onSearchTap">
           <view class="panel-search-symbol"></view>
         </view>
       </view>
       <view class="recommend-grid">
-        <block wx:for="{{recommendList}}" wx:key="id">
-          <view class="template-card {{selectedSpot.id === item.id ? 'active' : ''}}" data-index="{{index}}" bindtap="selectTemplate">
-            <image class="template-image" src="{{item.cover}}" mode="aspectFill"></image>
-          </view>
+        <block wx:if="{{templateLoading}}">
+          <view class="loading-tip">模板加载中...</view>
+        </block>
+        <block wx:elif="{{recommendList.length === 0}}">
+          <view class="empty-tip">暂无推荐模板</view>
+        </block>
+        <block wx:else>
+          <block wx:for="{{recommendList}}" wx:key="id">
+            <view
+              class="template-card {{selectedTemplateId == item.id ? 'active' : ''}}"
+              data-index="{{index}}"
+              bindtap="selectTemplate"
+            >
+              <image class="template-image" src="{{item.cover}}" mode="aspectFill"></image>
+            </view>
+          </block>
         </block>
       </view>
     </view>
+   <button class="confirm-btn" bindtap="confirmSelection">选好啦~就这个模板</button>
   </scroll-view>
-  <button class="confirm-btn" bindtap="confirmSelection">选好啦~就这个模板</button>
-  <view class="bottom-dock">
-    <view class="nav-icon" bindtap="goCommunity">
-      <image class="dock-icon-img stack-img" src="/images/icons/post-stack.png" mode="aspectFit"></image>
-    </view>
-    <view class="nav-icon compose" bindtap="goPublish">
-      <image class="dock-icon-img compose-img" src="/images/icons/post-compose.png" mode="aspectFit"></image>
-    </view>
-    <view class="nav-icon" bindtap="goProfile">
-      <image class="dock-icon-img user-img" src="/images/icons/post-user.png" mode="aspectFit"></image>
-    </view>
-  </view>
-</view>
+

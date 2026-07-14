@@ -15,6 +15,7 @@ Page({
   },
 
   personalize() {
+    app.globalData.task_data.card_id = "";
     wx.navigateTo({
       url: "../user_custom1/user_custom1",
     });

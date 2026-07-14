@@ -21,7 +21,6 @@
         <button class="action-btn primary-btn" bindtap="goConfigPage" disabled="{{loading}}">
           <text class="action-btn-text">开始生成</text>
         </button>
-
         <button class="action-btn secondary-btn" bindtap="goBack">
           <text class="action-btn-text">返回修改</text>
         </button>

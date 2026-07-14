@@ -1,9 +1,9 @@
 const app = getApp();
 
 const FRAMES = {
-  left: "../../images/left.gif",
-  front: "../../images/front.gif",
-  right: "../../images/right.gif",
+  left: "https://data.ruralv.cn/asset/left.gif",
+  front: "https://data.ruralv.cn/asset/front.gif",
+  right: "https://data.ruralv.cn/asset/right.gif",
 };
 
 // 运动范围：左(0) → 中(40) → 右(80) → 中(40) → ... 单位 rpx

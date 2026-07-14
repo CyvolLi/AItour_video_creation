@@ -9,6 +9,7 @@ const wxRequest = new WxRequest({
 
 Page({
   data: {
+    debugOnlyShot: false,
     use_extend: false,
     count: 0,
     coverUrl: "",
@@ -92,6 +93,13 @@ Page({
     }
     // ========== 新增结束 ==========
 
+    // 🔧 调试：只生成图片不生成视频
+    if (this.data.debugOnlyShot) {
+      wx.hideLoading();
+      console.log("🔧 debugOnlyShot=true，跳过视频生成流程");
+      return;
+    }
+
     try {
       const shareResp = await wxRequest.post(this.data.requestUrl, {
         task_data: fullTaskData
@@ -142,6 +150,9 @@ Page({
           title: "视频任务创建异常",
           icon: "none"
         });
+        wx.reLaunch({
+          url: "/pages/community/community"
+        });
         return;
       }
 
@@ -153,6 +164,9 @@ Page({
         title: "视频任务启动失败",
         icon: "none"
       });
+      wx.reLaunch({
+        url: "/pages/community/community"
+      });
     }
   },
 
@@ -163,7 +177,7 @@ Page({
 
     const timer = setInterval(() => {
       this.checkVideoStatus();
-    }, 10000);
+    }, 15000);
 
     this.setData({
       pollingTimer: timer
@@ -186,7 +200,7 @@ Page({
 
     const timer = setInterval(() => {
       const current = this.data.progress || 0;
-      let next = current + Math.floor(Math.random() * 6) + 1;
+      let next = current + Math.floor(Math.random() * 2) + 1;  // 每次涨1~2
 
       if (next >= 20) {
         next = 20;
@@ -199,7 +213,7 @@ Page({
       if (next >= 20) {
         this.clearFakeProgress();
       }
-    }, 600);
+    }, 2000);  // 每2秒跳一次
 
     this.setData({
       fakeTimer: timer
@@ -266,8 +280,15 @@ Page({
 
         wx.showToast({
           title: data.video_error || data.error_message || "视频生成失败",
-          icon: "none"
+          icon: "none",
+          duration: 1500
         });
+
+        setTimeout(() => {
+          wx.reLaunch({
+            url: "/pages/community/community"
+          });
+        }, 1500);
       }
     } catch (err) {
       console.error("轮询视频状态失败：", err);
@@ -305,3 +326,4 @@ Page({
     }, 400);
   }
 });
+

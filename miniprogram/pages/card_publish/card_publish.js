@@ -113,7 +113,7 @@ Page({
           title: "发布成功",
           icon: "success"
         });
-        wx.redirectTo({
+        wx.reLaunch({
           url: "/pages/community/community"
         });
       })

@@ -2,9 +2,9 @@ page {
   min-height: 100vh;
   background: linear-gradient(
     180deg,
-    #70efd1 0%,
-    #ddf0ba 45%,
-    #ffffff 100%
+    #a1e3ed 0%,
+    #b6d3d3 45%,
+    #9bf5f5 100%
   );
 }
 

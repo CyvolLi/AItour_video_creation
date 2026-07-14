@@ -34,7 +34,7 @@
           <view class="download-icon"></view>
         </button>
         <button class="action-pill action-pill-secondary" bindtap="backToGenerate">重新生成</button>
-        <button class="action-pill action-pill-secondary" bindtap="backToExtend">扩展视频</button>
+        <!--<button class="action-pill action-pill-secondary" bindtap="backToExtend">扩展视频</button>-->
       </view>
     </view>
   </scroll-view>

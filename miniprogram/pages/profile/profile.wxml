@@ -1,6 +1,17 @@
 <view class="page">
   <!-- 发布菜单遮罩层 -->
   <view class="publish-overlay {{showPublishMenu ? 'show' : ''}}" bindtap="hidePublishMenu" catchtouchmove="preventMove"></view>
+
+  <view class="delete-overlay {{deleteConfirmVisible ? 'show' : ''}}" catchtouchmove="preventMove">
+    <view class="delete-dialog">
+      <view class="delete-title">删除{{activeTab === 'mypost' ? '帖子' : '模板'}}</view>
+      <view class="delete-copy">删除后内容会从你的个人页移除，确认后不可恢复。</view>
+      <view class="delete-actions">
+        <button class="delete-action cancel" catchtap="cancelDelete" disabled="{{deleting}}">先保留</button>
+        <button class="delete-action confirm" catchtap="confirmDelete" loading="{{deleting}}" disabled="{{deleting}}">确认删除</button>
+      </view>
+    </view>
+  </view>
   
   <!-- 发布菜单弹出层 -->
   <view class="publish-menu {{showPublishMenu ? 'show' : ''}}">
@@ -60,7 +71,13 @@
 <scroll-view class="grid-scroll" scroll-y>
   <view class="grid">
     <block wx:for="{{currentList}}" wx:key="target_id">
-      <view class="work-card" bindtap="openDetail" data-index="{{index}}">
+      <view class="work-card" bindtap="openDetail" bindlongpress="showDeleteButton" data-index="{{index}}">
+        <view
+          wx:if="{{(activeTab === 'mypost' || activeTab === 'mycard') && deleteTargetIndex === index}}"
+          class="delete-badge"
+          data-index="{{index}}"
+          catchtap="deleteCurrentItem"
+        >×</view>
         <view class="card-container">
           <image class="thumb" src="{{item.cover_url || item.image_url}}" mode="aspectFill"></image>
           <!-- 根据 post_id 判断类型显示标题 -->

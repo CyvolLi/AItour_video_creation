@@ -2,6 +2,7 @@ const communityService = require("../../utils/communityService.js");
 const profileStore = require("../../utils/profileStore.js");
 const avatarStore = require("../../utils/avatarStore.js");
 const avatarRefresh = require("../../utils/avatarRefresh.js");
+const profileDelete = require("../../utils/profileDelete.js");
 const app = getApp();
 
 Page({
@@ -23,6 +24,10 @@ Page({
       card_liked: []
     },
     showPublishMenu: false,
+    deleteTargetIndex: -1,
+    deleteConfirmVisible: false,
+    pendingDelete: null,
+    deleting: false,
     loading: false
   },
 
@@ -101,9 +106,17 @@ Page({
       return;
     }
 
-    this.setData({ activeTab: tab }, () => {
-      this.loadTab(tab);
-    });
+    this.setData(
+      {
+        activeTab: tab,
+        deleteTargetIndex: -1,
+        deleteConfirmVisible: false,
+        pendingDelete: null
+      },
+      () => {
+        this.loadTab(tab);
+      }
+    );
   },
 
   requestProfileList(tab, payload) {
@@ -222,8 +235,17 @@ Page({
   },
 
   openDetail(e) {
-    const item = this.data.currentList[Number(e.currentTarget.dataset.index)];
+    if (this.data.deleting) {
+      return;
+    }
+    
+    if (this.data.deleteTargetIndex !== -1) {
+    this.cancelDeleteMode();
+    return;
+  }
 
+    const item = this.data.currentList[Number(e.currentTarget.dataset.index)];
+    
     if (!item) {
       return;
     }
@@ -268,6 +290,130 @@ Page({
       });
   },
 
+  showDeleteButton(e) {
+    const tab = this.data.activeTab;
+
+    if (!profileDelete.canDeleteFromTab(tab)) {
+      return;
+    }
+
+    const index = Number(e.currentTarget.dataset.index);
+    const item = this.data.currentList[index];
+
+    if (!item) {
+      return;
+    }
+
+    this.setData({
+      deleteTargetIndex: index
+    });
+  },
+  
+  cancelDeleteMode() {
+  this.setData({
+    deleteTargetIndex: -1
+  });
+},
+
+  deleteCurrentItem(e) {
+    if (this.data.deleting) {
+      return;
+    }
+
+    const tab = this.data.activeTab;
+    const index = Number(e.currentTarget.dataset.index);
+    const item = this.data.currentList[index];
+    const payload = profileDelete.buildDeletePayload(tab, item);
+    const deleteId = profileDelete.getDeleteId(tab, item);
+
+    if (!profileDelete.canDeleteFromTab(tab) || !item || !payload || !deleteId) {
+      wx.showToast({
+        title: "暂不能删除",
+        icon: "none"
+      });
+      return;
+    }
+
+    this.setData({
+      deleteConfirmVisible: true,
+      pendingDelete: {
+        tab,
+        item,
+        payload
+      }
+    });
+  },
+
+  cancelDelete() {
+    if (this.data.deleting) {
+      return;
+    }
+
+    this.setData({
+      deleteConfirmVisible: false,
+      pendingDelete: null
+    });
+  },
+
+  confirmDelete() {
+    const pendingDelete = this.data.pendingDelete;
+
+    if (!pendingDelete || this.data.deleting) {
+      return;
+    }
+
+    this.performDelete(
+      pendingDelete.tab,
+      pendingDelete.item,
+      pendingDelete.payload
+    );
+  },
+
+  performDelete(tab, item, payload) {
+    const request =
+      tab === "mypost"
+        ? communityService.apiProfilePostDelete
+        : communityService.apiProfileCardDelete;
+
+    this.setData({ deleting: true });
+
+    request(payload)
+      .then(() => {
+        const nextList = profileDelete.removeDeletedItem(
+          this.data.currentList,
+          tab,
+          item
+        );
+        const nextCache = {
+          ...this.data.cache,
+          [tab]: profileDelete.removeDeletedItem(this.data.cache[tab], tab, item)
+        };
+
+        this.setData({
+          currentList: nextList,
+          cache: nextCache,
+          deleteTargetIndex: -1,
+          deleteConfirmVisible: false,
+          pendingDelete: null
+        });
+
+        wx.showToast({
+          title: "已删除",
+          icon: "success"
+        });
+      })
+      .catch((err) => {
+        console.error("删除失败", err);
+        wx.showToast({
+          title: "删除失败",
+          icon: "none"
+        });
+      })
+      .finally(() => {
+        this.setData({ deleting: false });
+      });
+  },
+
   goBack() {
     wx.navigateBack({
       fail() {
@@ -279,7 +425,7 @@ Page({
   },
 
   goCommunity() {
-    wx.redirectTo({
+    wx.reLaunch({
       url: "/pages/community/community"
     });
   },
@@ -292,6 +438,8 @@ Page({
   hidePublishMenu() {
     this.setData({ showPublishMenu: false });
   },
+
+  preventMove() {},
 
   // 发布视频帖子
 goPublishPost() {

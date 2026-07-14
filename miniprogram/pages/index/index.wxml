@@ -2,7 +2,7 @@
 <view class="home-page">
   <image
     class="hero-image"
-    src="/images/home-hero.gif"
+    src="https://data.ruralv.cn/asset/home-hero.gif"
     mode="aspectFill"
   />
 

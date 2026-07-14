@@ -1,11 +1,9 @@
 Component({
   methods: {
     handleTap() {
-      wx.redirectTo({
-            url: "/pages/community/community"
-          });
-      }
-
+      wx.reLaunch({
+        url: "/pages/community/community"
+      });
     }
   }
-);
+});

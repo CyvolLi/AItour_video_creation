@@ -1,9 +1,26 @@
 <view class="page">
   <view class="empty-panel" wx:if="{{!hasVideo}}">
-    <view class="empty-title">还没有可发布的视频</view>
-    <view class="empty-desc">发布作品需要先完成一次视频生成，生成后会自动带回这里继续发布。</view>
-    <button class="main-btn" bindtap="goCreateVideo">去制作视频</button>
-    <button class="sub-btn" bindtap="backToCommunity">返回社区广场</button>
+    <view class="empty-illustration" aria-hidden="true">
+      <view class="scenery-card">
+        <view class="scenery-sun"></view>
+        <view class="scenery-cloud cloud-one"></view>
+        <view class="scenery-cloud cloud-two"></view>
+        <view class="scenery-mountain mountain-back"></view>
+        <view class="scenery-mountain mountain-front"></view>
+        <view class="scenery-field">
+          <view class="scenery-path"></view>
+        </view>
+        <view class="spark spark-one"></view>
+      </view>
+      <view class="postcard-shadow"></view>
+    </view>
+    <view class="empty-title">还没有可发布的作品</view>
+    <view class="empty-desc">先AI生成景区短剧，完成后可在此发布分享</view>
+    <button class="main-btn empty-main-btn" bindtap="goCreateVideo">
+      <image class="empty-btn-icon" src="/images/icons/top-video.png" mode="aspectFit"></image>
+      <text>去制作视频</text>
+    </button>
+    <button class="sub-btn empty-sub-btn" bindtap="backToCommunity">返回社区广场</button>
   </view>
 
   <view class="panel" wx:else>

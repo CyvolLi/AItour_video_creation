@@ -43,7 +43,7 @@
     </view>
 
     <view class="camera-wrap">
-      <image class="camera-icon" src="../../images/camera.gif" bindtap="chooseAndUploadImage"></image>
+      <image class="camera-icon" src="https://data.ruralv.cn/asset/camera.gif" bindtap="chooseAndUploadImage"></image>
       <text class="camera-text">上传照片</text>
     </view>
   </view>
