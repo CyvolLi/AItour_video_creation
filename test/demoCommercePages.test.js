@@ -15,9 +15,14 @@ function withDetailPage(app, wxStub, run) {
   const hadGetApp = Object.prototype.hasOwnProperty.call(global, "getApp");
   const hadPage = Object.prototype.hasOwnProperty.call(global, "Page");
   const hadWx = Object.prototype.hasOwnProperty.call(global, "wx");
+  const hadGetCurrentPages = Object.prototype.hasOwnProperty.call(
+    global,
+    "getCurrentPages"
+  );
   const previousGetApp = global.getApp;
   const previousPage = global.Page;
   const previousWx = global.wx;
+  const previousGetCurrentPages = global.getCurrentPages;
   const previousModule = require.cache[modulePath];
   let pageDefinition;
 
@@ -34,6 +39,8 @@ function withDetailPage(app, wxStub, run) {
     else delete global.Page;
     if (hadWx) global.wx = previousWx;
     else delete global.wx;
+    if (hadGetCurrentPages) global.getCurrentPages = previousGetCurrentPages;
+    else delete global.getCurrentPages;
   };
 
   delete require.cache[modulePath];
@@ -316,6 +323,9 @@ test("detail demo product and back actions stay local to the page", () => {
     navigateBack() {
       backCalls += 1;
     },
+    reLaunch() {
+      forbiddenCalls.push("reLaunch");
+    },
     navigateTo() {
       forbiddenCalls.push("navigateTo");
     },
@@ -332,6 +342,7 @@ test("detail demo product and back actions stay local to the page", () => {
 
   withDetailPage(app, wxStub, (pageDefinition) => {
     const page = createPageInstance(pageDefinition);
+    global.getCurrentPages = () => [{ route: "pages/community/community" }, { route: "pages/detail/detail" }];
 
     assert.strictEqual(page.data.featuredProduct, null);
     assert.strictEqual(page.data.activeDetailTab, undefined);
@@ -343,6 +354,94 @@ test("detail demo product and back actions stay local to the page", () => {
     assert.match(toastCalls[0].title, /演示|暂不支持购买/);
     assert.strictEqual(backCalls, 1);
     assert.deepStrictEqual(forbiddenCalls, []);
+  });
+});
+
+test("detail measures the custom navigation around the menu capsule", async () => {
+  let windowInfoCalls = 0;
+  let menuRectCalls = 0;
+  const app = {
+    globalData: {
+      task_data: {},
+      community_current_item: { type: "post", post_id: "post-nav" }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {},
+    getWindowInfo() {
+      windowInfoCalls += 1;
+      return { statusBarHeight: 47, windowWidth: 390 };
+    },
+    getMenuButtonBoundingClientRect() {
+      menuRectCalls += 1;
+      return { top: 51, bottom: 83, height: 32, left: 296, right: 383 };
+    }
+  };
+
+  await withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "post", id: "post-nav" });
+
+    assert.strictEqual(windowInfoCalls, 1);
+    assert.strictEqual(menuRectCalls, 1);
+    assert.strictEqual(page.data.statusBarHeight, 47);
+    assert.strictEqual(page.data.navContentHeight, 40);
+    assert.strictEqual(page.data.capsuleRightInset, 102);
+  });
+});
+
+test("detail custom navigation falls back when modern window APIs are missing", async () => {
+  let systemInfoCalls = 0;
+  const app = {
+    globalData: {
+      task_data: {},
+      community_current_item: { type: "card", card_id: "card-nav" }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {},
+    getSystemInfoSync() {
+      systemInfoCalls += 1;
+      return { statusBarHeight: 24, windowWidth: 360 };
+    }
+  };
+
+  await withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "card", id: "card-nav" });
+
+    assert.strictEqual(systemInfoCalls, 1);
+    assert.strictEqual(page.data.statusBarHeight, 24);
+    assert.strictEqual(page.data.navContentHeight, 44);
+    assert.strictEqual(page.data.capsuleRightInset, 96);
+  });
+});
+
+test("detail falls back to the community when opened without a previous page", () => {
+  const navigationCalls = [];
+  const app = { globalData: { task_data: {} } };
+  const wxStub = {
+    navigateBack() {
+      navigationCalls.push("navigateBack");
+    },
+    reLaunch(options) {
+      navigationCalls.push({ reLaunch: options.url });
+    }
+  };
+
+  withDetailPage(app, wxStub, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+    global.getCurrentPages = () => [{ route: "pages/detail/detail" }];
+
+    page.goBack();
+
+    assert.deepStrictEqual(navigationCalls, [
+      { reLaunch: "/pages/community/community" }
+    ]);
   });
 });
 
@@ -363,7 +462,14 @@ test("detail renders the post commerce flow in one continuous view", () => {
   );
 
   assert.strictEqual(json.navigationStyle, "custom");
-  assert.match(wxml, /class="custom-header"/);
+  assert.match(
+    wxml,
+    /class="custom-header"[^>]+style="padding-top: {{statusBarHeight}}px;"/
+  );
+  assert.match(
+    wxml,
+    /class="header-row"[^>]+style="height: {{navContentHeight}}px; padding-right: {{capsuleRightInset}}px;"/
+  );
   assert.match(wxml, /class="back-button"[^>]+bindtap="goBack"/);
   assert.match(wxml, />内容详情</);
   assert.doesNotMatch(wxml, /detail-tabs|product-grid|activeDetailTab|switchDetailTab/);
@@ -404,6 +510,54 @@ test("detail renders the post commerce flow in one continuous view", () => {
   assert.match(wxss, /\.post-card\s*{[^}]*border-radius:\s*(?:2[4-9]|3[0-4])rpx/is);
   assert.match(wxss, /\.demo-product-strip\s*{[^}]*display:\s*flex/is);
   assert.match(wxss, /\.product-name\s*{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis/is);
+  assert.match(wxss, /\.header-title\s*{[^}]*flex:\s*1;[^}]*min-width:\s*0/is);
+  assert.doesNotMatch(wxss, /padding:\s*[^;]*190rpx/);
+});
+
+test("detail updates the local favorite count after toggling", async () => {
+  const profileStore = require("../miniprogram/utils/profileStore.js");
+  const originalToggleFavorite = profileStore.toggleFavorite;
+  const toggleResults = [{ isFavorited: true }, { isFavorited: false }, { isFavorited: false }];
+  const toastCalls = [];
+  const app = { globalData: { task_data: { openid: "openid-detail" } } };
+  const wxStub = {
+    showToast(options) {
+      toastCalls.push(options);
+    }
+  };
+
+  profileStore.toggleFavorite = () => Promise.resolve(toggleResults.shift());
+
+  try {
+    await withDetailPage(app, wxStub, async (pageDefinition) => {
+      const page = createPageInstance(pageDefinition);
+      page.setData({
+        type: "post",
+        item: { post_id: "post-favorite" },
+        target: { likes: 8, favorites: 2, comments: 3, List: [{ comment_id: "c1" }] }
+      });
+
+      await page.favoriteCurrent();
+      assert.strictEqual(page.data.target.favorites, 3);
+      assert.strictEqual(page.data.target.likes, 8);
+      assert.strictEqual(page.data.target.comments, 3);
+      assert.strictEqual(page.data.target.List.length, 1);
+
+      await page.favoriteCurrent();
+      assert.strictEqual(page.data.target.favorites, 2);
+
+      page.setData({ target: { ...page.data.target, favorites: 0 } });
+      await page.favoriteCurrent();
+      assert.strictEqual(page.data.target.favorites, 0);
+      assert.deepStrictEqual(toastCalls.map((call) => call.title), [
+        "已收藏",
+        "已取消",
+        "已取消"
+      ]);
+    });
+  } finally {
+    profileStore.toggleFavorite = originalToggleFavorite;
+  }
 });
 
 test("detail onLoad selects one video-related product without breaking comments", () => {

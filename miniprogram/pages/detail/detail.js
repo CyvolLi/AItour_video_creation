@@ -24,7 +24,10 @@ Page({
     commentInput: "",
     commentLoading: false,
     commenting: false,
-    featuredProduct: null
+    featuredProduct: null,
+    statusBarHeight: 20,
+    navContentHeight: 44,
+    capsuleRightInset: 96
   },
 
   normalizeTarget(target) {
@@ -121,6 +124,8 @@ Page({
   },
 
   onLoad(options) {
+    this.measureNavigation();
+
     const item = app.globalData.community_current_item || {};
     const target = item.target || item.Target || {};
     const type = options.type || item.type || "post";
@@ -141,8 +146,82 @@ Page({
     });
   },
 
+  measureNavigation() {
+    let windowInfo = {};
+    let menuRect = {};
+
+    try {
+      if (typeof wx.getWindowInfo === "function") {
+        windowInfo = wx.getWindowInfo() || {};
+      } else if (typeof wx.getSystemInfoSync === "function") {
+        windowInfo = wx.getSystemInfoSync() || {};
+      }
+    } catch (err) {
+      console.warn("窗口信息获取失败，使用默认导航尺寸", err);
+    }
+
+    try {
+      if (typeof wx.getMenuButtonBoundingClientRect === "function") {
+        menuRect = wx.getMenuButtonBoundingClientRect() || {};
+      }
+    } catch (err) {
+      console.warn("胶囊位置获取失败，使用默认安全间距", err);
+    }
+
+    const validNumber = (value, fallback) => {
+      const number = Number(value);
+      return Number.isFinite(number) && number > 0 ? number : fallback;
+    };
+    const statusBarHeight = validNumber(windowInfo.statusBarHeight, 20);
+    const windowWidth = validNumber(
+      windowInfo.windowWidth || windowInfo.screenWidth,
+      375
+    );
+    const menuTop = Number(menuRect.top);
+    const menuLeft = Number(menuRect.left);
+    const menuHeight = validNumber(
+      menuRect.height || Number(menuRect.bottom) - menuTop,
+      0
+    );
+    const hasMenuGeometry =
+      Number.isFinite(menuTop) && menuTop >= statusBarHeight && menuHeight > 0;
+    const navContentHeight = hasMenuGeometry
+      ? menuHeight + (menuTop - statusBarHeight) * 2
+      : 44;
+    const capsuleRightInset =
+      Number.isFinite(menuLeft) && menuLeft > 0 && menuLeft < windowWidth
+        ? Math.max(72, windowWidth - menuLeft + 8)
+        : 96;
+
+    this.setData({
+      statusBarHeight,
+      navContentHeight,
+      capsuleRightInset
+    });
+  },
+
   goBack() {
-    wx.navigateBack();
+    let pages = [];
+
+    try {
+      pages = typeof getCurrentPages === "function" ? getCurrentPages() : [];
+    } catch (err) {
+      console.warn("页面栈获取失败，返回社区页", err);
+    }
+
+    if (pages.length > 1 && typeof wx.navigateBack === "function") {
+      return wx.navigateBack();
+    }
+
+    if (typeof wx.reLaunch === "function") {
+      return wx.reLaunch({
+        url: "/pages/community/community"
+      });
+    }
+
+    if (typeof wx.navigateBack === "function") {
+      return wx.navigateBack();
+    }
   },
 
   showDemoProduct() {
@@ -390,11 +469,24 @@ Page({
       return;
     }
 
-    profileStore
+    return profileStore
       .toggleFavorite(openid, type, id)
       .then((res) => {
+        const currentTarget = this.data.target || {};
+        const currentFavorites = Number(currentTarget.favorites) || 0;
+        const favorites = res && res.isFavorited
+          ? currentFavorites + 1
+          : Math.max(0, currentFavorites - 1);
+
+        this.setData({
+          target: {
+            ...currentTarget,
+            favorites
+          }
+        });
+
         wx.showToast({
-          title: res.isFavorited ? "已收藏" : "已取消",
+          title: res && res.isFavorited ? "已收藏" : "已取消",
           icon: "success"
         });
       })

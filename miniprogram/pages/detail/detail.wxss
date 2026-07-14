@@ -10,7 +10,6 @@ page {
 }
 
 .custom-header {
-  padding-top: env(safe-area-inset-top);
   background: rgba(237, 249, 244, 0.96);
 }
 
@@ -18,8 +17,7 @@ page {
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  min-height: 104rpx;
-  padding: 12rpx 190rpx 12rpx 28rpx;
+  padding: 0 0 0 28rpx;
 }
 
 .back-button {
@@ -49,6 +47,7 @@ page {
 
 .header-title {
   display: flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;

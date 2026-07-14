@@ -1,6 +1,6 @@
 <view class="page">
-  <view class="custom-header">
-    <view class="header-row">
+  <view class="custom-header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="header-row" style="height: {{navContentHeight}}px; padding-right: {{capsuleRightInset}}px;">
       <view class="back-button" bindtap="goBack" hover-class="back-button-active" aria-label="返回">
         <text class="back-icon">‹</text>
       </view>
