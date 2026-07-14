@@ -74,4 +74,3 @@
 3. 运行 `git diff --check origin/main...HEAD`，确认无新增二进制/本地商品图片。
 4. 确认生产代码未新增真实 commerce API，发布 payload 无商品字段。
 5. 在开发者工具与 Android/iOS 真机检查视频覆盖层、详情同屏评论和发布页滚动；确认 `images.unsplash.com` 合法域名配置。
-

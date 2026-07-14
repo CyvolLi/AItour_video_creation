@@ -57,4 +57,3 @@
 - 发布页测试验证预览视觉结构和 payload 不变。
 - 全量 Node 测试、JS/JSON 检查和 `git diff --check`。
 - Android/iOS 真机检查视频商品条不遮挡人物主体与 controls、详情页滚动、评论输入和发布页底部 dock。
-
