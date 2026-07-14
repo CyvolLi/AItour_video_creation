@@ -51,14 +51,10 @@
           <text>下载视频</text>
           <view class="download-icon"></view>
         </button>
+        <button class="action-pill action-pill-publish" bindtap="publishPost">发布作品</button>
         <button class="action-pill action-pill-secondary" bindtap="backToGenerate">重新生成</button>
         <!--<button class="action-pill action-pill-secondary" bindtap="backToExtend">扩展视频</button>-->
       </view>
     </view>
   </scroll-view>
-
-  <!-- 发布作品按钮 - 固定在底部 -->
-  <view class="publish-bar">
-    <button class="publish-btn" bindtap="publishPost">发布作品</button>
-  </view>
 </view>

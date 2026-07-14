@@ -284,21 +284,31 @@ test("v_output renders the demo product overlay inside the video card", () => {
     wxml.slice(overlayStart, nextCardStart),
     /wx:if="{{featuredProduct\s*&&\s*isVideoPlaying}}"/
   );
-  assert.match(wxml, /class="publish-bar"/);
+  assert.doesNotMatch(wxml, /class="publish-bar"/);
   const overlayStyle = wxss.match(
     /\.demo-product-overlay\s*{([^}]*)}/
   )[1];
   const ctaStyle = wxss.match(/\.demo-product-cta\s*{([^}]*)}/)[1];
   const overlayHeight = Number(overlayStyle.match(/height:\s*(\d+)rpx/)[1]);
   const overlayBottom = Number(overlayStyle.match(/bottom:\s*(\d+)rpx/)[1]);
+  const overlayRight = Number(overlayStyle.match(/right:\s*(\d+)rpx/)[1]);
 
   assert.ok(
-    overlayHeight >= 82 && overlayHeight <= 88,
-    "overlay should stay compact in an 82-88rpx range"
+    overlayHeight >= 68 && overlayHeight <= 76,
+    "overlay should stay compact in a 68-76rpx range"
   );
   assert.ok(
-    overlayBottom >= 100 && overlayBottom <= 110,
+    overlayBottom >= 96 && overlayBottom <= 112,
     "overlay should stay above the native video controls"
+  );
+  assert.ok(
+    overlayRight >= 120,
+    "overlay should leave enough video visible instead of spanning the full width"
+  );
+  assert.match(
+    overlayStyle,
+    /background-color:\s*rgba\(255,\s*255,\s*255,\s*0\.8[2-8]\)/,
+    "overlay should use a translucent white backing"
   );
   assert.doesNotMatch(overlayStyle, /box-shadow|linear-gradient|background-image/);
   assert.doesNotMatch(ctaStyle, /box-shadow|linear-gradient|background-image/);
@@ -309,6 +319,31 @@ test("v_output renders the demo product overlay inside the video card", () => {
     -1,
     "the product overlay should not be duplicated outside the video card"
   );
+});
+
+test("v_output keeps download, publish, and regenerate in one action panel", () => {
+  const wxml = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/v_output/v_output.wxml"),
+    "utf8"
+  );
+  const wxss = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/v_output/v_output.wxss"),
+    "utf8"
+  );
+  const panelStart = wxml.indexOf('<view class="actions-panel">');
+  const panelEnd = wxml.indexOf("</scroll-view>", panelStart);
+  const actions = wxml.slice(panelStart, panelEnd);
+  const saveStart = actions.indexOf('bindtap="saveVideo"');
+  const publishStart = actions.indexOf('bindtap="publishPost"');
+  const regenerateStart = actions.indexOf('bindtap="backToGenerate"');
+
+  assert.ok(panelStart >= 0, "actions-panel should exist");
+  assert.ok(saveStart >= 0, "download action should remain available");
+  assert.ok(publishStart > saveStart, "publish should follow download");
+  assert.ok(regenerateStart > publishStart, "regenerate should follow publish");
+  assert.doesNotMatch(wxml, /class="publish-bar"/);
+  assert.doesNotMatch(wxss, /\.publish-bar\s*{/);
+  assert.match(wxss, /\.content-shell\s*{[^}]*padding:\s*[^;]*\b(?:[4-9]\d|1[01]\d)rpx/is);
 });
 
 test("detail demo product and back actions stay local to the page", () => {
