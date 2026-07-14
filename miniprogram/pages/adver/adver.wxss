@@ -1,0 +1,58 @@
+page {
+  background: #f5f6f8;
+  color: #1f2329;
+}
+
+.page {
+  padding: 24rpx;
+}
+
+.panel {
+  margin-bottom: 24rpx;
+  padding: 28rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
+}
+
+.panel-title {
+  margin-bottom: 20rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.info-row,
+.config-value,
+.guide-item,
+.result,
+.hint,
+.notice {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.notice {
+  color: #ad6800;
+}
+
+.result {
+  margin-top: 24rpx;
+  color: #096dd9;
+}
+
+.hint {
+  color: #646a73;
+  font-size: 24rpx;
+}
+
+.guide-item {
+  padding-left: 24rpx;
+  position: relative;
+}
+
+.guide-item::before {
+  position: absolute;
+  left: 0;
+  content: "•";
+}
