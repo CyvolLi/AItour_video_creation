@@ -30,6 +30,21 @@ test("builds cloud initialization options", () => {
   });
 });
 
+test("app initialization reuses the runtime cloud configuration", () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/app.js"),
+    "utf8"
+  );
+
+  assert.ok(!source.includes("cloudbase-d2g8dvtluc8d8face"));
+  assert.ok(source.includes('require("./utils/runtimeConfig.js")'));
+  assert.match(source, /env:\s*runtimeConfig\.CLOUD_ENV_ID/);
+  assert.match(
+    source,
+    /wx\.cloud\.init\(runtimeConfig\.getCloudInitOptions\(\)\)/
+  );
+});
+
 test("accepts the checked-in runtime configuration", () => {
   assert.deepStrictEqual(runtimeConfig.validateRuntimeConfig(), []);
 });

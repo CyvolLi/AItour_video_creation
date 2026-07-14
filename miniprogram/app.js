@@ -1,12 +1,13 @@
 // app.js
 const profileStore = require("./utils/profileStore.js");
 const avatarStore = require("./utils/avatarStore.js");
+const runtimeConfig = require("./utils/runtimeConfig.js");
 
 App({
   onLaunch: function () {
     // 1. 初始化全局数据
     this.globalData = {
-      env: "cloudbase-d2g8dvtluc8d8face", // 请确保此 ID 与你云开发控制台一致
+      env: runtimeConfig.CLOUD_ENV_ID, // 请确保此 ID 与你云开发控制台一致
       userInfo: null,
       hasNavigated: false,
       video_extend: false,
@@ -32,11 +33,7 @@ App({
     if (!wx.cloud) {
       console.error("请使用 2.2.3 或以上的基础库以使用云能力");
     } else {
-      wx.cloud.init({
-        env:
-        wx.cloud.DYNAMIC_CURRENT_ENV || this.globalData.env,
-        traceUser: true,
-      });
+      wx.cloud.init(runtimeConfig.getCloudInitOptions());
     }
 
     // 3. 获取 OpenID
