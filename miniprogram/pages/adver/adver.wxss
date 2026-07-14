@@ -25,7 +25,8 @@ page {
 .guide-item,
 .result,
 .hint,
-.notice {
+.notice,
+.fallback {
   margin-top: 12rpx;
   font-size: 26rpx;
   line-height: 1.6;
@@ -34,6 +35,10 @@ page {
 
 .notice {
   color: #ad6800;
+}
+
+.fallback {
+  color: #646a73;
 }
 
 .result {

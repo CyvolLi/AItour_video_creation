@@ -12,6 +12,7 @@ Page({
     SDKVersion: "未知",
     storeHomeSupported: false,
     storeProductSupported: false,
+    enterEventsSupported: false,
     environmentNotice: "",
     productEnterResult: "尚未触发商品跳转"
   },
@@ -25,19 +26,30 @@ Page({
       typeof wx.canIUse === "function" ? wx.canIUse.bind(wx) : () => false;
     const platform = deviceInfo.platform || "未知";
     const system = deviceInfo.system || "未知";
-    const desktopEnvironment = /devtools|windows|mac/i.test(
-      `${platform} ${system}`
+    const normalizedPlatform = String(deviceInfo.platform || "").toLowerCase();
+    const mobilePlatforms = ["ios", "android", "ohos"];
+    const desktopPlatforms = ["devtools", "windows", "mac", "ohos_pc"];
+    const environmentNotice = mobilePlatforms.includes(normalizedPlatform)
+      ? "当前为移动端环境，请结合手机真机上的实际结果判读。"
+      : desktopPlatforms.includes(normalizedPlatform)
+        ? "当前为开发者工具或桌面环境，微信小店结果必须使用手机真机复核。"
+        : "当前运行环境未知，请使用手机真机复核。";
+    const storeHomeSupported = canIUse("store-home");
+    const storeProductSupported = canIUse("store-product");
+    const enterSuccessSupported = canIUse(
+      "store-product.bindentersuccess"
     );
+    const enterErrorSupported = canIUse("store-product.bindentererror");
 
     this.setData({
       platform,
       system,
       SDKVersion: appBaseInfo.SDKVersion || "未知",
-      storeHomeSupported: canIUse("store-home"),
-      storeProductSupported: canIUse("store-product"),
-      environmentNotice: desktopEnvironment
-        ? "当前为开发者工具或桌面环境，微信小店结果必须使用手机真机复核。"
-        : "当前为移动端环境，请结合手机真机上的实际结果判读。"
+      storeHomeSupported,
+      storeProductSupported,
+      enterEventsSupported:
+        enterSuccessSupported && enterErrorSupported,
+      environmentNotice
     });
   },
 
