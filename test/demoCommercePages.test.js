@@ -146,10 +146,25 @@ test("v_output renders the demo product overlay inside the video card", () => {
   assert.match(wxml, /同款|演示/);
   assert.match(wxml, /<video[\s\S]*?\scontrols(?:\s|>)/);
   assert.match(wxml, /class="publish-bar"/);
-  assert.match(
-    wxss,
-    /\.demo-product-overlay\s*{[\s\S]*?bottom:\s*58rpx;/
+  const overlayStyle = wxss.match(
+    /\.demo-product-overlay\s*{([^}]*)}/
+  )[1];
+  const ctaStyle = wxss.match(/\.demo-product-cta\s*{([^}]*)}/)[1];
+  const overlayHeight = Number(overlayStyle.match(/height:\s*(\d+)rpx/)[1]);
+  const overlayBottom = Number(overlayStyle.match(/bottom:\s*(\d+)rpx/)[1]);
+
+  assert.ok(
+    overlayHeight >= 82 && overlayHeight <= 88,
+    "overlay should stay compact in an 82-88rpx range"
   );
+  assert.ok(
+    overlayBottom >= 100 && overlayBottom <= 110,
+    "overlay should stay above the native video controls"
+  );
+  assert.doesNotMatch(overlayStyle, /box-shadow|linear-gradient|background-image/);
+  assert.doesNotMatch(ctaStyle, /box-shadow|linear-gradient|background-image/);
+  assert.match(ctaStyle, /background-color:\s*#[0-9a-f]{6}/i);
+  assert.match(ctaStyle, /color:\s*#fff(?:fff)?/i);
   assert.strictEqual(
     wxml.indexOf('<cover-view class="demo-product-overlay"', overlayStart + 1),
     -1,

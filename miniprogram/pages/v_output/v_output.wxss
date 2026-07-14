@@ -77,67 +77,66 @@ home-back-button {
   position: absolute;
   left: 34rpx;
   right: 44rpx;
-  bottom: 58rpx;
+  bottom: 106rpx;
   z-index: 8;
   display: flex;
   align-items: center;
-  height: 108rpx;
-  padding: 10rpx 12rpx;
-  border-radius: 20rpx;
+  height: 86rpx;
+  padding: 8rpx 10rpx;
+  border-radius: 16rpx;
   box-sizing: border-box;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 6rpx 18rpx rgba(19, 35, 33, 0.22);
+  background-color: #ffffff;
 }
 
 .demo-product-image {
   flex: 0 0 auto;
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 14rpx;
+  width: 66rpx;
+  height: 66rpx;
+  border-radius: 10rpx;
 }
 
 .demo-product-info {
   flex: 1;
   min-width: 0;
-  margin: 0 14rpx;
+  margin: 0 10rpx;
   color: #1c2a2b;
 }
 
 .demo-product-kicker {
   color: #62827b;
-  font-size: 20rpx;
-  line-height: 26rpx;
+  font-size: 16rpx;
+  line-height: 20rpx;
 }
 
 .demo-product-title {
   max-width: 330rpx;
   overflow: hidden;
   color: #172524;
-  font-size: 25rpx;
+  font-size: 21rpx;
   font-weight: 700;
-  line-height: 32rpx;
+  line-height: 25rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .demo-product-price {
   color: #ed613a;
-  font-size: 24rpx;
+  font-size: 20rpx;
   font-weight: 700;
-  line-height: 28rpx;
+  line-height: 22rpx;
 }
 
 .demo-product-cta {
   flex: 0 0 auto;
-  height: 54rpx;
-  padding: 0 22rpx;
-  border-radius: 27rpx;
+  height: 44rpx;
+  padding: 0 16rpx;
+  border-radius: 22rpx;
   color: #ffffff;
-  font-size: 23rpx;
+  font-size: 20rpx;
   font-weight: 700;
-  line-height: 54rpx;
-  background: linear-gradient(135deg, #f4a64f 0%, #ee7c43 100%);
+  line-height: 44rpx;
+  background-color: #f28b3c;
 }
 
 .copy-card,
