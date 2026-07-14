@@ -4,24 +4,10 @@ const path = require("path");
 
 const { pickProduct } = require("../miniprogram/utils/demoProducts.js");
 
+const testCases = [];
+
 function test(name, fn) {
-  try {
-    const result = fn();
-    if (result && typeof result.then === "function") {
-      return result.then(
-        () => console.log("ok - " + name),
-        (err) => {
-          console.error("not ok - " + name);
-          console.error(err);
-          process.exitCode = 1;
-        }
-      );
-    }
-    console.log("ok - " + name);
-  } catch (err) {
-    console.error("not ok - " + name);
-    throw err;
-  }
+  testCases.push({ name, fn });
 }
 
 function withDetailPage(app, wxStub, run) {
@@ -111,6 +97,68 @@ function withVOutputPage(app, wxStub, run) {
     else delete global.Page;
     if (hadWx) global.wx = previousWx;
     else delete global.wx;
+  }
+}
+
+function withPublishPage(app, wxStub, communityStub, run) {
+  const modulePath = require.resolve("../miniprogram/pages/publish/publish.js");
+  const communityPath = require.resolve(
+    "../miniprogram/utils/communityService.js"
+  );
+  const hadGetApp = Object.prototype.hasOwnProperty.call(global, "getApp");
+  const hadPage = Object.prototype.hasOwnProperty.call(global, "Page");
+  const hadWx = Object.prototype.hasOwnProperty.call(global, "wx");
+  const previousGetApp = global.getApp;
+  const previousPage = global.Page;
+  const previousWx = global.wx;
+  const previousModule = require.cache[modulePath];
+  const previousCommunityModule = require.cache[communityPath];
+  let pageDefinition;
+
+  const cleanup = () => {
+    if (previousModule) require.cache[modulePath] = previousModule;
+    else delete require.cache[modulePath];
+    if (previousCommunityModule) {
+      require.cache[communityPath] = previousCommunityModule;
+    } else {
+      delete require.cache[communityPath];
+    }
+
+    if (hadGetApp) global.getApp = previousGetApp;
+    else delete global.getApp;
+    if (hadPage) global.Page = previousPage;
+    else delete global.Page;
+    if (hadWx) global.wx = previousWx;
+    else delete global.wx;
+  };
+
+  delete require.cache[modulePath];
+  require.cache[communityPath] = {
+    id: communityPath,
+    filename: communityPath,
+    loaded: true,
+    exports: communityStub
+  };
+  global.getApp = () => app;
+  global.Page = (definition) => {
+    pageDefinition = definition;
+  };
+  global.wx = wxStub;
+
+  try {
+    require(modulePath);
+    assert.ok(pageDefinition, "publish.js should register a Page definition");
+    const result = run(pageDefinition);
+
+    if (result && typeof result.then === "function") {
+      return result.finally(cleanup);
+    }
+
+    cleanup();
+    return result;
+  } catch (err) {
+    cleanup();
+    throw err;
   }
 }
 
@@ -368,3 +416,242 @@ test("detail onLoad provides three demo products without breaking comments", () 
     });
   });
 });
+
+test("detail keeps card pages on the card view with comments reachable", () => {
+  const wxml = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/detail/detail.wxml"),
+    "utf8"
+  );
+  const app = {
+    globalData: {
+      task_data: {},
+      community_current_item: {
+        type: "card",
+        card_id: "card-demo",
+        emotion_text: "card copy",
+        target: { comments: 0, List: [] }
+      }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {}
+  };
+
+  return withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "card", id: "card-demo" });
+
+    assert.strictEqual(page.data.type, "card");
+    assert.strictEqual(page.data.item.card_id, "card-demo");
+    assert.strictEqual(page.getCommentTargetId(), "card-demo");
+    assert.strictEqual(page.data.commentLoading, false);
+    assert.deepStrictEqual(page.data.target.List, []);
+    assert.match(wxml, /class="detail-tabs"[^>]+wx:if="{{type === 'post'}}"/);
+    assert.match(
+      wxml,
+      /class="comments"[^>]+wx:if="{{type !== 'post' \|\| activeDetailTab === 'comments'}}"/
+    );
+  });
+});
+
+test("publish prepares a stable endorsement candidate while staying disabled", () => {
+  const videoUrl = "https://example.com/publish-travel.mp4";
+  const app = {
+    globalData: {
+      task_data: {
+        card_id: "card-demo",
+        location_name: "泉州"
+      },
+      video_url: videoUrl,
+      final_response: "travel copy"
+    }
+  };
+
+  withPublishPage(app, {}, {}, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    assert.strictEqual(page.data.endorsementEnabled, false);
+    assert.strictEqual(page.data.endorsementProduct, null);
+    page.onLoad();
+    assert.deepStrictEqual(page.data.endorsementCandidate, pickProduct(videoUrl));
+    assert.strictEqual(page.data.endorsementEnabled, false);
+    assert.strictEqual(page.data.endorsementProduct, null);
+  });
+});
+
+test("publish endorsement switch only controls the local product preview", () => {
+  const app = {
+    globalData: {
+      task_data: { spot_name: "鼓浪屿" },
+      final_response: "海边旅行"
+    }
+  };
+
+  withPublishPage(app, {}, {}, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+    page.onLoad();
+    const candidate = page.data.endorsementCandidate;
+
+    page.onEndorsementChange({ detail: { value: true } });
+    assert.strictEqual(page.data.endorsementEnabled, true);
+    assert.deepStrictEqual(page.data.endorsementProduct, candidate);
+
+    page.onEndorsementChange({ detail: { value: false } });
+    assert.strictEqual(page.data.endorsementEnabled, false);
+    assert.strictEqual(page.data.endorsementProduct, null);
+
+    assert.doesNotThrow(() => page.onEndorsementChange());
+    assert.strictEqual(page.data.endorsementEnabled, false);
+    assert.strictEqual(page.data.endorsementProduct, null);
+    assert.strictEqual(
+      Object.prototype.hasOwnProperty.call(app.globalData, "endorsementProduct"),
+      false
+    );
+  });
+});
+
+test("publish demo endorsement action only shows an informational toast", () => {
+  const toastCalls = [];
+  const forbiddenCalls = [];
+  const wxStub = {
+    showToast(options) {
+      toastCalls.push(options);
+    },
+    navigateTo() {
+      forbiddenCalls.push("navigateTo");
+    },
+    openEmbeddedMiniProgram() {
+      forbiddenCalls.push("openEmbeddedMiniProgram");
+    },
+    navigateToMiniProgram() {
+      forbiddenCalls.push("navigateToMiniProgram");
+    },
+    request() {
+      forbiddenCalls.push("request");
+    }
+  };
+  const app = { globalData: { task_data: {} } };
+
+  withPublishPage(app, wxStub, {}, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+    page.showDemoProduct();
+
+    assert.strictEqual(toastCalls.length, 1);
+    assert.match(toastCalls[0].title, /演示|不影响发布/);
+    assert.deepStrictEqual(forbiddenCalls, []);
+  });
+});
+
+test("publish payload remains unchanged when demo endorsement is enabled", async () => {
+  const publishCalls = [];
+  const app = {
+    globalData: {
+      task_data: {
+        openid: "openid-demo",
+        card_id: "card-demo",
+        landscape: "001",
+        spot_url: "https://example.com/cover.jpg"
+      },
+      video_url: "https://example.com/video.mp4",
+      final_response: "travel copy"
+    }
+  };
+  const wxStub = {
+    showToast() {},
+    reLaunch() {}
+  };
+  const communityStub = {
+    apiCommunityPostPublish(payload) {
+      publishCalls.push(payload);
+      return Promise.resolve({});
+    }
+  };
+
+  await withPublishPage(app, wxStub, communityStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+    page.onLoad();
+    page.setData({ title: "发布标题" });
+    page.onEndorsementChange({ detail: { value: true } });
+    page.publishPost();
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    assert.strictEqual(publishCalls.length, 1);
+    assert.deepStrictEqual(Object.keys(publishCalls[0]).sort(), [
+      "card_id",
+      "cover_url",
+      "landscape",
+      "location_name",
+      "openid",
+      "share_text",
+      "title",
+      "video_url"
+    ]);
+    assert.strictEqual(
+      Object.keys(publishCalls[0]).some((key) =>
+        /product|endorsement|promotion|link/i.test(key)
+      ),
+      false
+    );
+  });
+});
+
+test("publish renders an isolated demo endorsement option and preview", () => {
+  const wxml = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/publish/publish.wxml"),
+    "utf8"
+  );
+  const wxss = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/publish/publish.wxss"),
+    "utf8"
+  );
+  const visibilityStart = wxml.indexOf("公开可见");
+  const endorsementStart = wxml.indexOf("选择代言商品");
+  const publishButtonStart = wxml.indexOf("发布笔记");
+
+  assert.ok(visibilityStart >= 0, "visibility option should exist");
+  assert.ok(
+    endorsementStart > visibilityStart,
+    "endorsement option should follow visibility"
+  );
+  assert.ok(
+    publishButtonStart > endorsementStart,
+    "endorsement option should remain above the publish button"
+  );
+  assert.match(
+    wxml,
+    /<switch[^>]+checked="{{endorsementEnabled}}"[^>]+bindchange="onEndorsementChange"/
+  );
+  assert.match(wxml, /选择代言商品/);
+  assert.match(wxml, /演示/);
+  assert.match(
+    wxml,
+    /class="endorsement-preview"[^>]+wx:if="{{endorsementEnabled && endorsementProduct}}"[^>]+bindtap="showDemoProduct"/
+  );
+  assert.match(wxml, /src="{{endorsementProduct\.imageUrl}}"/);
+  assert.match(wxml, /{{endorsementProduct\.title}}/);
+  assert.match(wxml, /{{endorsementProduct\.price}}/);
+  assert.match(wxml, /智能匹配/);
+  assert.match(wxml, /仅演示，不影响发布/);
+  assert.doesNotMatch(wxml, /<view[^>]+bindtap="onEndorsementChange"/);
+  assert.match(wxss, /\.endorsement-preview\s*{/);
+  assert.match(wxss, /\.endorsement-image\s*{[^}]*border-radius:/s);
+});
+
+async function main() {
+  for (const testCase of testCases) {
+    try {
+      await testCase.fn();
+      console.log("ok - " + testCase.name);
+    } catch (err) {
+      console.error("not ok - " + testCase.name);
+      console.error(err);
+      process.exitCode = 1;
+    }
+  }
+}
+
+main();

@@ -1,4 +1,5 @@
 const communityService = require("../../utils/communityService.js");
+const { pickProduct } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 Page({
@@ -10,21 +11,31 @@ Page({
     shareText: "",
     locationName: "",
     hasVideo: false,
-    publishing: false
+    publishing: false,
+    endorsementEnabled: false,
+    endorsementCandidate: null,
+    endorsementProduct: null
   },
 
   onLoad() {
     const taskData = app.globalData.task_data || {};
     const videoUrl = app.globalData.video_url || app.globalData.videoUrl || "";
+    const shareText = app.globalData.final_response || "";
+    const locationName = taskData.location_name || taskData.spot_name || "";
+    const endorsementSeed =
+      videoUrl || shareText || locationName || taskData.card_id || "publish-demo";
 
     this.setData({
       title: "",
       cardId: taskData.card_id || "",
       videoUrl,
       coverUrl: app.globalData.coverUrl || taskData.spot_url || "",
-      shareText: app.globalData.final_response || "",
-      locationName: taskData.location_name || taskData.spot_name || "",
-      hasVideo: !!videoUrl
+      shareText,
+      locationName,
+      hasVideo: !!videoUrl,
+      endorsementEnabled: false,
+      endorsementCandidate: pickProduct(endorsementSeed),
+      endorsementProduct: null
     });
   },
 
@@ -43,6 +54,22 @@ Page({
 
   onLocationInput(e) {
     this.setData({ locationName: e.detail.value });
+  },
+
+  onEndorsementChange(e) {
+    const enabled = !!(e && e.detail && e.detail.value);
+
+    this.setData({
+      endorsementEnabled: enabled,
+      endorsementProduct: enabled ? this.data.endorsementCandidate : null
+    });
+  },
+
+  showDemoProduct() {
+    wx.showToast({
+      title: "演示商品，不影响发布",
+      icon: "none"
+    });
   },
 
   goCreateVideo() {
