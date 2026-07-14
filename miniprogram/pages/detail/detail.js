@@ -4,7 +4,7 @@ const profileStore = require("../../utils/profileStore.js");
 const avatarStore = require("../../utils/avatarStore.js");
 const avatarRefresh = require("../../utils/avatarRefresh.js");
 const landscapeUtil = require("../../utils/landscape.js");
-const { getFeaturedProducts } = require("../../utils/demoProducts.js");
+const { getRelatedProducts } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 const DEFAULT_USER_AVATAR = "../../images/default.jpg";
@@ -126,6 +126,7 @@ Page({
     const target = item.target || item.Target || {};
     const type = options.type || item.type || "post";
     const id = options.id || item.post_id || item.card_id || "";
+    const productSeed = item.video_url || item.share_text || item.post_id || id;
 
     return this.attachAuthorProfiles([item]).then((items) => {
       this.setData({
@@ -134,7 +135,7 @@ Page({
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
         target: this.normalizeTarget(target),
-        demoProducts: getFeaturedProducts(3)
+        demoProducts: getRelatedProducts(productSeed, 3)
       });
 
       return this.loadComments();

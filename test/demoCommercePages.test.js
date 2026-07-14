@@ -394,6 +394,7 @@ test("detail onLoad provides three demo products without breaking comments", () 
         type: "post",
         post_id: "post-demo",
         title: "demo video",
+        video_url: "video-1",
         target: { comments: 0, List: [] }
       }
     }
@@ -410,6 +411,11 @@ test("detail onLoad provides three demo products without breaking comments", () 
     assert.ok(loading && typeof loading.then === "function");
     return loading.then(() => {
       assert.strictEqual(page.data.demoProducts.length, 3);
+      assert.strictEqual(pickProduct("video-1").id, "demo-travel-bottle");
+      assert.strictEqual(
+        page.data.demoProducts[0].id,
+        pickProduct("video-1").id
+      );
       assert.strictEqual(page.data.item.post_id, "post-demo");
       assert.strictEqual(page.data.commentLoading, false);
       assert.deepStrictEqual(page.data.target.List, []);

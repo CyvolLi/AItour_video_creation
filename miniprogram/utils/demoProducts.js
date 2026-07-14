@@ -64,8 +64,24 @@ function pickProduct(seed) {
   return DEMO_PRODUCTS[hash % DEMO_PRODUCTS.length];
 }
 
+function getRelatedProducts(seed, limit = DEMO_PRODUCTS.length) {
+  const safeLimit = Math.floor(Number(limit));
+  if (!Number.isFinite(safeLimit) || safeLimit <= 0) {
+    return [];
+  }
+
+  const primary = pickProduct(seed);
+  return [
+    primary,
+    ...DEMO_PRODUCTS.filter((product) => product.id !== primary.id)
+  ]
+    .slice(0, safeLimit)
+    .map((product) => ({ ...product }));
+}
+
 module.exports = {
   DEMO_PRODUCTS,
   getFeaturedProducts,
+  getRelatedProducts,
   pickProduct
 };

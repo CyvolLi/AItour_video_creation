@@ -3,6 +3,7 @@ const assert = require("assert");
 const {
   DEMO_PRODUCTS,
   getFeaturedProducts,
+  getRelatedProducts,
   pickProduct
 } = require("../miniprogram/utils/demoProducts.js");
 
@@ -86,4 +87,32 @@ test("uses seeds to reach different product indexes", () => {
 test("uses the first product when the seed is empty", () => {
   assert.strictEqual(pickProduct().id, DEMO_PRODUCTS[0].id);
   assert.strictEqual(pickProduct("").id, DEMO_PRODUCTS[0].id);
+});
+
+test("puts the seeded primary product first without duplicates", () => {
+  const seed = "video-1";
+  const primary = pickProduct(seed);
+  const originalTitle = primary.title;
+
+  assert.strictEqual(primary.id, DEMO_PRODUCTS[3].id);
+  assert.strictEqual(typeof getRelatedProducts, "function");
+
+  const related = getRelatedProducts(seed, 3);
+  assert.strictEqual(related.length, 3);
+  assert.strictEqual(related[0].id, primary.id);
+  assert.strictEqual(new Set(related.map((product) => product.id)).size, 3);
+
+  related[0].title = "changed";
+  related.pop();
+  assert.strictEqual(primary.title, originalTitle);
+  assert.strictEqual(DEMO_PRODUCTS.length, 4);
+});
+
+test("handles non-positive and excessive related product limits", () => {
+  assert.deepStrictEqual(getRelatedProducts("video-1", 0), []);
+  assert.deepStrictEqual(getRelatedProducts("video-1", -2), []);
+  assert.strictEqual(
+    getRelatedProducts("video-1", DEMO_PRODUCTS.length + 10).length,
+    DEMO_PRODUCTS.length
+  );
 });
