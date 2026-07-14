@@ -6,7 +6,7 @@ const DEMO_PRODUCTS = Object.freeze([
     tag: "旅途好物",
     description: "轻量便携，随时享受一杯手冲咖啡",
     imageUrl:
-      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=640&q=80"
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=640&h=640&q=80"
   }),
   Object.freeze({
     id: "demo-light-sneakers",
@@ -15,7 +15,7 @@ const DEMO_PRODUCTS = Object.freeze([
     tag: "出行推荐",
     description: "柔软轻盈，适合城市漫步与短途旅行",
     imageUrl:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=640&q=80"
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=640&h=640&q=80"
   }),
   Object.freeze({
     id: "demo-local-snacks",
@@ -24,7 +24,7 @@ const DEMO_PRODUCTS = Object.freeze([
     tag: "人气风味",
     description: "精选地方风味，一盒分享旅途记忆",
     imageUrl:
-      "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=640&q=80"
+      "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=640&h=640&q=80"
   }),
   Object.freeze({
     id: "demo-travel-bottle",
@@ -33,7 +33,7 @@ const DEMO_PRODUCTS = Object.freeze([
     tag: "日常精选",
     description: "简约耐用，冷热饮随身携带",
     imageUrl:
-      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=640&q=80"
+      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=640&h=640&q=80"
   })
 ]);
 

@@ -115,6 +115,23 @@ test("v_output demo product action only shows a non-purchasable toast", () => {
   });
 });
 
+test("v_output only shows the product overlay while video is playing", () => {
+  const app = { globalData: { task_data: {} } };
+
+  withVOutputPage(app, {}, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    assert.strictEqual(page.data.isVideoPlaying, false);
+    page.onVideoPlay();
+    assert.strictEqual(page.data.isVideoPlaying, true);
+    page.onVideoPause();
+    assert.strictEqual(page.data.isVideoPlaying, false);
+    page.onVideoPlay();
+    page.onVideoEnded();
+    assert.strictEqual(page.data.isVideoPlaying, false);
+  });
+});
+
 test("v_output renders the demo product overlay inside the video card", () => {
   const wxmlPath = path.join(
     __dirname,
@@ -145,6 +162,13 @@ test("v_output renders the demo product overlay inside the video card", () => {
   assert.match(wxml, /{{featuredProduct\.price}}/);
   assert.match(wxml, /同款|演示/);
   assert.match(wxml, /<video[\s\S]*?\scontrols(?:\s|>)/);
+  assert.match(wxml, /bindplay="onVideoPlay"/);
+  assert.match(wxml, /bindpause="onVideoPause"/);
+  assert.match(wxml, /bindended="onVideoEnded"/);
+  assert.match(
+    wxml.slice(overlayStart, nextCardStart),
+    /wx:if="{{featuredProduct\s*&&\s*isVideoPlaying}}"/
+  );
   assert.match(wxml, /class="publish-bar"/);
   const overlayStyle = wxss.match(
     /\.demo-product-overlay\s*{([^}]*)}/

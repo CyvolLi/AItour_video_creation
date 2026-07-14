@@ -30,6 +30,10 @@ test("provides at least four complete demo products with fixed remote images", (
     assert.ok(product.imageUrl.includes("images.unsplash.com/"));
     assert.ok(!product.imageUrl.includes("random"));
     assert.ok(!product.imageUrl.startsWith("/"));
+    const imageUrl = new URL(product.imageUrl);
+    assert.strictEqual(imageUrl.searchParams.get("w"), "640");
+    assert.strictEqual(imageUrl.searchParams.get("h"), "640");
+    assert.strictEqual(imageUrl.searchParams.get("fit"), "crop");
   });
 });
 

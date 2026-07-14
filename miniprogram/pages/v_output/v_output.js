@@ -8,7 +8,8 @@ Page({
     videoUrl: "",
     coverUrl: "",
     finalResponse: "",
-    featuredProduct: null
+    featuredProduct: null,
+    isVideoPlaying: false
   },
 
   onLoad() {
@@ -33,6 +34,18 @@ Page({
       title: "演示商品，暂不支持购买",
       icon: "none"
     });
+  },
+
+  onVideoPlay() {
+    this.setData({ isVideoPlaying: true });
+  },
+
+  onVideoPause() {
+    this.setData({ isVideoPlaying: false });
+  },
+
+  onVideoEnded() {
+    this.setData({ isVideoPlaying: false });
   },
 
   backToGenerate() {

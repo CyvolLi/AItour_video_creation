@@ -12,10 +12,13 @@
             poster="{{coverUrl}}"
             controls
             show-center-play-btn
+            bindplay="onVideoPlay"
+            bindpause="onVideoPause"
+            bindended="onVideoEnded"
             object-fit="cover"
           ></video>
           <cover-view class="demo-product-overlay"
-            wx:if="{{featuredProduct}}"
+            wx:if="{{featuredProduct && isVideoPlaying}}"
             bindtap="showDemoProduct"
           >
             <cover-image
