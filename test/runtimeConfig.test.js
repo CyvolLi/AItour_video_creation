@@ -30,19 +30,80 @@ test("builds cloud initialization options", () => {
   });
 });
 
-test("app initialization reuses the runtime cloud configuration", () => {
-  const source = fs.readFileSync(
-    path.join(__dirname, "../miniprogram/app.js"),
-    "utf8"
-  );
+test("app launch initializes the configured cloud before requesting OpenID", () => {
+  const appPath = require.resolve("../miniprogram/app.js");
+  const cachedAppModule = require.cache[appPath];
+  const hadApp = Object.prototype.hasOwnProperty.call(global, "App");
+  const hadWx = Object.prototype.hasOwnProperty.call(global, "wx");
+  const originalApp = global.App;
+  const originalWx = global.wx;
+  const cloudCalls = [];
+  let appDefinition;
 
-  assert.ok(!source.includes("cloudbase-d2g8dvtluc8d8face"));
-  assert.ok(source.includes('require("./utils/runtimeConfig.js")'));
-  assert.match(source, /env:\s*runtimeConfig\.CLOUD_ENV_ID/);
-  assert.match(
-    source,
-    /wx\.cloud\.init\(runtimeConfig\.getCloudInitOptions\(\)\)/
-  );
+  global.App = (definition) => {
+    appDefinition = definition;
+  };
+  global.wx = {
+    cloud: {
+      init(options) {
+        cloudCalls.push({ method: "init", options });
+      },
+      callFunction(options) {
+        cloudCalls.push({ method: "callFunction", options });
+        return new Promise(() => {});
+      }
+    }
+  };
+
+  try {
+    delete require.cache[appPath];
+    require(appPath);
+    assert.ok(appDefinition, "app.js should register an App definition");
+
+    appDefinition.onLaunch.call(appDefinition);
+
+    assert.strictEqual(
+      appDefinition.globalData.env,
+      runtimeConfig.CLOUD_ENV_ID
+    );
+    assert.deepStrictEqual(
+      cloudCalls[0],
+      {
+        method: "init",
+        options: runtimeConfig.getCloudInitOptions()
+      }
+    );
+    assert.deepStrictEqual(
+      cloudCalls[1],
+      {
+        method: "callFunction",
+        options: {
+          name: "quickstartFunctions",
+          data: { type: "getOpenId" }
+        }
+      }
+    );
+    assert.deepStrictEqual(
+      cloudCalls.map((call) => call.method),
+      ["init", "callFunction"]
+    );
+  } finally {
+    delete require.cache[appPath];
+    if (cachedAppModule) {
+      require.cache[appPath] = cachedAppModule;
+    }
+
+    if (hadApp) {
+      global.App = originalApp;
+    } else {
+      delete global.App;
+    }
+    if (hadWx) {
+      global.wx = originalWx;
+    } else {
+      delete global.wx;
+    }
+  }
 });
 
 test("accepts the checked-in runtime configuration", () => {
