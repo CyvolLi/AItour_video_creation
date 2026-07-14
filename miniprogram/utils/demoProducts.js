@@ -3,6 +3,7 @@ const DEMO_PRODUCTS = Object.freeze([
     id: "demo-travel-coffee",
     title: "旅行手冲咖啡套装",
     price: "¥39.90",
+    sales: 128,
     tag: "旅途好物",
     description: "轻量便携，随时享受一杯手冲咖啡",
     imageUrl:
@@ -12,6 +13,7 @@ const DEMO_PRODUCTS = Object.freeze([
     id: "demo-light-sneakers",
     title: "轻便城市运动鞋",
     price: "¥169.00",
+    sales: 86,
     tag: "出行推荐",
     description: "柔软轻盈，适合城市漫步与短途旅行",
     imageUrl:
@@ -21,6 +23,7 @@ const DEMO_PRODUCTS = Object.freeze([
     id: "demo-local-snacks",
     title: "地方风味点心礼盒",
     price: "¥59.80",
+    sales: 203,
     tag: "人气风味",
     description: "精选地方风味，一盒分享旅途记忆",
     imageUrl:
@@ -30,6 +33,7 @@ const DEMO_PRODUCTS = Object.freeze([
     id: "demo-travel-bottle",
     title: "随行保温旅行杯",
     price: "¥79.00",
+    sales: 64,
     tag: "日常精选",
     description: "简约耐用，冷热饮随身携带",
     imageUrl:

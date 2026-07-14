@@ -107,6 +107,129 @@
   border: none;
 }
 
+.detail-tabs {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 0 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #edf2ef;
+}
+
+.detail-tab {
+  position: relative;
+  padding: 15px 4px 13px;
+  margin-right: 26px;
+  color: #7a8580;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.detail-tab.active {
+  color: #167c67;
+  font-weight: 600;
+}
+
+.detail-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: #20a886;
+  transform: translateX(-50%);
+}
+
+.detail-intro {
+  background: #fff;
+  padding: 16px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #f3f7f5;
+}
+
+.product-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e4eee9;
+  border-radius: 20rpx;
+  background: #fff;
+}
+
+.product-image {
+  display: block;
+  width: 100%;
+  height: 280rpx;
+  object-fit: cover;
+  background: #e9efec;
+}
+
+.product-info {
+  padding: 18rpx;
+}
+
+.product-title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #202a26;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.product-description {
+  overflow: hidden;
+  margin-top: 8rpx;
+  color: #7a8580;
+  font-size: 22rpx;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-tag {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 12rpx;
+  padding: 4rpx 10rpx;
+  overflow: hidden;
+  border-radius: 8rpx;
+  background: #e8f7f2;
+  color: #16866e;
+  font-size: 20rpx;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 14rpx;
+}
+
+.product-price {
+  color: #ef5b45;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.product-sales {
+  color: #9aa39f;
+  font-size: 20rpx;
+}
+
 .comments {
   background: #fff;
   padding: 16px;

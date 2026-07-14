@@ -4,6 +4,7 @@ const profileStore = require("../../utils/profileStore.js");
 const avatarStore = require("../../utils/avatarStore.js");
 const avatarRefresh = require("../../utils/avatarRefresh.js");
 const landscapeUtil = require("../../utils/landscape.js");
+const { getFeaturedProducts } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 const DEFAULT_USER_AVATAR = "../../images/default.jpg";
@@ -22,7 +23,9 @@ Page({
     },
     commentInput: "",
     commentLoading: false,
-    commenting: false
+    commenting: false,
+    demoProducts: [],
+    activeDetailTab: "products"
   },
 
   normalizeTarget(target) {
@@ -124,16 +127,35 @@ Page({
     const type = options.type || item.type || "post";
     const id = options.id || item.post_id || item.card_id || "";
 
-    this.attachAuthorProfiles([item]).then((items) => {
+    return this.attachAuthorProfiles([item]).then((items) => {
       this.setData({
         type,
         id,
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
-        target: this.normalizeTarget(target)
+        target: this.normalizeTarget(target),
+        demoProducts: getFeaturedProducts(3)
       });
 
-      this.loadComments();
+      return this.loadComments();
+    });
+  },
+
+  switchDetailTab(e) {
+    const tab = e && e.currentTarget && e.currentTarget.dataset.tab;
+    const allowedTabs = ["intro", "products", "comments"];
+
+    if (!allowedTabs.includes(tab)) {
+      return;
+    }
+
+    this.setData({ activeDetailTab: tab });
+  },
+
+  showDemoProduct() {
+    wx.showToast({
+      title: "演示商品，暂不支持购买",
+      icon: "none"
     });
   },
 

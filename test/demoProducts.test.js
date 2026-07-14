@@ -21,7 +21,7 @@ test("provides at least four complete demo products with fixed remote images", (
   assert.ok(DEMO_PRODUCTS.length >= 4);
 
   DEMO_PRODUCTS.forEach((product) => {
-    ["id", "title", "price", "tag", "description", "imageUrl"].forEach(
+    ["id", "title", "price", "tag", "description", "imageUrl", "sales"].forEach(
       (field) => {
         assert.ok(product[field], `${field} should be present`);
       }
