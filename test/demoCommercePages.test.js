@@ -846,14 +846,31 @@ test("publish renders an isolated demo endorsement option and preview", () => {
     wxml,
     /class="endorsement-preview"[^>]+wx:if="{{endorsementEnabled && endorsementProduct}}"[^>]+bindtap="showDemoProduct"/
   );
-  assert.match(wxml, /src="{{endorsementProduct\.imageUrl}}"/);
+  assert.match(
+    wxml,
+    /class="endorsement-image endorsement-image-large"[^>]+src="{{endorsementProduct\.imageUrl}}"[^>]+mode="aspectFill"/
+  );
+  assert.match(wxml, /class="endorsement-market"[^>]*>乡村市集</);
   assert.match(wxml, /{{endorsementProduct\.title}}/);
-  assert.match(wxml, /{{endorsementProduct\.price}}/);
-  assert.match(wxml, /智能匹配/);
-  assert.match(wxml, /仅演示，不影响发布/);
+  assert.match(
+    wxml,
+    /class="endorsement-price endorsement-price-demo"[^>]*>{{endorsementProduct\.price}}/
+  );
+  assert.match(wxml, /class="endorsement-sales"[^>]*>已售{{endorsementProduct\.sales}}/);
+  assert.match(wxml, /智能匹配，仅演示，不影响发布/);
   assert.doesNotMatch(wxml, /<view[^>]+bindtap="onEndorsementChange"/);
-  assert.match(wxss, /\.endorsement-preview\s*{/);
-  assert.match(wxss, /\.endorsement-image\s*{[^}]*border-radius:/s);
+  assert.match(
+    wxss,
+    /\.endorsement-preview\s*{[^}]*border-radius:[^;}]+;[^}]*background:\s*(?:#fff(?:fff)?|rgba\(255,\s*255,\s*255,[^)]+\))/s
+  );
+  assert.match(
+    wxss,
+    /\.endorsement-image-large\s*{[^}]*width:\s*(?:2[0-9]{2}|[3-9][0-9]{2})rpx;[^}]*height:\s*(?:2[0-9]{2}|[3-9][0-9]{2})rpx;/s
+  );
+  assert.match(
+    wxss,
+    /\.endorsement-price-demo\s*{[^}]*color:\s*#(?:e[0-9a-f]{5}|f[0-7][0-9a-f]{4});/is
+  );
 });
 
 async function main() {

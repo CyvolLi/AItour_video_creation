@@ -55,14 +55,18 @@
     </view>
 
     <view class="endorsement-preview" wx:if="{{endorsementEnabled && endorsementProduct}}" bindtap="showDemoProduct">
-      <image class="endorsement-image" src="{{endorsementProduct.imageUrl}}" mode="aspectFill"></image>
+      <image class="endorsement-image endorsement-image-large" src="{{endorsementProduct.imageUrl}}" mode="aspectFill"></image>
       <view class="endorsement-info">
-        <view class="endorsement-product-title">{{endorsementProduct.title}}</view>
-        <view class="endorsement-meta">
-          <text class="endorsement-price">{{endorsementProduct.price}}</text>
+        <view class="endorsement-tags">
+          <text class="endorsement-market">乡村市集</text>
           <text class="match-badge">智能匹配</text>
         </view>
-        <view class="endorsement-note">仅演示，不影响发布</view>
+        <view class="endorsement-product-title">{{endorsementProduct.title}}</view>
+        <view class="endorsement-meta">
+          <text class="endorsement-price endorsement-price-demo">{{endorsementProduct.price}}</text>
+          <text class="endorsement-sales">已售{{endorsementProduct.sales}}</text>
+        </view>
+        <view class="endorsement-note">智能匹配，仅演示，不影响发布</view>
       </view>
     </view>
 

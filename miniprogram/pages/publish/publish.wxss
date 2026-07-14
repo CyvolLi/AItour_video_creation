@@ -308,7 +308,7 @@ page {
   display: flex;
   align-items: center;
   width: 100%;
-  min-height: 150rpx;
+  min-height: 256rpx;
   margin-top: 24rpx;
   padding: 18rpx;
   border: 2rpx solid rgba(61, 147, 195, 0.16);
@@ -320,19 +320,40 @@ page {
 
 .endorsement-image {
   flex: 0 0 auto;
-  width: 116rpx;
-  height: 116rpx;
   border-radius: 22rpx;
   background: #d9eee7;
 }
 
+.endorsement-image-large {
+  width: 220rpx;
+  height: 220rpx;
+}
+
 .endorsement-info {
+  flex: 1;
   min-width: 0;
   margin-left: 22rpx;
 }
 
+.endorsement-tags {
+  display: flex;
+  align-items: center;
+}
+
+.endorsement-market {
+  flex: 0 0 auto;
+  padding: 6rpx 13rpx;
+  border-radius: 8rpx;
+  color: #ffffff;
+  font-size: 21rpx;
+  font-weight: 700;
+  line-height: 1;
+  background: #49a986;
+}
+
 .endorsement-product-title {
   overflow: hidden;
+  margin-top: 14rpx;
   color: #18252d;
   font-size: 29rpx;
   font-weight: 700;
@@ -348,9 +369,18 @@ page {
 }
 
 .endorsement-price {
-  color: #ef704f;
   font-size: 30rpx;
   font-weight: 800;
+}
+
+.endorsement-price-demo {
+  color: #ed5b3d;
+}
+
+.endorsement-sales {
+  margin-left: 16rpx;
+  color: #839194;
+  font-size: 21rpx;
 }
 
 .match-badge {
