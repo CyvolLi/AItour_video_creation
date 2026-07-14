@@ -24,8 +24,7 @@ Page({
     commentInput: "",
     commentLoading: false,
     commenting: false,
-    demoProducts: [],
-    activeDetailTab: "products"
+    featuredProduct: null
   },
 
   normalizeTarget(target) {
@@ -135,22 +134,15 @@ Page({
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
         target: this.normalizeTarget(target),
-        demoProducts: getRelatedProducts(productSeed, 3)
+        featuredProduct: getRelatedProducts(productSeed, 1)[0] || null
       });
 
       return this.loadComments();
     });
   },
 
-  switchDetailTab(e) {
-    const tab = e && e.currentTarget && e.currentTarget.dataset.tab;
-    const allowedTabs = ["intro", "products", "comments"];
-
-    if (!allowedTabs.includes(tab)) {
-      return;
-    }
-
-    this.setData({ activeDetailTab: tab });
+  goBack() {
+    wx.navigateBack();
   },
 
   showDemoProduct() {

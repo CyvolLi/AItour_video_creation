@@ -304,13 +304,17 @@ test("v_output renders the demo product overlay inside the video card", () => {
   );
 });
 
-test("detail defaults to the products tab and only accepts known tabs", () => {
+test("detail demo product and back actions stay local to the page", () => {
   const toastCalls = [];
+  let backCalls = 0;
   const forbiddenCalls = [];
   const app = { globalData: { task_data: {} } };
   const wxStub = {
     showToast(options) {
       toastCalls.push(options);
+    },
+    navigateBack() {
+      backCalls += 1;
     },
     navigateTo() {
       forbiddenCalls.push("navigateTo");
@@ -329,22 +333,20 @@ test("detail defaults to the products tab and only accepts known tabs", () => {
   withDetailPage(app, wxStub, (pageDefinition) => {
     const page = createPageInstance(pageDefinition);
 
-    assert.strictEqual(page.data.activeDetailTab, "products");
-    ["intro", "products", "comments"].forEach((tab) => {
-      page.switchDetailTab({ currentTarget: { dataset: { tab } } });
-      assert.strictEqual(page.data.activeDetailTab, tab);
-    });
-    page.switchDetailTab({ currentTarget: { dataset: { tab: "checkout" } } });
-    assert.strictEqual(page.data.activeDetailTab, "comments");
+    assert.strictEqual(page.data.featuredProduct, null);
+    assert.strictEqual(page.data.activeDetailTab, undefined);
+    assert.strictEqual(page.switchDetailTab, undefined);
 
     page.showDemoProduct();
+    page.goBack();
     assert.strictEqual(toastCalls.length, 1);
     assert.match(toastCalls[0].title, /演示|暂不支持购买/);
+    assert.strictEqual(backCalls, 1);
     assert.deepStrictEqual(forbiddenCalls, []);
   });
 });
 
-test("detail renders video commerce tabs and keeps card comments visible", () => {
+test("detail renders the post commerce flow in one continuous view", () => {
   const wxml = fs.readFileSync(
     path.join(__dirname, "../miniprogram/pages/detail/detail.wxml"),
     "utf8"
@@ -353,40 +355,58 @@ test("detail renders video commerce tabs and keeps card comments visible", () =>
     path.join(__dirname, "../miniprogram/pages/detail/detail.wxss"),
     "utf8"
   );
-
-  assert.match(wxml, /class="detail-tabs"[^>]+wx:if="{{type === 'post'}}"/);
-  assert.match(wxml, /data-tab="intro"[^>]+bindtap="switchDetailTab"/);
-  assert.match(wxml, /data-tab="products"[^>]+bindtap="switchDetailTab"/);
-  assert.match(wxml, /data-tab="comments"[^>]+bindtap="switchDetailTab"/);
-  assert.match(wxml, /简介/);
-  assert.match(wxml, /同款好物·{{demoProducts\.length}}/);
-  assert.match(wxml, /评论/);
-  assert.match(wxml, /activeDetailTab === 'products' \? 'active' : ''/);
-
-  assert.match(
-    wxml,
-    /class="detail-intro"[^>]+wx:if="{{type === 'post' && activeDetailTab === 'intro'}}"[\s\S]*?{{item\.share_text[\s\S]*?bindtap="usePostCard"/
-  );
-  assert.match(
-    wxml,
-    /class="product-grid"[^>]+wx:if="{{type === 'post' && activeDetailTab === 'products'}}"[\s\S]*?wx:for="{{demoProducts}}"[\s\S]*?bindtap="showDemoProduct"/
-  );
-  assert.match(wxml, /src="{{item\.imageUrl}}"[^>]+mode="aspectFill"/);
-  assert.match(wxml, /{{item\.title}}/);
-  assert.match(wxml, /{{item\.description}}/);
-  assert.match(wxml, /{{item\.price}}/);
-  assert.match(wxml, /{{item\.sales}}/);
-  assert.match(wxml, /演示商品/);
-  assert.match(
-    wxml,
-    /class="comments"[^>]+wx:if="{{type !== 'post' \|\| activeDetailTab === 'comments'}}"/
+  const json = JSON.parse(
+    fs.readFileSync(
+      path.join(__dirname, "../miniprogram/pages/detail/detail.json"),
+      "utf8"
+    )
   );
 
-  assert.match(wxss, /\.product-grid\s*{[^}]*display:\s*grid;[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/s);
-  assert.match(wxss, /\.product-image\s*{[^}]*width:\s*100%;[^}]*height:\s*\d+rpx;[^}]*object-fit:\s*cover/s);
+  assert.strictEqual(json.navigationStyle, "custom");
+  assert.match(wxml, /class="custom-header"/);
+  assert.match(wxml, /class="back-button"[^>]+bindtap="goBack"/);
+  assert.match(wxml, />内容详情</);
+  assert.doesNotMatch(wxml, /detail-tabs|product-grid|activeDetailTab|switchDetailTab/);
+
+  const headerStart = wxml.indexOf('class="custom-header"');
+  const postStart = wxml.indexOf('class="post-card"');
+  const videoStart = wxml.indexOf('class="video"', postStart);
+  const authorStart = wxml.indexOf('class="author-line"', videoStart);
+  const titleStart = wxml.indexOf('class="title"', authorStart);
+  const copyStart = wxml.indexOf('class="copy"', titleStart);
+  const useCardStart = wxml.indexOf('bindtap="usePostCard"', copyStart);
+  const productStart = wxml.indexOf('class="demo-product-strip"', useCardStart);
+  const statsStart = wxml.indexOf('class="target"', productStart);
+  const commentsStart = wxml.indexOf('class="comments"', statsStart);
+
+  assert.ok(headerStart >= 0, "custom header should exist");
+  assert.ok(postStart > headerStart, "post card should follow the header");
+  assert.ok(videoStart > postStart, "video should be inside the post card");
+  assert.ok(authorStart > videoStart, "author should follow the video");
+  assert.ok(titleStart > authorStart, "title should follow the author");
+  assert.ok(copyStart > titleStart, "copy should follow the title");
+  assert.ok(useCardStart > copyStart, "use-card action should follow the copy");
+  assert.ok(productStart > useCardStart, "product strip should follow use-card");
+  assert.ok(statsStart > productStart, "stats should follow the product strip");
+  assert.ok(commentsStart > statsStart, "comments should remain visible after stats");
+
+  assert.match(wxml, /class="demo-product-strip"[^>]+wx:if="{{type === 'post' && featuredProduct}}"[^>]+bindtap="showDemoProduct"/);
+  assert.match(wxml, /src="{{featuredProduct\.imageUrl}}"[^>]+mode="aspectFill"/);
+  assert.match(wxml, /{{featuredProduct\.title}}/);
+  assert.match(wxml, /{{featuredProduct\.description}}/);
+  assert.match(wxml, /{{featuredProduct\.price}}/);
+  assert.match(wxml, /已售{{featuredProduct\.sales}}/);
+  assert.match(wxml, /乡村市集/);
+  assert.match(wxml, /\+好物购/);
+  assert.match(wxml, /class="stat stat-favorite"[^>]+bindtap="favoriteCurrent"/);
+  assert.match(wxml, /class="comments"/);
+  assert.match(wxss, /\.page\s*{[^}]*background:\s*#[0-9a-f]{6}/is);
+  assert.match(wxss, /\.post-card\s*{[^}]*border-radius:\s*(?:2[4-9]|3[0-4])rpx/is);
+  assert.match(wxss, /\.demo-product-strip\s*{[^}]*display:\s*flex/is);
+  assert.match(wxss, /\.product-name\s*{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis/is);
 });
 
-test("detail onLoad provides three demo products without breaking comments", () => {
+test("detail onLoad selects one video-related product without breaking comments", () => {
   const app = {
     globalData: {
       task_data: {},
@@ -410,10 +430,10 @@ test("detail onLoad provides three demo products without breaking comments", () 
 
     assert.ok(loading && typeof loading.then === "function");
     return loading.then(() => {
-      assert.strictEqual(page.data.demoProducts.length, 3);
+      assert.strictEqual(page.data.demoProducts, undefined);
       assert.strictEqual(pickProduct("video-1").id, "demo-travel-bottle");
       assert.strictEqual(
-        page.data.demoProducts[0].id,
+        page.data.featuredProduct.id,
         pickProduct("video-1").id
       );
       assert.strictEqual(page.data.item.post_id, "post-demo");
@@ -454,11 +474,11 @@ test("detail keeps card pages on the card view with comments reachable", () => {
     assert.strictEqual(page.getCommentTargetId(), "card-demo");
     assert.strictEqual(page.data.commentLoading, false);
     assert.deepStrictEqual(page.data.target.List, []);
-    assert.match(wxml, /class="detail-tabs"[^>]+wx:if="{{type === 'post'}}"/);
-    assert.match(
-      wxml,
-      /class="comments"[^>]+wx:if="{{type !== 'post' \|\| activeDetailTab === 'comments'}}"/
-    );
+    assert.doesNotMatch(wxml, /detail-tabs|product-grid|activeDetailTab|switchDetailTab/);
+    assert.match(wxml, /class="card-view"[^>]+wx:if="{{type !== 'post'}}"/);
+    assert.match(wxml, /class="comments"/);
+    assert.doesNotMatch(wxml, /class="comments"[^>]+wx:if=/);
+    assert.match(wxml, /class="demo-product-strip"[^>]+wx:if="{{type === 'post' && featuredProduct}}"/);
   });
 });
 

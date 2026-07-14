@@ -1,73 +1,82 @@
 <view class="page">
-  <view class="hero" wx:if="{{type === 'post'}}">
-    <video class="video" src="{{item.video_url}}" poster="{{item.cover_url}}" controls></video>
-    <view class="title">{{item.title || '旅行作品'}}</view>
-    <view class="author-line">
-      <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshDetailAvatarOnError"></image>
-      <text class="author">{{item.author_name || '忆景创影'}}</text>
+  <view class="custom-header">
+    <view class="header-row">
+      <view class="back-button" bindtap="goBack" hover-class="back-button-active" aria-label="返回">
+        <text class="back-icon">‹</text>
+      </view>
+      <view class="header-title">内容详情</view>
     </view>
   </view>
 
-  <view class="hero" wx:else>
-    <image class="image" src="{{item.image_url}}" mode="aspectFill"></image>
-    <view class="title">{{item.author_name || '用户'}}的卡片</view>
-    <view class="copy">{{item.emotion_text || '暂无情绪描述'}}</view>
-    <button class="main-btn" bindtap="useCard">立即使用</button>
-  </view>
+  <view class="content">
+    <view class="post-card" wx:if="{{type === 'post'}}">
+      <video class="video" src="{{item.video_url}}" poster="{{item.cover_url}}" controls></video>
 
-  <view class="target">
-    <view class="stat">点赞 {{target.likes || 0}}</view>
-    <view class="stat">收藏 {{target.favorites || 0}}</view>
-    <view class="stat">评论 {{target.comments || 0}}</view>
-  </view>
+      <view class="author-line">
+        <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshDetailAvatarOnError"></image>
+        <view class="author-copy">
+          <text class="author">{{item.author_name || '忆景创影'}}</text>
+          <text class="author-badge">作者</text>
+        </view>
+      </view>
 
-  <button class="favorite" bindtap="favoriteCurrent">收藏当前内容</button>
+      <view class="title">{{item.title || '旅行作品'}}</view>
+      <view class="copy">{{item.share_text || '分享旅途中的风景与故事。'}}</view>
+      <view class="post-tags" wx:if="{{item.tags || item.topic}}">{{item.tags || item.topic}}</view>
+      <view class="post-meta" wx:if="{{item.created_at || item.createdAt || item.location_name}}">
+        <text wx:if="{{item.created_at || item.createdAt}}">{{item.created_at || item.createdAt}}</text>
+        <text wx:if="{{item.location_name}}">{{item.location_name}}</text>
+      </view>
+      <button class="main-btn" bindtap="usePostCard">使用同款绑定卡片</button>
+    </view>
 
-  <view class="detail-tabs" wx:if="{{type === 'post'}}">
-    <view class="detail-tab {{activeDetailTab === 'intro' ? 'active' : ''}}" data-tab="intro" bindtap="switchDetailTab">简介</view>
-    <view class="detail-tab {{activeDetailTab === 'products' ? 'active' : ''}}" data-tab="products" bindtap="switchDetailTab">同款好物·{{demoProducts.length}}</view>
-    <view class="detail-tab {{activeDetailTab === 'comments' ? 'active' : ''}}" data-tab="comments" bindtap="switchDetailTab">评论</view>
-  </view>
+    <view class="card-view" wx:if="{{type !== 'post'}}">
+      <image class="image" src="{{item.image_url}}" mode="aspectFill"></image>
+      <view class="title">{{item.author_name || '用户'}}的卡片</view>
+      <view class="copy">{{item.emotion_text || '暂无情绪描述'}}</view>
+      <button class="main-btn" bindtap="useCard">立即使用</button>
+    </view>
 
-  <view class="detail-intro" wx:if="{{type === 'post' && activeDetailTab === 'intro'}}">
-    <view class="section-title">作品简介</view>
-    <view class="copy">{{item.share_text || '暂无视频文案'}}</view>
-    <button class="main-btn" bindtap="usePostCard">使用绑定卡片</button>
-  </view>
-
-  <view class="product-grid" wx:if="{{type === 'post' && activeDetailTab === 'products'}}">
-    <view class="product-card" wx:for="{{demoProducts}}" wx:key="id" bindtap="showDemoProduct" data-product-id="{{item.id}}">
-      <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-      <view class="product-info">
-        <view class="product-title">{{item.title}}</view>
-        <view class="product-description">{{item.description}}</view>
-        <view class="product-tag">演示商品 · {{item.tag}}</view>
+    <view class="demo-product-strip" wx:if="{{type === 'post' && featuredProduct}}" bindtap="showDemoProduct">
+      <image class="product-image" src="{{featuredProduct.imageUrl}}" mode="aspectFill"></image>
+      <view class="product-content">
+        <view class="product-heading">
+          <text class="product-market">乡村市集</text>
+          <text class="product-name">{{featuredProduct.title}}</text>
+        </view>
+        <view class="product-description">{{featuredProduct.description}}</view>
         <view class="product-meta">
-          <text class="product-price">{{item.price}}</text>
-          <text class="product-sales">已售{{item.sales}}</text>
+          <text class="product-price">{{featuredProduct.price}}</text>
+          <text class="product-sales">已售{{featuredProduct.sales}}</text>
         </view>
       </view>
+      <view class="product-cta">+好物购</view>
     </view>
-  </view>
 
-  <view class="comments" wx:if="{{type !== 'post' || activeDetailTab === 'comments'}}">
-    <view class="section-title">评论</view>
-    <block wx:for="{{target.List}}" wx:key="comment_id">
-      <view class="comment">
-        <image class="avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshCommentAvatarOnError" data-index="{{index}}"></image>
-        <view class="comment-body">
-          <view class="comment-name">{{item.author_name || '用户'}}</view>
-          <view class="comment-content">{{item.content}}</view>
+    <view class="target">
+      <view class="stat">点赞 {{target.likes || 0}}</view>
+      <view class="stat stat-favorite" bindtap="favoriteCurrent">收藏 {{target.favorites || 0}}</view>
+      <view class="stat">评论 {{target.comments || 0}}</view>
+    </view>
+
+    <view class="comments">
+      <view class="section-title">评论</view>
+      <block wx:for="{{target.List}}" wx:key="comment_id">
+        <view class="comment">
+          <image class="avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshCommentAvatarOnError" data-index="{{index}}"></image>
+          <view class="comment-body">
+            <view class="comment-name">{{item.author_name || '用户'}}</view>
+            <view class="comment-content">{{item.content}}</view>
+          </view>
         </view>
+      </block>
+      <view class="empty" wx:if="{{commentLoading}}">评论加载中...</view>
+      <view class="empty" wx:if="{{!commentLoading && (!target.List || target.List.length === 0)}}">暂无评论</view>
+
+      <view class="comment-editor-bottom">
+        <textarea class="comment-input" value="{{commentInput}}" bindinput="onCommentInput" placeholder="写下你的评论" maxlength="300"></textarea>
+        <image class="send-btn" src="/images/icons/send.svg" bindtap="submitComment" mode="aspectFit"></image>
       </view>
-    </block>
-    <view class="empty" wx:if="{{commentLoading}}">评论加载中...</view>
-    <view class="empty" wx:if="{{!commentLoading && (!target.List || target.List.length === 0)}}">暂无评论</view>
-    
-    <!-- 底部评论输入框 -->
-    <view class="comment-editor-bottom">
-      <textarea class="comment-input" value="{{commentInput}}" bindinput="onCommentInput" placeholder="写下你的评论" maxlength="300"></textarea>
-      <image class="send-btn" src="/images/icons/send.svg" bindtap="submitComment" mode="aspectFill"></image>
     </view>
   </view>
 </view>
