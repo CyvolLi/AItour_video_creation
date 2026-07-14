@@ -12,7 +12,7 @@ Page({
       success() {
         that.setData({
           result:
-            "通用跳转 API 成功；不能证明 store-product 参数或商品详情是否有效"
+            "通用跳转 API 成功，可能降级；不能证明实际半屏形态，也不能证明 store-product 参数或商品详情是否有效"
         });
       },
       fail(err) {

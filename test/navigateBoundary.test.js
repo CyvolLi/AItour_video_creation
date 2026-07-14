@@ -88,6 +88,8 @@ test("uses the store id only as a path-free embedded navigation experiment", () 
 
       receivedOptions.success();
       assert.match(instance.data.result, /通用跳转 API 成功/);
+      assert.match(instance.data.result, /可能降级/);
+      assert.match(instance.data.result, /不能证明.*半屏形态/);
       assert.match(instance.data.result, /不能证明.*store-product/);
       assert.match(instance.data.result, /商品详情/);
     }
@@ -130,14 +132,16 @@ test("explains the boundary between embedded navigation and store-product", () =
   assert.match(wxml, /不是\s*store-product\s*的替代方案/);
   assert.match(wxml, /STORE_APPID/);
   assert.match(wxml, /小店 ID/);
-  assert.match(wxml, /同时也是可跳转目标小程序 AppID/);
+  assert.match(wxml, /有效的目标小程序 AppID/);
   assert.match(wxml, /半屏小程序管理/);
-  assert.match(wxml, /绑定\/许可获批/);
-  assert.match(wxml, /才可能成功/);
-  assert.match(wxml, /成功或失败/);
-  assert.match(wxml, /不能证明\s*store-product\s*参数有效/);
-  assert.match(wxml, /不能证明商品详情/);
+  assert.match(wxml, /半屏形态/);
+  assert.match(wxml, /绑定\/许可/);
+  assert.match(wxml, /可能降级为普通跳转/);
+  assert.match(wxml, /success/);
+  assert.match(wxml, /不证明实际半屏/);
+  assert.match(wxml, /不证明.*store-product/);
+  assert.match(wxml, /商品详情/);
   assert.match(wxml, /不应猜测微信小店内部商品\s*path/);
-  assert.match(wxml, /尝试半屏打开（实验\/对照）/);
+  assert.match(wxml, /尝试打开（半屏能力，可能降级）/);
   assert.match(wxml, /{{storeIdUnderTest}}/);
 });
