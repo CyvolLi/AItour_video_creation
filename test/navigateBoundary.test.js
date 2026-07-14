@@ -63,7 +63,7 @@ function createPageInstance(page) {
   };
 }
 
-test("opens the embedded mini program with the shared store app id", () => {
+test("uses the store id only as a path-free embedded navigation experiment", () => {
   let receivedOptions;
 
   loadNavigatePage(
@@ -75,12 +75,21 @@ test("opens the embedded mini program with the shared store app id", () => {
     (page) => {
       const instance = createPageInstance(page);
 
-      assert.strictEqual(instance.data.storeAppId, runtimeConfig.STORE_APPID);
+      assert.strictEqual(
+        instance.data.storeIdUnderTest,
+        runtimeConfig.STORE_APPID
+      );
       instance.openStore();
       assert.strictEqual(receivedOptions.appId, runtimeConfig.STORE_APPID);
+      assert.strictEqual(
+        Object.prototype.hasOwnProperty.call(receivedOptions, "path"),
+        false
+      );
 
       receivedOptions.success();
-      assert.strictEqual(instance.data.result, "跳转成功");
+      assert.match(instance.data.result, /通用跳转 API 成功/);
+      assert.match(instance.data.result, /不能证明.*store-product/);
+      assert.match(instance.data.result, /商品详情/);
     }
   );
 });
@@ -99,11 +108,14 @@ test("shows embedded mini program failures and handles an empty error", () => {
 
       instance.openStore();
       receivedOptions.fail({ errMsg: "permission denied" });
-      assert.match(instance.data.result, /失败/);
+      assert.match(instance.data.result, /通用跳转 API 失败/);
       assert.match(instance.data.result, /permission denied/);
+      assert.match(instance.data.result, /不能证明.*store-product/);
+      assert.match(instance.data.result, /商品详情/);
 
       assert.doesNotThrow(() => receivedOptions.fail());
-      assert.strictEqual(instance.data.result, "失败: 未知错误");
+      assert.match(instance.data.result, /通用跳转 API 失败: 未知错误/);
+      assert.match(instance.data.result, /不能证明.*store-product/);
     }
   );
 });
@@ -116,12 +128,16 @@ test("explains the boundary between embedded navigation and store-product", () =
 
   assert.match(wxml, /普通\/半屏小程序跳转能力对照/);
   assert.match(wxml, /不是\s*store-product\s*的替代方案/);
+  assert.match(wxml, /STORE_APPID/);
+  assert.match(wxml, /小店 ID/);
+  assert.match(wxml, /同时也是可跳转目标小程序 AppID/);
   assert.match(wxml, /半屏小程序管理/);
-  assert.match(wxml, /embeddedAppIdList/);
-  assert.match(wxml, /不等于完成后台绑定/);
+  assert.match(wxml, /绑定\/许可获批/);
+  assert.match(wxml, /才可能成功/);
+  assert.match(wxml, /成功或失败/);
+  assert.match(wxml, /不能证明\s*store-product\s*参数有效/);
+  assert.match(wxml, /不能证明商品详情/);
   assert.match(wxml, /不应猜测微信小店内部商品\s*path/);
-  assert.match(wxml, /不能只凭\s*product ID/);
-  assert.match(wxml, /官方\s*store-product/);
-  assert.match(wxml, /手机真机复核/);
-  assert.match(wxml, /{{storeAppId}}/);
+  assert.match(wxml, /尝试半屏打开（实验\/对照）/);
+  assert.match(wxml, /{{storeIdUnderTest}}/);
 });

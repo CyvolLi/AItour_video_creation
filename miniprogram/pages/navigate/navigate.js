@@ -2,7 +2,7 @@ const { STORE_APPID } = require("../../utils/runtimeConfig.js");
 
 Page({
   data: {
-    storeAppId: STORE_APPID,
+    storeIdUnderTest: STORE_APPID,
     result: ""
   },
   openStore() {
@@ -10,11 +10,19 @@ Page({
     wx.openEmbeddedMiniProgram({
       appId: STORE_APPID,
       success() {
-        that.setData({ result: "跳转成功" });
+        that.setData({
+          result:
+            "通用跳转 API 成功；不能证明 store-product 参数或商品详情是否有效"
+        });
       },
       fail(err) {
         const detail = err ? JSON.stringify(err) : "未知错误";
-        that.setData({ result: "失败: " + detail });
+        that.setData({
+          result:
+            "通用跳转 API 失败: " +
+            detail +
+            "；不能证明 store-product 参数或商品详情是否有效"
+        });
       }
     });
   }
