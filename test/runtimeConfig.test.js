@@ -14,10 +14,18 @@ function test(name, fn) {
   }
 }
 
+test("uses the competition mini program app id", () => {
+  const projectConfig = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "../project.config.json"), "utf8")
+  );
+
+  assert.strictEqual(projectConfig.appid, "wx995a8e05136418fb");
+});
+
 test("exports the configured cloud environment and store defaults", () => {
   assert.strictEqual(
     runtimeConfig.CLOUD_ENV_ID,
-    "cloud1-5g34ybsmbfe89727"
+    "cloudbase-d2g8dvtluc8d8face"
   );
   assert.strictEqual(runtimeConfig.STORE_APPID, "wxde7b459287c6bc1b");
   assert.strictEqual(runtimeConfig.DEFAULT_PRODUCT_ID, "10001033506602");
@@ -25,7 +33,7 @@ test("exports the configured cloud environment and store defaults", () => {
 
 test("builds cloud initialization options", () => {
   assert.deepStrictEqual(runtimeConfig.getCloudInitOptions(), {
-    env: "cloud1-5g34ybsmbfe89727",
+    env: "cloudbase-d2g8dvtluc8d8face",
     traceUser: true
   });
 });

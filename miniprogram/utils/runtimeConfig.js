@@ -1,4 +1,4 @@
-const CLOUD_ENV_ID = "cloud1-5g34ybsmbfe89727";
+const CLOUD_ENV_ID = "cloudbase-d2g8dvtluc8d8face";
 const STORE_APPID = "wxde7b459287c6bc1b";
 const DEFAULT_PRODUCT_ID = "10001033506602";
 
