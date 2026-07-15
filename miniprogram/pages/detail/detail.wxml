@@ -37,20 +37,19 @@
       <button class="main-btn" bindtap="useCard">立即使用</button>
     </view>
 
-    <view class="demo-product-strip" wx:if="{{type === 'post' && featuredProduct}}" bindtap="showDemoProduct">
-      <image class="product-image" src="{{featuredProduct.imageUrl}}" mode="aspectFill"></image>
-      <view class="product-content">
-        <view class="product-heading">
-          <text class="product-market">乡村市集</text>
-          <text class="product-name">{{featuredProduct.title}}</text>
-        </view>
-        <view class="product-description">{{featuredProduct.description}}</view>
-        <view class="product-meta">
-          <text class="product-price">{{featuredProduct.price}}</text>
-          <text class="product-sales">已售{{featuredProduct.sales}}</text>
+    <view class="product-grid" wx:if="{{type === 'post' && demoProducts.length}}">
+      <view class="product-card" wx:for="{{demoProducts}}" wx:key="id" bindtap="showDemoProduct">
+        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+        <view class="product-content">
+          <view class="product-market">乡村市集</view>
+          <view class="product-name">{{item.title}}</view>
+          <view class="product-description">{{item.description}}</view>
+          <view class="product-meta">
+            <text class="product-price">{{item.price}}</text>
+            <text class="product-sales">已售{{item.sales}}</text>
+          </view>
         </view>
       </view>
-      <view class="product-cta">+好物购</view>
     </view>
 
     <view class="target">

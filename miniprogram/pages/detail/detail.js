@@ -24,7 +24,7 @@ Page({
     commentInput: "",
     commentLoading: false,
     commenting: false,
-    featuredProduct: null,
+    demoProducts: [],
     statusBarHeight: 20,
     navContentHeight: 44,
     capsuleRightInset: 96
@@ -139,7 +139,8 @@ Page({
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
         target: this.normalizeTarget(target),
-        featuredProduct: getRelatedProducts(productSeed, 1)[0] || null
+        demoProducts:
+          type === "post" ? getRelatedProducts(productSeed, 4) : []
       });
 
       return this.loadComments();

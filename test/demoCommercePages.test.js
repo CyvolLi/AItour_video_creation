@@ -2,7 +2,10 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 
-const { pickProduct } = require("../miniprogram/utils/demoProducts.js");
+const {
+  getRelatedProducts,
+  pickProduct
+} = require("../miniprogram/utils/demoProducts.js");
 
 const testCases = [];
 
@@ -379,7 +382,8 @@ test("detail demo product and back actions stay local to the page", () => {
     const page = createPageInstance(pageDefinition);
     global.getCurrentPages = () => [{ route: "pages/community/community" }, { route: "pages/detail/detail" }];
 
-    assert.strictEqual(page.data.featuredProduct, null);
+    assert.deepStrictEqual(page.data.demoProducts, []);
+    assert.strictEqual(page.data.featuredProduct, undefined);
     assert.strictEqual(page.data.activeDetailTab, undefined);
     assert.strictEqual(page.switchDetailTab, undefined);
 
@@ -507,7 +511,7 @@ test("detail renders the post commerce flow in one continuous view", () => {
   );
   assert.match(wxml, /class="back-button"[^>]+bindtap="goBack"/);
   assert.match(wxml, />内容详情</);
-  assert.doesNotMatch(wxml, /detail-tabs|product-grid|activeDetailTab|switchDetailTab/);
+  assert.doesNotMatch(wxml, /detail-tabs|activeDetailTab|switchDetailTab/);
 
   const headerStart = wxml.indexOf('class="custom-header"');
   const postStart = wxml.indexOf('class="post-card"');
@@ -516,7 +520,7 @@ test("detail renders the post commerce flow in one continuous view", () => {
   const titleStart = wxml.indexOf('class="title"', authorStart);
   const copyStart = wxml.indexOf('class="copy"', titleStart);
   const useCardStart = wxml.indexOf('bindtap="usePostCard"', copyStart);
-  const productStart = wxml.indexOf('class="demo-product-strip"', useCardStart);
+  const productStart = wxml.indexOf('class="product-grid"', useCardStart);
   const statsStart = wxml.indexOf('class="target"', productStart);
   const commentsStart = wxml.indexOf('class="comments"', statsStart);
 
@@ -527,24 +531,29 @@ test("detail renders the post commerce flow in one continuous view", () => {
   assert.ok(titleStart > authorStart, "title should follow the author");
   assert.ok(copyStart > titleStart, "copy should follow the title");
   assert.ok(useCardStart > copyStart, "use-card action should follow the copy");
-  assert.ok(productStart > useCardStart, "product strip should follow use-card");
-  assert.ok(statsStart > productStart, "stats should follow the product strip");
+  assert.ok(productStart > useCardStart, "product grid should follow use-card");
+  assert.ok(statsStart > productStart, "stats should follow the product grid");
   assert.ok(commentsStart > statsStart, "comments should remain visible after stats");
 
-  assert.match(wxml, /class="demo-product-strip"[^>]+wx:if="{{type === 'post' && featuredProduct}}"[^>]+bindtap="showDemoProduct"/);
-  assert.match(wxml, /src="{{featuredProduct\.imageUrl}}"[^>]+mode="aspectFill"/);
-  assert.match(wxml, /{{featuredProduct\.title}}/);
-  assert.match(wxml, /{{featuredProduct\.description}}/);
-  assert.match(wxml, /{{featuredProduct\.price}}/);
-  assert.match(wxml, /已售{{featuredProduct\.sales}}/);
+  assert.match(wxml, /class="product-grid"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
+  assert.match(wxml, /wx:for="{{demoProducts}}"[^>]+wx:key="id"/);
+  assert.match(wxml, /class="product-card"[^>]+bindtap="showDemoProduct"/);
+  assert.match(wxml, /src="{{item\.imageUrl}}"[^>]+mode="aspectFill"/);
+  assert.match(wxml, /{{item\.title}}/);
+  assert.match(wxml, /{{item\.description}}/);
+  assert.match(wxml, /{{item\.price}}/);
+  assert.match(wxml, /已售{{item\.sales}}/);
   assert.match(wxml, /乡村市集/);
-  assert.match(wxml, /\+好物购/);
+  assert.doesNotMatch(wxml, /\+好物购|购买|立即买/);
   assert.match(wxml, /class="stat stat-favorite"[^>]+bindtap="favoriteCurrent"/);
   assert.match(wxml, /class="comments"/);
   assert.match(wxss, /\.page\s*{[^}]*background:\s*#[0-9a-f]{6}/is);
   assert.match(wxss, /\.post-card\s*{[^}]*border-radius:\s*(?:2[4-9]|3[0-4])rpx/is);
-  assert.match(wxss, /\.demo-product-strip\s*{[^}]*display:\s*flex/is);
-  assert.match(wxss, /\.product-name\s*{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis/is);
+  assert.match(wxss, /\.product-grid\s*{[^}]*display:\s*grid[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)[^}]*gap:\s*\d+rpx/is);
+  assert.match(wxss, /\.product-card\s*{[^}]*box-sizing:\s*border-box[^}]*border-radius:\s*(?:[1-9]|1[0-6])rpx[^}]*background:\s*(?:#fff(?:fff)?|rgba\(255,\s*255,\s*255,[^)]+\))/is);
+  assert.match(wxss, /\.product-image\s*{[^}]*width:\s*100%[^}]*aspect-ratio:\s*1\s*\/\s*1/is);
+  assert.match(wxss, /\.product-name\s*{[^}]*overflow:\s*hidden/is);
+  assert.match(wxss, /\.product-price\s*{[^}]*color:\s*#(?:d|e|f)[0-9a-f]{5}/is);
   assert.match(wxss, /\.header-title\s*{[^}]*flex:\s*1;[^}]*min-width:\s*0/is);
   assert.doesNotMatch(wxss, /padding:\s*[^;]*190rpx/);
 });
@@ -595,7 +604,7 @@ test("detail updates the local favorite count after toggling", async () => {
   }
 });
 
-test("detail onLoad selects one video-related product without breaking comments", () => {
+test("detail onLoad selects four stable video-related products without breaking comments", () => {
   const app = {
     globalData: {
       task_data: {},
@@ -619,12 +628,13 @@ test("detail onLoad selects one video-related product without breaking comments"
 
     assert.ok(loading && typeof loading.then === "function");
     return loading.then(() => {
-      assert.strictEqual(page.data.demoProducts, undefined);
       assert.strictEqual(pickProduct("video-1").id, "demo-travel-bottle");
-      assert.strictEqual(
-        page.data.featuredProduct.id,
-        pickProduct("video-1").id
+      assert.deepStrictEqual(
+        page.data.demoProducts,
+        getRelatedProducts("video-1", 4)
       );
+      assert.strictEqual(page.data.demoProducts.length, 4);
+      assert.strictEqual(page.data.featuredProduct, undefined);
       assert.strictEqual(page.data.item.post_id, "post-demo");
       assert.strictEqual(page.data.commentLoading, false);
       assert.deepStrictEqual(page.data.target.List, []);
@@ -663,11 +673,12 @@ test("detail keeps card pages on the card view with comments reachable", () => {
     assert.strictEqual(page.getCommentTargetId(), "card-demo");
     assert.strictEqual(page.data.commentLoading, false);
     assert.deepStrictEqual(page.data.target.List, []);
-    assert.doesNotMatch(wxml, /detail-tabs|product-grid|activeDetailTab|switchDetailTab/);
+    assert.doesNotMatch(wxml, /detail-tabs|activeDetailTab|switchDetailTab/);
     assert.match(wxml, /class="card-view"[^>]+wx:if="{{type !== 'post'}}"/);
     assert.match(wxml, /class="comments"/);
     assert.doesNotMatch(wxml, /class="comments"[^>]+wx:if=/);
-    assert.match(wxml, /class="demo-product-strip"[^>]+wx:if="{{type === 'post' && featuredProduct}}"/);
+    assert.deepStrictEqual(page.data.demoProducts, []);
+    assert.match(wxml, /class="product-grid"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
   });
 });
 
