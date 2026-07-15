@@ -778,12 +778,13 @@ test("publish demo endorsement action only shows an informational toast", () => 
   });
 });
 
-test("publish payload remains unchanged when demo endorsement is enabled", async () => {
+test("publish payload includes target_id when demo endorsement is enabled", async () => {
   const publishCalls = [];
   const app = {
     globalData: {
       task_data: {
         openid: "openid-demo",
+        target_id: "target-demo",
         card_id: "card-demo",
         landscape: "001",
         spot_url: "https://example.com/cover.jpg"
@@ -821,9 +822,11 @@ test("publish payload remains unchanged when demo endorsement is enabled", async
       "location_name",
       "openid",
       "share_text",
+      "target_id",
       "title",
       "video_url"
     ]);
+    assert.strictEqual(publishCalls[0].target_id, "target-demo");
     assert.strictEqual(
       Object.keys(publishCalls[0]).some((key) =>
         /product|endorsement|promotion|link/i.test(key)

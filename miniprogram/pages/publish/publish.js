@@ -97,6 +97,7 @@ Page({
 
     const taskData = app.globalData.task_data || {};
     const openid = taskData.openid || "";
+    const targetId = taskData.target_id || taskData.card_id || "none";
 
     if (!openid || !this.data.videoUrl || !this.data.title) {
       wx.showToast({
@@ -111,6 +112,7 @@ Page({
     communityService
       .apiCommunityPostPublish({
         openid,
+        target_id: targetId,
         card_id: this.data.cardId || "none",
         landscape: app.globalData.task_data.landscape || "sharepool",
         title: this.data.title || "旅行作品",
