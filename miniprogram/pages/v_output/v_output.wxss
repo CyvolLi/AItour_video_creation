@@ -76,13 +76,13 @@ home-back-button {
 .demo-product-overlay {
   position: absolute;
   left: 34rpx;
-  right: 156rpx;
-  bottom: 104rpx;
+  right: 180rpx;
+  bottom: 72rpx;
   z-index: 8;
   display: flex;
   align-items: center;
-  height: 72rpx;
-  padding: 6rpx 8rpx;
+  height: 64rpx;
+  padding: 5rpx 8rpx;
   border-radius: 14rpx;
   box-sizing: border-box;
   overflow: hidden;
@@ -91,52 +91,52 @@ home-back-button {
 
 .demo-product-image {
   flex: 0 0 auto;
-  width: 58rpx;
-  height: 58rpx;
-  border-radius: 9rpx;
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 8rpx;
   background-color: #edf5f2;
 }
 
 .demo-product-info {
   flex: 1;
   min-width: 0;
-  margin: 0 8rpx;
+  margin: 0 6rpx;
   color: #1c2a2b;
 }
 
 .demo-product-kicker {
   color: #62827b;
-  font-size: 14rpx;
-  line-height: 17rpx;
+  font-size: 13rpx;
+  line-height: 15rpx;
 }
 
 .demo-product-title {
-  max-width: 244rpx;
+  max-width: 220rpx;
   overflow: hidden;
   color: #172524;
-  font-size: 18rpx;
+  font-size: 16rpx;
   font-weight: 700;
-  line-height: 21rpx;
+  line-height: 18rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .demo-product-price {
   color: #ed613a;
-  font-size: 17rpx;
+  font-size: 15rpx;
   font-weight: 700;
-  line-height: 19rpx;
+  line-height: 17rpx;
 }
 
 .demo-product-cta {
   flex: 0 0 auto;
-  height: 38rpx;
-  padding: 0 12rpx;
-  border-radius: 19rpx;
+  height: 34rpx;
+  padding: 0 10rpx;
+  border-radius: 17rpx;
   color: #ffffff;
-  font-size: 17rpx;
+  font-size: 15rpx;
   font-weight: 700;
-  line-height: 38rpx;
+  line-height: 34rpx;
   background-color: #f28b3c;
 }
 

@@ -297,20 +297,20 @@ test("v_output renders the demo product overlay inside the video card", () => {
   const overlayRight = Number(overlayStyle.match(/right:\s*(\d+)rpx/)[1]);
 
   assert.ok(
-    overlayHeight >= 68 && overlayHeight <= 76,
-    "overlay should stay compact in a 68-76rpx range"
+    overlayHeight >= 64 && overlayHeight <= 68,
+    "overlay should stay compact in a 64-68rpx range"
   );
   assert.ok(
-    overlayBottom >= 96 && overlayBottom <= 112,
-    "overlay should stay above the native video controls"
+    overlayBottom >= 64 && overlayBottom <= 84,
+    "overlay should sit near the video bottom while clearing native controls"
   );
   assert.ok(
-    overlayRight >= 120,
+    overlayRight >= 170,
     "overlay should leave enough video visible instead of spanning the full width"
   );
   assert.match(
     overlayStyle,
-    /background-color:\s*rgba\(255,\s*255,\s*255,\s*0\.8[2-8]\)/,
+    /background-color:\s*rgba\(255,\s*255,\s*255,\s*0\.8[2-6]\)/,
     "overlay should use a translucent white backing"
   );
   assert.doesNotMatch(overlayStyle, /box-shadow|linear-gradient|background-image/);
