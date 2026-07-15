@@ -1,4 +1,13 @@
-﻿<view style="padding:40rpx;">
-  <button type="primary" bindtap="openStore">半屏打开小店</button>
+<view style="padding:40rpx;">
+  <view style="margin-bottom:30rpx;color:#666;font-size:28rpx;line-height:1.7;">
+    <text style="display:block;">这是普通/半屏小程序跳转能力对照，不是 store-product 的替代方案。</text>
+    <text style="display:block;margin-top:16rpx;">共享配置中的 STORE_APPID 是小店 ID，本页只将其作为待验证的实验输入；若要用此 API 打开目标，该值必须也是有效的目标小程序 AppID。</text>
+    <text style="display:block;margin-top:16rpx;">后台“半屏小程序管理”的绑定/许可只是半屏形态条件；目标 AppID 有效但条件不满足时，可能降级为普通跳转。仅配置 app.json 的 embeddedAppIdList 不等于完成后台绑定。</text>
+    <text style="display:block;margin-top:16rpx;">success 回调只表示通用跳转 API 成功，可能已经降级；不证明实际半屏，也不证明 store-product 参数或商品详情有效。</text>
+    <text style="display:block;margin-top:16rpx;">不应猜测微信小店内部商品 path，不能只凭 product ID 使用此 API 保证打开商品详情。</text>
+    <text style="display:block;margin-top:16rpx;">商品展示和交易请使用官方 store-product，并在手机真机复核。</text>
+    <text style="display:block;margin-top:16rpx;color:#999;">当前实验输入（小店 ID）：{{storeIdUnderTest}}</text>
+  </view>
+  <button type="primary" bindtap="openStore">尝试打开（半屏能力，可能降级）</button>
   <text style="display:block;margin-top:30rpx;color:#999;font-size:28rpx;">{{result}}</text>
 </view>

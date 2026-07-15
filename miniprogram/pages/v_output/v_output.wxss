@@ -8,7 +8,7 @@ page {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  padding: calc(34rpx + env(safe-area-inset-top)) 22rpx 140rpx;
+  padding: calc(34rpx + env(safe-area-inset-top)) 22rpx calc(28rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   background:
     radial-gradient(circle at 16% 84%, rgba(255, 255, 255, 0.66) 0 20%, transparent 21%),
@@ -16,11 +16,11 @@ page {
 }
 
 .content-scroll {
-  height: calc(100vh - 176rpx - env(safe-area-inset-top));
+  height: calc(100vh - 84rpx - env(safe-area-inset-top) - env(safe-area-inset-bottom));
 }
 
 .content-shell {
-  padding: 6rpx 0 150rpx;
+  padding: 6rpx 0 76rpx;
 }
 
 .video-shell {
@@ -73,6 +73,67 @@ home-back-button {
   overflow: hidden;
 }
 
+.demo-product-overlay {
+  position: absolute;
+  left: 34rpx;
+  right: 180rpx;
+  bottom: 72rpx;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  height: 68rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 14rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.86);
+}
+
+.demo-product-image {
+  flex: 0 0 auto;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 8rpx;
+  background-color: #edf5f2;
+}
+
+.demo-product-info {
+  flex: 1;
+  min-width: 0;
+  margin: 0 6rpx;
+  color: #1c2a2b;
+}
+
+.demo-product-title {
+  max-width: 220rpx;
+  overflow: hidden;
+  color: #172524;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 28rpx;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.demo-product-price {
+  color: #ed613a;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 24rpx;
+}
+
+.demo-product-cta {
+  flex: 0 0 auto;
+  height: 38rpx;
+  padding: 0 8rpx;
+  border-radius: 19rpx;
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+  background-color: #f28b3c;
+}
+
 .copy-card,
 .tag-card {
   margin: 0 auto 18rpx;
@@ -117,24 +178,24 @@ home-back-button {
 .actions-panel {
   width: 470rpx;
   margin: 26rpx auto 0;
-  padding: 18rpx 0;
+  padding: 14rpx 0;
   border-radius: 28rpx;
   background: rgba(186, 216, 216, 0.82);
-  box-shadow: 0 10rpx 18rpx rgba(75, 100, 99, 0.14);
+  box-shadow: 0 5rpx 10rpx rgba(75, 100, 99, 0.12);
 }
 
 .action-pill {
   width: 390rpx;
-  height: 76rpx;
-  margin: 0 auto 16rpx;
+  height: 68rpx;
+  margin: 0 auto 12rpx;
   padding: 0 30rpx;
   border-radius: 24rpx;
   color: #111;
   font-size: 28rpx;
   font-weight: 600;
-  line-height: 76rpx;
+  line-height: 68rpx;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 6rpx 10rpx rgba(63, 82, 82, 0.12);
+  box-shadow: 0 3rpx 7rpx rgba(63, 82, 82, 0.1);
   box-sizing: border-box;
 }
 
@@ -155,6 +216,12 @@ home-back-button {
 
 .action-pill-secondary {
   text-align: center;
+  background: rgba(219, 232, 231, 0.94);
+}
+
+.action-pill-publish {
+  text-align: center;
+  background: rgba(235, 247, 245, 0.96);
 }
 
 .download-icon {
@@ -183,38 +250,4 @@ home-back-button {
   border-right: 4rpx solid #111;
   border-bottom: 4rpx solid #111;
   transform: rotate(45deg);
-}
-
-.publish-bar {
-  position: fixed;
-  left: 32rpx;
-  right: 32rpx;
-  bottom: calc(40rpx + env(safe-area-inset-bottom));
-  z-index: 30;
-}
-
-.publish-btn {
-  width: 100%;
-  height: 88rpx;
-  border-radius: 44rpx;
-  color: #ffffff;
-  font-size: 32rpx;
-  font-weight: 700;
-  line-height: 88rpx;
-  text-align: center;
-  background: linear-gradient(135deg, #e4b37b 0%, #a3e5d7 100%);
-  box-shadow: 0 8rpx 20rpx rgba(238, 90, 36, 0.35);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.publish-btn::after {
-  border: 0;
-}
-
-.publish-btn:active {
-  opacity: 0.85;
-  transform: scale(0.98);
 }

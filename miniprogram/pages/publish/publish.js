@@ -1,4 +1,5 @@
 const communityService = require("../../utils/communityService.js");
+const { pickProduct } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 Page({
@@ -10,21 +11,31 @@ Page({
     shareText: "",
     locationName: "",
     hasVideo: false,
-    publishing: false
+    publishing: false,
+    endorsementEnabled: false,
+    endorsementCandidate: null,
+    endorsementProduct: null
   },
 
   onLoad() {
     const taskData = app.globalData.task_data || {};
     const videoUrl = app.globalData.video_url || app.globalData.videoUrl || "";
+    const shareText = app.globalData.final_response || "";
+    const locationName = taskData.location_name || taskData.spot_name || "";
+    const endorsementSeed =
+      videoUrl || shareText || locationName || taskData.card_id || "publish-demo";
 
     this.setData({
       title: "",
       cardId: taskData.card_id || "",
       videoUrl,
       coverUrl: app.globalData.coverUrl || taskData.spot_url || "",
-      shareText: app.globalData.final_response || "",
-      locationName: taskData.location_name || taskData.spot_name || "",
-      hasVideo: !!videoUrl
+      shareText,
+      locationName,
+      hasVideo: !!videoUrl,
+      endorsementEnabled: false,
+      endorsementCandidate: pickProduct(endorsementSeed),
+      endorsementProduct: null
     });
   },
 
@@ -43,6 +54,22 @@ Page({
 
   onLocationInput(e) {
     this.setData({ locationName: e.detail.value });
+  },
+
+  onEndorsementChange(e) {
+    const enabled = !!(e && e.detail && e.detail.value);
+
+    this.setData({
+      endorsementEnabled: enabled,
+      endorsementProduct: enabled ? this.data.endorsementCandidate : null
+    });
+  },
+
+  showDemoProduct() {
+    wx.showToast({
+      title: "演示商品，不影响发布",
+      icon: "none"
+    });
   },
 
   goCreateVideo() {
@@ -70,8 +97,9 @@ Page({
 
     const taskData = app.globalData.task_data || {};
     const openid = taskData.openid || "";
+    const targetId = taskData.target_id || taskData.card_id || "none";
 
-    if (!openid || !this.data.videoUrl || !this.data.title) {
+    if (!openid || !this.data.videoUrl) {
       wx.showToast({
         title: "缺少发布信息",
         icon: "none"
@@ -79,14 +107,17 @@ Page({
       return;
     }
 
+    const title = (this.data.title || "").trim() || "旅行作品";
+
     this.setData({ publishing: true });
 
     communityService
       .apiCommunityPostPublish({
         openid,
+        target_id: targetId,
         card_id: this.data.cardId || "none",
         landscape: app.globalData.task_data.landscape || "sharepool",
-        title: this.data.title || "旅行作品",
+        title,
         cover_url: this.data.coverUrl || "",
         video_url: this.data.videoUrl,
         share_text: this.data.shareText || "",

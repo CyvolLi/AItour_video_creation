@@ -12,8 +12,25 @@
             poster="{{coverUrl}}"
             controls
             show-center-play-btn
+            bindplay="onVideoPlay"
+            bindpause="onVideoPause"
+            bindended="onVideoEnded"
             object-fit="cover"
           ></video>
+          <cover-view class="demo-product-overlay"
+            wx:if="{{featuredProduct && isVideoPlaying}}"
+            bindtap="showDemoProduct"
+          >
+            <cover-image
+              class="demo-product-image"
+              src="{{featuredProduct.imageUrl}}"
+            ></cover-image>
+            <cover-view class="demo-product-info">
+              <cover-view class="demo-product-title">{{featuredProduct.title}}</cover-view>
+              <cover-view class="demo-product-price">{{featuredProduct.price}}</cover-view>
+            </cover-view>
+            <cover-view class="demo-product-cta">看同款</cover-view>
+          </cover-view>
         </view>
       </view>
 
@@ -33,14 +50,10 @@
           <text>下载视频</text>
           <view class="download-icon"></view>
         </button>
+        <button class="action-pill action-pill-publish" bindtap="publishPost">发布作品</button>
         <button class="action-pill action-pill-secondary" bindtap="backToGenerate">重新生成</button>
         <!--<button class="action-pill action-pill-secondary" bindtap="backToExtend">扩展视频</button>-->
       </view>
     </view>
   </scroll-view>
-
-  <!-- 发布作品按钮 - 固定在底部 -->
-  <view class="publish-bar">
-    <button class="publish-btn" bindtap="publishPost">发布作品</button>
-  </view>
 </view>
