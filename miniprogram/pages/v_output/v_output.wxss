@@ -65,6 +65,14 @@ home-back-button {
   box-shadow: 0 10rpx 18rpx rgba(50, 78, 73, 0.18);
 }
 
+.video-wrap {
+  position: relative;
+  width: 100%;
+  height: 320rpx;
+  overflow: hidden;
+  border-radius: 24rpx;
+}
+
 .video {
   display: block;
   width: 100%;
@@ -75,40 +83,42 @@ home-back-button {
 
 .demo-product-overlay {
   position: absolute;
-  left: 34rpx;
-  right: 180rpx;
-  bottom: 72rpx;
+  left: 24rpx;
+  bottom: 74rpx;
   z-index: 8;
   display: flex;
   align-items: center;
-  height: 68rpx;
-  padding: 4rpx 8rpx;
-  border-radius: 14rpx;
   box-sizing: border-box;
+  width: 55%;
+  height: 72rpx;
+  padding: 4rpx 10rpx 4rpx 4rpx;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.86);
+  border: 1rpx solid rgba(255, 255, 255, 0.68);
+  border-radius: 14rpx;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 4rpx 12rpx rgba(32, 53, 47, 0.12);
 }
 
 .demo-product-image {
-  flex: 0 0 auto;
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 8rpx;
-  background-color: #edf5f2;
+  flex-shrink: 0;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 10rpx;
+  background: #dce9e4;
 }
 
 .demo-product-info {
   flex: 1;
   min-width: 0;
-  margin: 0 6rpx;
-  color: #1c2a2b;
+  margin: 0 10rpx;
+  color: #26332e;
 }
 
 .demo-product-title {
   max-width: 220rpx;
   overflow: hidden;
-  color: #172524;
-  font-size: 24rpx;
+  color: #24312e;
+  font-size: 22rpx;
   font-weight: 700;
   line-height: 28rpx;
   text-overflow: ellipsis;
@@ -116,22 +126,18 @@ home-back-button {
 }
 
 .demo-product-price {
-  color: #ed613a;
-  font-size: 22rpx;
+  color: #e15d3e;
+  font-size: 20rpx;
   font-weight: 700;
-  line-height: 24rpx;
+  line-height: 26rpx;
 }
 
 .demo-product-cta {
-  flex: 0 0 auto;
-  height: 38rpx;
-  padding: 0 8rpx;
-  border-radius: 19rpx;
-  color: #ffffff;
-  font-size: 22rpx;
+  flex-shrink: 0;
+  color: #2f7e69;
+  font-size: 19rpx;
   font-weight: 700;
-  line-height: 38rpx;
-  background-color: #f28b3c;
+  white-space: nowrap;
 }
 
 .copy-card,

@@ -250,7 +250,7 @@ test("v_output only shows the product overlay while video is playing", () => {
   });
 });
 
-test("v_output renders the demo product overlay inside the video card", () => {
+test("v_output matches the detail video product overlay layout", () => {
   const wxmlPath = path.join(
     __dirname,
     "../miniprogram/pages/v_output/v_output.wxml"
@@ -260,13 +260,19 @@ test("v_output renders the demo product overlay inside the video card", () => {
     path.join(__dirname, "../miniprogram/pages/v_output/v_output.wxss"),
     "utf8"
   );
+  const detailWxss = fs.readFileSync(
+    path.join(__dirname, "../miniprogram/pages/detail/detail.wxss"),
+    "utf8"
+  );
   const cardStart = wxml.indexOf('<view class="video-card">');
-  const videoStart = wxml.indexOf("<video", cardStart);
+  const videoWrapStart = wxml.indexOf('<view class="video-wrap">', cardStart);
+  const videoStart = wxml.indexOf("<video", videoWrapStart);
   const overlayStart = wxml.indexOf('<cover-view class="demo-product-overlay"', videoStart);
   const nextCardStart = wxml.indexOf('<view class="copy-card">', cardStart);
 
   assert.ok(cardStart >= 0, "video-card should exist");
-  assert.ok(videoStart > cardStart, "video should be inside video-card");
+  assert.ok(videoWrapStart > cardStart, "video wrapper should be inside video-card");
+  assert.ok(videoStart > videoWrapStart, "video should be inside its wrapper");
   assert.ok(overlayStart > videoStart, "overlay should follow the video");
   assert.ok(
     nextCardStart > overlayStart,
@@ -278,7 +284,7 @@ test("v_output renders the demo product overlay inside the video card", () => {
   );
   assert.match(wxml, /{{featuredProduct\.title}}/);
   assert.match(wxml, /{{featuredProduct\.price}}/);
-  assert.match(wxml, /同款|演示/);
+  assert.match(wxml, />同款\s*›</);
   assert.match(wxml, /<video[\s\S]*?\scontrols(?:\s|>)/);
   assert.match(wxml, /bindplay="onVideoPlay"/);
   assert.match(wxml, /bindpause="onVideoPause"/);
@@ -291,40 +297,62 @@ test("v_output renders the demo product overlay inside the video card", () => {
   const overlayStyle = wxss.match(
     /\.demo-product-overlay\s*{([^}]*)}/
   )[1];
+  const imageStyle = wxss.match(/\.demo-product-image\s*{([^}]*)}/)[1];
   const titleStyle = wxss.match(/\.demo-product-title\s*{([^}]*)}/)[1];
   const priceStyle = wxss.match(/\.demo-product-price\s*{([^}]*)}/)[1];
   const ctaStyle = wxss.match(/\.demo-product-cta\s*{([^}]*)}/)[1];
-  const overlayHeight = Number(overlayStyle.match(/height:\s*(\d+)rpx/)[1]);
-  const overlayBottom = Number(overlayStyle.match(/bottom:\s*(\d+)rpx/)[1]);
-  const overlayRight = Number(overlayStyle.match(/right:\s*(\d+)rpx/)[1]);
-  const titleFontSize = Number(titleStyle.match(/font-size:\s*(\d+)rpx/)[1]);
-  const priceFontSize = Number(priceStyle.match(/font-size:\s*(\d+)rpx/)[1]);
-  const ctaFontSize = Number(ctaStyle.match(/font-size:\s*(\d+)rpx/)[1]);
+  const detailOverlayStyle = detailWxss.match(
+    /\.video-product-overlay\s*{([^}]*)}/
+  )[1];
+  const detailImageStyle = detailWxss.match(/\.video-product-image\s*{([^}]*)}/)[1];
+  const detailTitleStyle = detailWxss.match(/\.video-product-title\s*{([^}]*)}/)[1];
+  const detailPriceStyle = detailWxss.match(/\.video-product-price\s*{([^}]*)}/)[1];
+  const detailCtaStyle = detailWxss.match(/\.video-product-action\s*{([^}]*)}/)[1];
+  const readProperty = (style, property) => {
+    const match = style.match(new RegExp(`${property}:\\s*([^;]+)`));
+    return match ? match[1].trim() : undefined;
+  };
 
-  assert.ok(
-    overlayHeight >= 64 && overlayHeight <= 68,
-    "overlay should stay compact in a 64-68rpx range"
+  [
+    "left",
+    "bottom",
+    "width",
+    "height",
+    "padding",
+    "border",
+    "border-radius",
+    "background",
+    "box-shadow"
+  ].forEach((property) => {
+    assert.strictEqual(
+      readProperty(overlayStyle, property),
+      readProperty(detailOverlayStyle, property),
+      `overlay ${property} should match detail`
+    );
+  });
+  ["width", "height", "border-radius", "background"].forEach((property) => {
+    assert.strictEqual(
+      readProperty(imageStyle, property),
+      readProperty(detailImageStyle, property),
+      `product image ${property} should match detail`
+    );
+  });
+  assert.strictEqual(
+    readProperty(titleStyle, "font-size"),
+    readProperty(detailTitleStyle, "font-size")
   );
-  assert.ok(
-    overlayBottom >= 64 && overlayBottom <= 84,
-    "overlay should sit near the video bottom while clearing native controls"
+  assert.strictEqual(
+    readProperty(priceStyle, "font-size"),
+    readProperty(detailPriceStyle, "font-size")
   );
-  assert.ok(
-    overlayRight >= 170,
-    "overlay should leave enough video visible instead of spanning the full width"
-  );
-  assert.ok(titleFontSize >= 24, "overlay title should remain readable");
-  assert.ok(priceFontSize >= 22, "overlay price should remain readable");
-  assert.ok(ctaFontSize >= 22, "overlay CTA should remain readable");
-  assert.match(
-    overlayStyle,
-    /background-color:\s*rgba\(255,\s*255,\s*255,\s*0\.8[2-6]\)/,
-    "overlay should use a translucent white backing"
-  );
-  assert.doesNotMatch(overlayStyle, /box-shadow|linear-gradient|background-image/);
-  assert.doesNotMatch(ctaStyle, /box-shadow|linear-gradient|background-image/);
-  assert.match(ctaStyle, /background-color:\s*#[0-9a-f]{6}/i);
-  assert.match(ctaStyle, /color:\s*#fff(?:fff)?/i);
+  ["color", "font-size", "font-weight", "white-space"].forEach((property) => {
+    assert.strictEqual(
+      readProperty(ctaStyle, property),
+      readProperty(detailCtaStyle, property),
+      `product action ${property} should match detail`
+    );
+  });
+  assert.doesNotMatch(overlayStyle, /\bright\s*:/);
   assert.strictEqual(
     wxml.indexOf('<cover-view class="demo-product-overlay"', overlayStart + 1),
     -1,
@@ -894,7 +922,7 @@ test("publish demo endorsement action only shows an informational toast", () => 
   });
 });
 
-test("publish payload includes target_id when demo endorsement is enabled", async () => {
+test("publish forces a generated string target_id into the payload", async () => {
   const publishCalls = [];
   const app = {
     globalData: {
@@ -923,6 +951,7 @@ test("publish payload includes target_id when demo endorsement is enabled", asyn
   await withPublishPage(app, wxStub, communityStub, async (pageDefinition) => {
     const page = createPageInstance(pageDefinition);
     page.onLoad();
+    const generatedTargetId = page.data.targetId;
     page.setData({ title: "发布标题" });
     page.onEndorsementChange({ detail: { value: true } });
     page.publishPost();
@@ -942,7 +971,15 @@ test("publish payload includes target_id when demo endorsement is enabled", asyn
       "title",
       "video_url"
     ]);
-    assert.strictEqual(publishCalls[0].target_id, "target-demo");
+    assert.strictEqual(typeof generatedTargetId, "string");
+    assert.match(
+      generatedTargetId,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+    );
+    assert.strictEqual(publishCalls[0].target_id, generatedTargetId);
+    assert.notStrictEqual(publishCalls[0].target_id, "target-demo");
+    assert.notStrictEqual(publishCalls[0].target_id, "card-demo");
+    assert.notStrictEqual(publishCalls[0].target_id, "none");
     assert.strictEqual(
       Object.keys(publishCalls[0]).some((key) =>
         /product|endorsement|promotion|link/i.test(key)
@@ -950,6 +987,62 @@ test("publish payload includes target_id when demo endorsement is enabled", asyn
       false
     );
   });
+});
+
+test("publish reuses the generated target_id after a failed request", async () => {
+  const publishCalls = [];
+  const errorCalls = [];
+  const originalConsoleError = console.error;
+  const app = {
+    globalData: {
+      task_data: {
+        openid: "openid-retry",
+        target_id: "legacy-target",
+        card_id: "card-retry",
+        landscape: "001"
+      },
+      video_url: "https://example.com/retry-video.mp4",
+      final_response: "retry copy"
+    }
+  };
+  const wxStub = {
+    showToast() {},
+    reLaunch() {}
+  };
+  const communityStub = {
+    apiCommunityPostPublish(payload) {
+      publishCalls.push(payload);
+      return publishCalls.length === 1
+        ? Promise.reject(new Error("temporary publish failure"))
+        : Promise.resolve({});
+    }
+  };
+
+  console.error = (...args) => errorCalls.push(args);
+
+  try {
+    await withPublishPage(app, wxStub, communityStub, async (pageDefinition) => {
+      const page = createPageInstance(pageDefinition);
+      page.onLoad();
+      const generatedTargetId = page.data.targetId;
+
+      page.publishPost();
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.strictEqual(page.data.publishing, false);
+
+      page.publishPost();
+      await new Promise((resolve) => setImmediate(resolve));
+
+      assert.strictEqual(publishCalls.length, 2);
+      assert.strictEqual(publishCalls[0].target_id, generatedTargetId);
+      assert.strictEqual(publishCalls[1].target_id, generatedTargetId);
+      assert.notStrictEqual(generatedTargetId, "legacy-target");
+      assert.notStrictEqual(generatedTargetId, "card-retry");
+      assert.strictEqual(errorCalls.length, 1);
+    });
+  } finally {
+    console.error = originalConsoleError;
+  }
 });
 
 test("publish uses a default title when the title input is empty", async () => {

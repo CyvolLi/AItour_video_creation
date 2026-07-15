@@ -1,5 +1,6 @@
 const communityService = require("../../utils/communityService.js");
 const { pickProduct } = require("../../utils/demoProducts.js");
+const { createTargetId } = require("../../utils/targetId.js");
 const app = getApp();
 
 Page({
@@ -12,6 +13,7 @@ Page({
     locationName: "",
     hasVideo: false,
     publishing: false,
+    targetId: "",
     endorsementEnabled: false,
     endorsementCandidate: null,
     endorsementProduct: null
@@ -33,6 +35,7 @@ Page({
       shareText,
       locationName,
       hasVideo: !!videoUrl,
+      targetId: createTargetId(),
       endorsementEnabled: false,
       endorsementCandidate: pickProduct(endorsementSeed),
       endorsementProduct: null
@@ -97,7 +100,6 @@ Page({
 
     const taskData = app.globalData.task_data || {};
     const openid = taskData.openid || "";
-    const targetId = taskData.target_id || taskData.card_id || "none";
 
     if (!openid || !this.data.videoUrl) {
       wx.showToast({
@@ -114,7 +116,7 @@ Page({
     communityService
       .apiCommunityPostPublish({
         openid,
-        target_id: targetId,
+        target_id: this.data.targetId,
         card_id: this.data.cardId || "none",
         landscape: app.globalData.task_data.landscape || "sharepool",
         title,

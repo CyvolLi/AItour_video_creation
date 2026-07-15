@@ -6,31 +6,33 @@
         <view class="petal petal-left"></view>
         <view class="petal petal-right"></view>
         <view class="video-card">
-          <video
-            class="video"
-            src="{{videoUrl}}"
-            poster="{{coverUrl}}"
-            controls
-            show-center-play-btn
-            bindplay="onVideoPlay"
-            bindpause="onVideoPause"
-            bindended="onVideoEnded"
-            object-fit="cover"
-          ></video>
-          <cover-view class="demo-product-overlay"
-            wx:if="{{featuredProduct && isVideoPlaying}}"
-            bindtap="showDemoProduct"
-          >
-            <cover-image
-              class="demo-product-image"
-              src="{{featuredProduct.imageUrl}}"
-            ></cover-image>
-            <cover-view class="demo-product-info">
-              <cover-view class="demo-product-title">{{featuredProduct.title}}</cover-view>
-              <cover-view class="demo-product-price">{{featuredProduct.price}}</cover-view>
+          <view class="video-wrap">
+            <video
+              class="video"
+              src="{{videoUrl}}"
+              poster="{{coverUrl}}"
+              controls
+              show-center-play-btn
+              bindplay="onVideoPlay"
+              bindpause="onVideoPause"
+              bindended="onVideoEnded"
+              object-fit="cover"
+            ></video>
+            <cover-view class="demo-product-overlay"
+              wx:if="{{featuredProduct && isVideoPlaying}}"
+              bindtap="showDemoProduct"
+            >
+              <cover-image
+                class="demo-product-image"
+                src="{{featuredProduct.imageUrl}}"
+              ></cover-image>
+              <cover-view class="demo-product-info">
+                <cover-view class="demo-product-title">{{featuredProduct.title}}</cover-view>
+                <cover-view class="demo-product-price">{{featuredProduct.price}}</cover-view>
+              </cover-view>
+              <cover-view class="demo-product-cta">同款 ›</cover-view>
             </cover-view>
-            <cover-view class="demo-product-cta">看同款</cover-view>
-          </cover-view>
+          </view>
         </view>
       </view>
 
