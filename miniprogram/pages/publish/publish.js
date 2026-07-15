@@ -99,13 +99,15 @@ Page({
     const openid = taskData.openid || "";
     const targetId = taskData.target_id || taskData.card_id || "none";
 
-    if (!openid || !this.data.videoUrl || !this.data.title) {
+    if (!openid || !this.data.videoUrl) {
       wx.showToast({
         title: "缺少发布信息",
         icon: "none"
       });
       return;
     }
+
+    const title = (this.data.title || "").trim() || "旅行作品";
 
     this.setData({ publishing: true });
 
@@ -115,7 +117,7 @@ Page({
         target_id: targetId,
         card_id: this.data.cardId || "none",
         landscape: app.globalData.task_data.landscape || "sharepool",
-        title: this.data.title || "旅行作品",
+        title,
         cover_url: this.data.coverUrl || "",
         video_url: this.data.videoUrl,
         share_text: this.data.shareText || "",

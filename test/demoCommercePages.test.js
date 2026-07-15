@@ -528,7 +528,7 @@ test("detail renders the post commerce flow in one continuous view", () => {
   const titleStart = wxml.indexOf('class="title"', authorStart);
   const copyStart = wxml.indexOf('class="copy"', titleStart);
   const useCardStart = wxml.indexOf('bindtap="usePostCard"', copyStart);
-  const productStart = wxml.indexOf('class="product-grid"', useCardStart);
+  const productStart = wxml.indexOf('class="product-banner"', useCardStart);
   const statsStart = wxml.indexOf('class="target"', productStart);
   const commentsStart = wxml.indexOf('class="comments"', statsStart);
 
@@ -539,28 +539,27 @@ test("detail renders the post commerce flow in one continuous view", () => {
   assert.ok(titleStart > authorStart, "title should follow the author");
   assert.ok(copyStart > titleStart, "copy should follow the title");
   assert.ok(useCardStart > copyStart, "use-card action should follow the copy");
-  assert.ok(productStart > useCardStart, "product grid should follow use-card");
-  assert.ok(statsStart > productStart, "stats should follow the product grid");
+  assert.ok(productStart > useCardStart, "product banner should follow use-card");
+  assert.ok(statsStart > productStart, "stats should follow the product banner");
   assert.ok(commentsStart > statsStart, "comments should remain visible after stats");
 
-  assert.match(wxml, /class="product-grid"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
-  assert.match(wxml, /wx:for="{{demoProducts}}"[^>]+wx:key="id"/);
-  assert.match(wxml, /class="product-card"[^>]+bindtap="showDemoProduct"/);
-  assert.match(wxml, /src="{{item\.imageUrl}}"[^>]+mode="aspectFill"/);
-  assert.match(wxml, /{{item\.title}}/);
-  assert.match(wxml, /{{item\.description}}/);
-  assert.match(wxml, /{{item\.price}}/);
-  assert.match(wxml, /已售{{item\.sales}}/);
+  assert.match(wxml, /class="product-banner"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
+  assert.doesNotMatch(wxml, /wx:for="{{demoProducts}}"/);
+  assert.match(wxml, /class="product-banner"[^>]+bindtap="showDemoProduct"/);
+  assert.match(wxml, /src="{{demoProducts\[0\]\.imageUrl}}"[^>]+mode="aspectFill"/);
+  assert.match(wxml, /{{demoProducts\[0\]\.title}}/);
+  assert.match(wxml, /{{demoProducts\[0\]\.description}}/);
+  assert.match(wxml, /{{demoProducts\[0\]\.price}}/);
+  assert.match(wxml, /{{demoProducts\[0\]\.sales}}/);
   assert.match(wxml, /乡村市集/);
-  assert.doesNotMatch(wxml, /\+好物购|购买|立即买/);
+  assert.match(wxml, /class="product-action"/);
   assert.match(wxml, /class="stat stat-favorite"[^>]+bindtap="favoriteCurrent"/);
   assert.match(wxml, /class="comments"/);
   assert.match(wxss, /\.page\s*{[^}]*background:\s*#[0-9a-f]{6}/is);
   assert.match(wxss, /\.post-card\s*{[^}]*border-radius:\s*(?:2[4-9]|3[0-4])rpx/is);
-  assert.match(wxss, /\.product-grid\s*{[^}]*display:\s*grid[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)[^}]*gap:\s*\d+rpx/is);
-  assert.match(wxss, /\.product-card\s*{[^}]*box-sizing:\s*border-box[^}]*border-radius:\s*(?:[1-9]|1[0-6])rpx[^}]*background:\s*(?:#fff(?:fff)?|rgba\(255,\s*255,\s*255,[^)]+\))/is);
-  assert.match(wxss, /\.product-image\s*{[^}]*width:\s*100%[^}]*aspect-ratio:\s*1\s*\/\s*1/is);
-  assert.match(wxss, /\.product-name\s*{[^}]*overflow:\s*hidden/is);
+  assert.match(wxss, /\.product-banner\s*{[^}]*display:\s*flex[^}]*align-items:\s*center[^}]*justify-content:\s*space-between/is);
+  assert.match(wxss, /\.product-media\s*{[^}]*width:\s*\d+rpx[^}]*height:\s*\d+rpx/is);
+  assert.match(wxss, /\.product-title\s*{[^}]*overflow:\s*hidden/is);
   assert.match(wxss, /\.product-price\s*{[^}]*color:\s*#(?:d|e|f)[0-9a-f]{5}/is);
   assert.match(wxss, /\.header-title\s*{[^}]*flex:\s*1;[^}]*min-width:\s*0/is);
   assert.doesNotMatch(wxss, /padding:\s*[^;]*190rpx/);
@@ -686,7 +685,7 @@ test("detail keeps card pages on the card view with comments reachable", () => {
     assert.match(wxml, /class="comments"/);
     assert.doesNotMatch(wxml, /class="comments"[^>]+wx:if=/);
     assert.deepStrictEqual(page.data.demoProducts, []);
-    assert.match(wxml, /class="product-grid"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
+    assert.match(wxml, /class="product-banner"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
   });
 });
 
@@ -831,6 +830,51 @@ test("publish payload includes target_id when demo endorsement is enabled", asyn
       Object.keys(publishCalls[0]).some((key) =>
         /product|endorsement|promotion|link/i.test(key)
       ),
+      false
+    );
+  });
+});
+
+test("publish uses a default title when the title input is empty", async () => {
+  const publishCalls = [];
+  const toastCalls = [];
+  const app = {
+    globalData: {
+      task_data: {
+        openid: "openid-demo",
+        target_id: "target-demo",
+        card_id: "card-demo",
+        landscape: "001"
+      },
+      video_url: "https://example.com/video.mp4",
+      final_response: "travel copy"
+    }
+  };
+  const wxStub = {
+    showToast(options) {
+      toastCalls.push(options);
+    },
+    reLaunch() {}
+  };
+  const communityStub = {
+    apiCommunityPostPublish(payload) {
+      publishCalls.push(payload);
+      return Promise.resolve({});
+    }
+  };
+
+  await withPublishPage(app, wxStub, communityStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+    page.onLoad();
+    page.publishPost();
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    assert.strictEqual(publishCalls.length, 1);
+    assert.strictEqual(publishCalls[0].title, "旅行作品");
+    assert.strictEqual(
+      toastCalls.some((call) => call.title === "缺少发布信息"),
       false
     );
   });

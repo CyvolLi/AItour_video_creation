@@ -37,19 +37,21 @@
       <button class="main-btn" bindtap="useCard">立即使用</button>
     </view>
 
-    <view class="product-grid" wx:if="{{type === 'post' && demoProducts.length}}">
-      <view class="product-card" wx:for="{{demoProducts}}" wx:key="id" bindtap="showDemoProduct">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-content">
-          <view class="product-market">乡村市集</view>
-          <view class="product-name">{{item.title}}</view>
-          <view class="product-description">{{item.description}}</view>
-          <view class="product-meta">
-            <text class="product-price">{{item.price}}</text>
-            <text class="product-sales">已售{{item.sales}}</text>
-          </view>
+    <view class="product-banner" wx:if="{{type === 'post' && demoProducts.length}}" bindtap="showDemoProduct">
+      <image class="product-media" src="{{demoProducts[0].imageUrl}}" mode="aspectFill"></image>
+      <view class="product-copy">
+        <view class="product-topline">
+          <text class="product-market">乡村市集</text>
+          <text class="product-tag">智能匹配</text>
+        </view>
+        <view class="product-title">{{demoProducts[0].title}}</view>
+        <view class="product-description">{{demoProducts[0].description}}</view>
+        <view class="product-meta">
+          <text class="product-price">{{demoProducts[0].price}}</text>
+          <text class="product-sales">已售{{demoProducts[0].sales}}</text>
         </view>
       </view>
+      <view class="product-action">+好物购</view>
     </view>
 
     <view class="target">
