@@ -16,6 +16,7 @@
     "pages/v_output/v_output",
     "pages/community/community",
     "pages/detail/detail",
+    "pages/product_list/product_list",
     "pages/publish/publish",
     "pages/card_publish/card_publish",
     "pages/profile/profile"

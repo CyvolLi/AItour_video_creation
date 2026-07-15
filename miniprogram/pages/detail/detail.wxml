@@ -10,7 +10,29 @@
 
   <view class="content">
     <view class="post-card" wx:if="{{type === 'post'}}">
-      <video class="video" src="{{item.video_url}}" poster="{{item.cover_url}}" controls></video>
+      <view class="video-wrap">
+        <video
+          class="video"
+          src="{{item.video_url}}"
+          poster="{{item.cover_url}}"
+          controls
+          bindplay="onVideoPlay"
+          bindpause="onVideoPause"
+          bindended="onVideoEnded"
+        ></video>
+        <cover-view
+          class="video-product-overlay"
+          wx:if="{{type === 'post' && demoProducts.length && isVideoPlaying}}"
+          bindtap="openProductList"
+        >
+          <cover-image class="video-product-image" src="{{demoProducts[0].imageUrl}}"></cover-image>
+          <cover-view class="video-product-copy">
+            <cover-view class="video-product-title">{{demoProducts[0].title}}</cover-view>
+            <cover-view class="video-product-price">{{demoProducts[0].price}}</cover-view>
+          </cover-view>
+          <cover-view class="video-product-action">同款 ›</cover-view>
+        </cover-view>
+      </view>
 
       <view class="author-line">
         <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshDetailAvatarOnError"></image>
@@ -37,7 +59,7 @@
       <button class="main-btn" bindtap="useCard">立即使用</button>
     </view>
 
-    <view class="product-banner" wx:if="{{type === 'post' && demoProducts.length}}" bindtap="showDemoProduct">
+    <view class="product-banner" wx:if="{{type === 'post' && demoProducts.length}}" bindtap="openProductList">
       <image class="product-media" src="{{demoProducts[0].imageUrl}}" mode="aspectFill"></image>
       <view class="product-copy">
         <view class="product-topline">

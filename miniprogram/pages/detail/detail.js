@@ -8,6 +8,7 @@ const { getRelatedProducts } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 const DEFAULT_USER_AVATAR = "../../images/default.jpg";
+const PRODUCT_LANDSCAPE_ID = "001";
 
 Page({
   data: {
@@ -25,6 +26,7 @@ Page({
     commentLoading: false,
     commenting: false,
     demoProducts: [],
+    isVideoPlaying: false,
     statusBarHeight: 20,
     navContentHeight: 44,
     capsuleRightInset: 96
@@ -131,6 +133,10 @@ Page({
     const type = options.type || item.type || "post";
     const id = options.id || item.post_id || item.card_id || "";
     const productSeed = item.video_url || item.share_text || item.post_id || id;
+    const taskData = app.globalData.task_data || {};
+    const postLandscape = item.landscape || taskData.landscape || "sharepool";
+    const shouldShowDemoProducts =
+      type === "post" && postLandscape === PRODUCT_LANDSCAPE_ID;
 
     return this.attachAuthorProfiles([item]).then((items) => {
       this.setData({
@@ -139,8 +145,9 @@ Page({
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
         target: this.normalizeTarget(target),
-        demoProducts:
-          type === "post" ? getRelatedProducts(productSeed, 4) : []
+        demoProducts: shouldShowDemoProducts
+          ? getRelatedProducts(productSeed, 4)
+          : []
       });
 
       return this.loadComments();
@@ -225,11 +232,22 @@ Page({
     }
   },
 
-  showDemoProduct() {
-    wx.showToast({
-      title: "演示商品，暂不支持购买",
-      icon: "none"
+  openProductList() {
+    return wx.navigateTo({
+      url: "/pages/product_list/product_list"
     });
+  },
+
+  onVideoPlay() {
+    this.setData({ isVideoPlaying: true });
+  },
+
+  onVideoPause() {
+    this.setData({ isVideoPlaying: false });
+  },
+
+  onVideoEnded() {
+    this.setData({ isVideoPlaying: false });
   },
 
   getCommentTargetId() {

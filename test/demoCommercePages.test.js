@@ -357,14 +357,14 @@ test("v_output keeps download, publish, and regenerate in one action panel", () 
   assert.match(wxss, /\.content-shell\s*{[^}]*padding:\s*[^;]*\b(?:[4-9]\d|1[01]\d)rpx/is);
 });
 
-test("detail demo product and back actions stay local to the page", () => {
-  const toastCalls = [];
+test("detail product entry opens the local list and back stays local", () => {
+  const navigationCalls = [];
   let backCalls = 0;
   const forbiddenCalls = [];
   const app = { globalData: { task_data: {} } };
   const wxStub = {
-    showToast(options) {
-      toastCalls.push(options);
+    showToast() {
+      forbiddenCalls.push("showToast");
     },
     navigateBack() {
       backCalls += 1;
@@ -372,8 +372,8 @@ test("detail demo product and back actions stay local to the page", () => {
     reLaunch() {
       forbiddenCalls.push("reLaunch");
     },
-    navigateTo() {
-      forbiddenCalls.push("navigateTo");
+    navigateTo(options) {
+      navigationCalls.push(options.url);
     },
     openEmbeddedMiniProgram() {
       forbiddenCalls.push("openEmbeddedMiniProgram");
@@ -394,13 +394,36 @@ test("detail demo product and back actions stay local to the page", () => {
     assert.strictEqual(page.data.featuredProduct, undefined);
     assert.strictEqual(page.data.activeDetailTab, undefined);
     assert.strictEqual(page.switchDetailTab, undefined);
+    assert.strictEqual(page.showDemoProduct, undefined);
+    assert.strictEqual(typeof page.openProductList, "function");
 
-    page.showDemoProduct();
+    page.openProductList();
     page.goBack();
-    assert.strictEqual(toastCalls.length, 1);
-    assert.match(toastCalls[0].title, /演示|暂不支持购买/);
+    assert.deepStrictEqual(navigationCalls, [
+      "/pages/product_list/product_list"
+    ]);
     assert.strictEqual(backCalls, 1);
     assert.deepStrictEqual(forbiddenCalls, []);
+  });
+});
+
+test("detail product overlay follows the video playback state", () => {
+  const app = { globalData: { task_data: {} } };
+
+  withDetailPage(app, {}, (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    assert.strictEqual(page.data.isVideoPlaying, false);
+
+    page.onVideoPlay();
+    assert.strictEqual(page.data.isVideoPlaying, true);
+
+    page.onVideoPause();
+    assert.strictEqual(page.data.isVideoPlaying, false);
+
+    page.onVideoPlay();
+    page.onVideoEnded();
+    assert.strictEqual(page.data.isVideoPlaying, false);
   });
 });
 
@@ -492,7 +515,7 @@ test("detail falls back to the community when opened without a previous page", (
   });
 });
 
-test("detail renders the post commerce flow in one continuous view", () => {
+test("detail keeps the product banner while adding an overlay inside the post video", () => {
   const wxml = fs.readFileSync(
     path.join(__dirname, "../miniprogram/pages/detail/detail.wxml"),
     "utf8"
@@ -523,42 +546,56 @@ test("detail renders the post commerce flow in one continuous view", () => {
 
   const headerStart = wxml.indexOf('class="custom-header"');
   const postStart = wxml.indexOf('class="post-card"');
-  const videoStart = wxml.indexOf('class="video"', postStart);
+  const videoWrapStart = wxml.indexOf('class="video-wrap"', postStart);
+  const videoStart = wxml.indexOf('class="video"', videoWrapStart);
+  const productStart = wxml.indexOf('class="video-product-overlay"', videoStart);
   const authorStart = wxml.indexOf('class="author-line"', videoStart);
   const titleStart = wxml.indexOf('class="title"', authorStart);
   const copyStart = wxml.indexOf('class="copy"', titleStart);
   const useCardStart = wxml.indexOf('bindtap="usePostCard"', copyStart);
-  const productStart = wxml.indexOf('class="product-banner"', useCardStart);
-  const statsStart = wxml.indexOf('class="target"', productStart);
+  const bannerStart = wxml.indexOf('class="product-banner"', useCardStart);
+  const statsStart = wxml.indexOf('class="target"', bannerStart);
   const commentsStart = wxml.indexOf('class="comments"', statsStart);
 
   assert.ok(headerStart >= 0, "custom header should exist");
   assert.ok(postStart > headerStart, "post card should follow the header");
-  assert.ok(videoStart > postStart, "video should be inside the post card");
+  assert.ok(videoWrapStart > postStart, "video wrapper should be inside the post card");
+  assert.ok(videoStart > videoWrapStart, "video should be inside its wrapper");
+  assert.ok(productStart > videoStart, "product overlay should be inside the video wrapper");
   assert.ok(authorStart > videoStart, "author should follow the video");
   assert.ok(titleStart > authorStart, "title should follow the author");
   assert.ok(copyStart > titleStart, "copy should follow the title");
   assert.ok(useCardStart > copyStart, "use-card action should follow the copy");
-  assert.ok(productStart > useCardStart, "product banner should follow use-card");
-  assert.ok(statsStart > productStart, "stats should follow the product banner");
+  assert.ok(bannerStart > useCardStart, "product banner should remain above stats");
+  assert.ok(statsStart > bannerStart, "stats should follow the product banner");
   assert.ok(commentsStart > statsStart, "comments should remain visible after stats");
 
-  assert.match(wxml, /class="product-banner"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
+  assert.match(wxml, /class="video-product-overlay"[^>]+wx:if="{{type === 'post' && demoProducts\.length && isVideoPlaying}}"/);
+  assert.match(wxml, /class="video"[^>]+bindplay="onVideoPlay"[^>]+bindpause="onVideoPause"[^>]+bindended="onVideoEnded"/s);
   assert.doesNotMatch(wxml, /wx:for="{{demoProducts}}"/);
-  assert.match(wxml, /class="product-banner"[^>]+bindtap="showDemoProduct"/);
-  assert.match(wxml, /src="{{demoProducts\[0\]\.imageUrl}}"[^>]+mode="aspectFill"/);
+  assert.match(wxml, /class="video-product-overlay"[^>]+bindtap="openProductList"/);
+  assert.match(wxml, /<cover-image[^>]+src="{{demoProducts\[0\]\.imageUrl}}"/s);
+  assert.match(wxml, /class="product-banner"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
+  assert.match(wxml, /class="product-banner"[^>]+bindtap="openProductList"/);
+  assert.match(wxml, /class="product-media"[^>]+src="{{demoProducts\[0\]\.imageUrl}}"/);
   assert.match(wxml, /{{demoProducts\[0\]\.title}}/);
   assert.match(wxml, /{{demoProducts\[0\]\.description}}/);
   assert.match(wxml, /{{demoProducts\[0\]\.price}}/);
   assert.match(wxml, /{{demoProducts\[0\]\.sales}}/);
-  assert.match(wxml, /乡村市集/);
+  assert.match(wxml, />同款\s*›</);
   assert.match(wxml, /class="product-action"/);
   assert.match(wxml, /class="stat stat-favorite"[^>]+bindtap="favoriteCurrent"/);
   assert.match(wxml, /class="comments"/);
   assert.match(wxss, /\.page\s*{[^}]*background:\s*#[0-9a-f]{6}/is);
   assert.match(wxss, /\.post-card\s*{[^}]*border-radius:\s*(?:2[4-9]|3[0-4])rpx/is);
+  assert.match(wxss, /\.video-wrap\s*{[^}]*position:\s*relative/is);
+  assert.match(wxss, /\.video-product-overlay\s*{[^}]*position:\s*absolute[^}]*left:\s*24rpx[^}]*bottom:\s*74rpx[^}]*width:\s*55%[^}]*height:\s*72rpx/is);
+  assert.match(wxss, /\.video-product-overlay\s*{[^}]*background:\s*rgba\(255,\s*255,\s*255,\s*0\.72\)/is);
+  assert.match(wxss, /\.video-product-image\s*{[^}]*width:\s*64rpx[^}]*height:\s*64rpx/is);
+  assert.match(wxss, /\.video-product-title\s*{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis[^}]*white-space:\s*nowrap/is);
+  assert.match(wxss, /\.video-product-price\s*{[^}]*color:\s*#(?:d|e|f)[0-9a-f]{5}/is);
   assert.match(wxss, /\.product-banner\s*{[^}]*display:\s*flex[^}]*align-items:\s*center[^}]*justify-content:\s*space-between/is);
-  assert.match(wxss, /\.product-media\s*{[^}]*width:\s*\d+rpx[^}]*height:\s*\d+rpx/is);
+  assert.match(wxss, /\.product-media\s*{[^}]*width:\s*150rpx[^}]*height:\s*150rpx/is);
   assert.match(wxss, /\.product-title\s*{[^}]*overflow:\s*hidden/is);
   assert.match(wxss, /\.product-price\s*{[^}]*color:\s*#(?:d|e|f)[0-9a-f]{5}/is);
   assert.match(wxss, /\.header-title\s*{[^}]*flex:\s*1;[^}]*min-width:\s*0/is);
@@ -611,13 +648,14 @@ test("detail updates the local favorite count after toggling", async () => {
   }
 });
 
-test("detail onLoad selects four stable video-related products without breaking comments", () => {
+test("detail onLoad selects four products for a Yuexiu video without breaking comments", () => {
   const app = {
     globalData: {
-      task_data: {},
+      task_data: { landscape: "sharepool" },
       community_current_item: {
         type: "post",
         post_id: "post-demo",
+        landscape: "001",
         title: "demo video",
         video_url: "video-1",
         target: { comments: 0, List: [] }
@@ -635,7 +673,6 @@ test("detail onLoad selects four stable video-related products without breaking 
 
     assert.ok(loading && typeof loading.then === "function");
     return loading.then(() => {
-      assert.strictEqual(pickProduct("video-1").id, "demo-travel-bottle");
       assert.deepStrictEqual(
         page.data.demoProducts,
         getRelatedProducts("video-1", 4)
@@ -646,6 +683,85 @@ test("detail onLoad selects four stable video-related products without breaking 
       assert.strictEqual(page.data.commentLoading, false);
       assert.deepStrictEqual(page.data.target.List, []);
     });
+  });
+});
+
+test("detail uses the current Yuexiu section for an older unmarked post", () => {
+  const app = {
+    globalData: {
+      task_data: { landscape: "001" },
+      community_current_item: {
+        type: "post",
+        post_id: "post-yuexiu-legacy",
+        video_url: "video-yuexiu-legacy",
+        target: { comments: 0, List: [] }
+      }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {}
+  };
+
+  return withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "post", id: "post-yuexiu-legacy" });
+
+    assert.strictEqual(page.data.demoProducts.length, 4);
+  });
+});
+
+test("detail does not add products to a video from another landscape", () => {
+  const app = {
+    globalData: {
+      task_data: { landscape: "001" },
+      community_current_item: {
+        type: "post",
+        post_id: "post-campus",
+        landscape: "002",
+        video_url: "video-campus",
+        target: { comments: 0, List: [] }
+      }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {}
+  };
+
+  return withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "post", id: "post-campus" });
+
+    assert.deepStrictEqual(page.data.demoProducts, []);
+  });
+});
+
+test("detail does not add products to an unmarked post in the public pool", () => {
+  const app = {
+    globalData: {
+      task_data: { landscape: "sharepool" },
+      community_current_item: {
+        type: "post",
+        post_id: "post-public",
+        video_url: "video-public",
+        target: { comments: 0, List: [] }
+      }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {}
+  };
+
+  return withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "post", id: "post-public" });
+
+    assert.deepStrictEqual(page.data.demoProducts, []);
   });
 });
 
@@ -685,6 +801,7 @@ test("detail keeps card pages on the card view with comments reachable", () => {
     assert.match(wxml, /class="comments"/);
     assert.doesNotMatch(wxml, /class="comments"[^>]+wx:if=/);
     assert.deepStrictEqual(page.data.demoProducts, []);
+    assert.match(wxml, /class="video-product-overlay"[^>]+wx:if="{{type === 'post' && demoProducts\.length && isVideoPlaying}}"/);
     assert.match(wxml, /class="product-banner"[^>]+wx:if="{{type === 'post' && demoProducts\.length}}"/);
   });
 });
