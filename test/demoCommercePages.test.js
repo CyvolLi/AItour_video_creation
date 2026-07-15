@@ -291,14 +291,12 @@ test("v_output renders the demo product overlay inside the video card", () => {
   const overlayStyle = wxss.match(
     /\.demo-product-overlay\s*{([^}]*)}/
   )[1];
-  const kickerStyle = wxss.match(/\.demo-product-kicker\s*{([^}]*)}/)[1];
   const titleStyle = wxss.match(/\.demo-product-title\s*{([^}]*)}/)[1];
   const priceStyle = wxss.match(/\.demo-product-price\s*{([^}]*)}/)[1];
   const ctaStyle = wxss.match(/\.demo-product-cta\s*{([^}]*)}/)[1];
   const overlayHeight = Number(overlayStyle.match(/height:\s*(\d+)rpx/)[1]);
   const overlayBottom = Number(overlayStyle.match(/bottom:\s*(\d+)rpx/)[1]);
   const overlayRight = Number(overlayStyle.match(/right:\s*(\d+)rpx/)[1]);
-  const kickerFontSize = Number(kickerStyle.match(/font-size:\s*(\d+)rpx/)[1]);
   const titleFontSize = Number(titleStyle.match(/font-size:\s*(\d+)rpx/)[1]);
   const priceFontSize = Number(priceStyle.match(/font-size:\s*(\d+)rpx/)[1]);
   const ctaFontSize = Number(ctaStyle.match(/font-size:\s*(\d+)rpx/)[1]);
@@ -315,10 +313,9 @@ test("v_output renders the demo product overlay inside the video card", () => {
     overlayRight >= 170,
     "overlay should leave enough video visible instead of spanning the full width"
   );
-  assert.ok(kickerFontSize >= 16, "overlay kicker should remain readable");
-  assert.ok(titleFontSize >= 20, "overlay title should remain readable");
-  assert.ok(priceFontSize >= 18, "overlay price should remain readable");
-  assert.ok(ctaFontSize >= 20, "overlay CTA should remain readable");
+  assert.ok(titleFontSize >= 24, "overlay title should remain readable");
+  assert.ok(priceFontSize >= 22, "overlay price should remain readable");
+  assert.ok(ctaFontSize >= 22, "overlay CTA should remain readable");
   assert.match(
     overlayStyle,
     /background-color:\s*rgba\(255,\s*255,\s*255,\s*0\.8[2-6]\)/,

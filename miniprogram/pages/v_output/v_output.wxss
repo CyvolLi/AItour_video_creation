@@ -104,28 +104,22 @@ home-back-button {
   color: #1c2a2b;
 }
 
-.demo-product-kicker {
-  color: #62827b;
-  font-size: 16rpx;
-  line-height: 17rpx;
-}
-
 .demo-product-title {
   max-width: 220rpx;
   overflow: hidden;
   color: #172524;
-  font-size: 20rpx;
+  font-size: 24rpx;
   font-weight: 700;
-  line-height: 21rpx;
+  line-height: 28rpx;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .demo-product-price {
   color: #ed613a;
-  font-size: 18rpx;
+  font-size: 22rpx;
   font-weight: 700;
-  line-height: 19rpx;
+  line-height: 24rpx;
 }
 
 .demo-product-cta {
@@ -134,7 +128,7 @@ home-back-button {
   padding: 0 8rpx;
   border-radius: 19rpx;
   color: #ffffff;
-  font-size: 20rpx;
+  font-size: 22rpx;
   font-weight: 700;
   line-height: 38rpx;
   background-color: #f28b3c;
