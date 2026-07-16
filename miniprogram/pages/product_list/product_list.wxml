@@ -38,7 +38,8 @@
         class="product-card"
         wx:for="{{filteredProducts}}"
         wx:key="id"
-        bindtap="showDemoProduct"
+        data-product-id="{{item.id}}"
+        bindtap="openDemoProduct"
         hover-class="product-card-active"
       >
         <view class="product-image-shell">

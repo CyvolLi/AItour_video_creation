@@ -86,6 +86,24 @@ Page({
     }
   },
 
+  openDemoProduct(event) {
+    const productId =
+      event &&
+      event.currentTarget &&
+      event.currentTarget.dataset &&
+      event.currentTarget.dataset.productId;
+
+    if (!productId) {
+      return;
+    }
+
+    wx.navigateTo({
+      url:
+        "/pages/demo_product/demo_product?id=" +
+        encodeURIComponent(productId)
+    });
+  },
+
   showDemoProduct() {
     wx.showToast({
       title: "演示商品，暂不支持购买",

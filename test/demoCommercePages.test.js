@@ -676,7 +676,8 @@ test("detail updates the local favorite count after toggling", async () => {
   }
 });
 
-test("detail onLoad selects four products for a Yuexiu video without breaking comments", () => {
+test("detail onLoad shows only the endorsed product without breaking comments", () => {
+  const endorsedProduct = pickProduct("video-1");
   const app = {
     globalData: {
       task_data: { landscape: "sharepool" },
@@ -686,6 +687,7 @@ test("detail onLoad selects four products for a Yuexiu video without breaking co
         landscape: "001",
         title: "demo video",
         video_url: "video-1",
+        endorsement_product: endorsedProduct,
         target: { comments: 0, List: [] }
       }
     }
@@ -703,9 +705,9 @@ test("detail onLoad selects four products for a Yuexiu video without breaking co
     return loading.then(() => {
       assert.deepStrictEqual(
         page.data.demoProducts,
-        getRelatedProducts("video-1", 4)
+        [endorsedProduct]
       );
-      assert.strictEqual(page.data.demoProducts.length, 4);
+      assert.strictEqual(page.data.demoProducts.length, 1);
       assert.strictEqual(page.data.featuredProduct, undefined);
       assert.strictEqual(page.data.item.post_id, "post-demo");
       assert.strictEqual(page.data.commentLoading, false);
@@ -714,7 +716,7 @@ test("detail onLoad selects four products for a Yuexiu video without breaking co
   });
 });
 
-test("detail uses the current Yuexiu section for an older unmarked post", () => {
+test("detail hides products when a post has no endorsed product", () => {
   const app = {
     globalData: {
       task_data: { landscape: "001" },
@@ -736,7 +738,7 @@ test("detail uses the current Yuexiu section for an older unmarked post", () => 
 
     await page.onLoad({ type: "post", id: "post-yuexiu-legacy" });
 
-    assert.strictEqual(page.data.demoProducts.length, 4);
+    assert.deepStrictEqual(page.data.demoProducts, []);
   });
 });
 
@@ -963,6 +965,7 @@ test("publish forces a generated string target_id into the payload", async () =>
     assert.deepStrictEqual(Object.keys(publishCalls[0]).sort(), [
       "card_id",
       "cover_url",
+      "endorsement_product",
       "landscape",
       "location_name",
       "openid",
@@ -977,15 +980,13 @@ test("publish forces a generated string target_id into the payload", async () =>
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
     );
     assert.strictEqual(publishCalls[0].target_id, generatedTargetId);
+    assert.deepStrictEqual(
+      publishCalls[0].endorsement_product,
+      page.data.endorsementCandidate
+    );
     assert.notStrictEqual(publishCalls[0].target_id, "target-demo");
     assert.notStrictEqual(publishCalls[0].target_id, "card-demo");
     assert.notStrictEqual(publishCalls[0].target_id, "none");
-    assert.strictEqual(
-      Object.keys(publishCalls[0]).some((key) =>
-        /product|endorsement|promotion|link/i.test(key)
-      ),
-      false
-    );
   });
 });
 
@@ -1083,6 +1084,13 @@ test("publish uses a default title when the title input is empty", async () => {
 
     assert.strictEqual(publishCalls.length, 1);
     assert.strictEqual(publishCalls[0].title, "旅行作品");
+    assert.strictEqual(
+      Object.prototype.hasOwnProperty.call(
+        publishCalls[0],
+        "endorsement_product"
+      ),
+      false
+    );
     assert.strictEqual(
       toastCalls.some((call) => call.title === "缺少发布信息"),
       false

@@ -4,11 +4,9 @@ const profileStore = require("../../utils/profileStore.js");
 const avatarStore = require("../../utils/avatarStore.js");
 const avatarRefresh = require("../../utils/avatarRefresh.js");
 const landscapeUtil = require("../../utils/landscape.js");
-const { getRelatedProducts } = require("../../utils/demoProducts.js");
 const app = getApp();
 
 const DEFAULT_USER_AVATAR = "../../images/default.jpg";
-const PRODUCT_LANDSCAPE_ID = "001";
 
 Page({
   data: {
@@ -132,11 +130,7 @@ Page({
     const target = item.target || item.Target || {};
     const type = options.type || item.type || "post";
     const id = options.id || item.post_id || item.card_id || "";
-    const productSeed = item.video_url || item.share_text || item.post_id || id;
-    const taskData = app.globalData.task_data || {};
-    const postLandscape = item.landscape || taskData.landscape || "sharepool";
-    const shouldShowDemoProducts =
-      type === "post" && postLandscape === PRODUCT_LANDSCAPE_ID;
+    const endorsedProduct = item.endorsement_product || null;
 
     return this.attachAuthorProfiles([item]).then((items) => {
       this.setData({
@@ -145,8 +139,8 @@ Page({
         targetId: options.target_id || item.target_id || "",
         item: items[0] || item,
         target: this.normalizeTarget(target),
-        demoProducts: shouldShowDemoProducts
-          ? getRelatedProducts(productSeed, 4)
+        demoProducts: type === "post" && endorsedProduct
+          ? [{ ...endorsedProduct }]
           : []
       });
 
