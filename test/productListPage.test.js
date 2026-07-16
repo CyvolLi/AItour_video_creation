@@ -48,6 +48,35 @@ function withProductListPage(wxStub, run) {
   }
 }
 
+function withDemoProductPage(wxStub, run) {
+  const modulePath = require.resolve(
+    "../miniprogram/pages/demo_product/demo_product.js"
+  );
+  const previousPage = global.Page;
+  const previousWx = global.wx;
+  const hadPage = Object.prototype.hasOwnProperty.call(global, "Page");
+  const hadWx = Object.prototype.hasOwnProperty.call(global, "wx");
+  let definition;
+
+  delete require.cache[modulePath];
+  global.Page = (value) => {
+    definition = value;
+  };
+  global.wx = wxStub;
+
+  try {
+    require(modulePath);
+    assert.ok(definition, "demo_product.js should register a Page definition");
+    return run(definition);
+  } finally {
+    delete require.cache[modulePath];
+    if (hadPage) global.Page = previousPage;
+    else delete global.Page;
+    if (hadWx) global.wx = previousWx;
+    else delete global.wx;
+  }
+}
+
 function createPageInstance(definition) {
   return {
     ...definition,
@@ -58,7 +87,7 @@ function createPageInstance(definition) {
   };
 }
 
-test("registers the product list and binds both detail product entries to it", () => {
+test("registers the demo product pages and binds detail entries to the list", () => {
   const appConfig = JSON.parse(
     fs.readFileSync(path.join(__dirname, "../miniprogram/app.json"), "utf8")
   );
@@ -68,6 +97,7 @@ test("registers the product list and binds both detail product entries to it", (
   );
 
   assert.ok(appConfig.pages.includes("pages/product_list/product_list"));
+  assert.ok(appConfig.pages.includes("pages/demo_product/demo_product"));
   assert.match(
     detailWxml,
     /class="video-product-overlay"[^>]+bindtap="openProductList"/
@@ -94,6 +124,70 @@ test("detail opens only the local product list page", () => {
     method[0],
     /request|openEmbeddedMiniProgram|navigateToMiniProgram/
   );
+});
+
+test("product list opens the local fake product detail page", () => {
+  const navigateCalls = [];
+  const wxStub = {
+    navigateTo(options) {
+      navigateCalls.push(options.url);
+    }
+  };
+
+  withProductListPage(wxStub, (definition) => {
+    const page = createPageInstance(definition);
+
+    assert.strictEqual(typeof page.openDemoProduct, "function");
+    page.openDemoProduct({
+      currentTarget: {
+        dataset: {
+          productId: "demo-travel-coffee"
+        }
+      }
+    });
+
+    assert.deepStrictEqual(navigateCalls, [
+      "/pages/demo_product/demo_product?id=demo-travel-coffee"
+    ]);
+  });
+});
+
+test("fake product detail loads the selected product locally", () => {
+  withDemoProductPage({}, (definition) => {
+    const page = createPageInstance(definition);
+
+    assert.strictEqual(typeof page.onLoad, "function");
+    page.onLoad({ id: "demo-local-snacks" });
+
+    assert.strictEqual(page.data.product.id, "demo-local-snacks");
+    assert.strictEqual(page.data.product.sales, 203);
+  });
+});
+
+test("provides a fake product detail page with inert purchase buttons", () => {
+  const appConfig = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "../miniprogram/app.json"), "utf8")
+  );
+  const pageRoot = path.join(
+    __dirname,
+    "../miniprogram/pages/demo_product/demo_product"
+  );
+  const wxml = fs.readFileSync(pageRoot + ".wxml", "utf8");
+  const wxss = fs.readFileSync(pageRoot + ".wxss", "utf8");
+  const json = JSON.parse(fs.readFileSync(pageRoot + ".json", "utf8"));
+
+  assert.ok(appConfig.pages.includes("pages/demo_product/demo_product"));
+  assert.strictEqual(json.navigationStyle, "custom");
+  assert.match(wxml, /src="{{product\.imageUrl}}"/);
+  assert.match(wxml, /{{product\.price}}/);
+  assert.match(wxml, /{{product\.title}}/);
+  assert.match(wxml, /class="gift-button"[^>]*>送朋友</);
+  assert.match(wxml, /class="buy-button"[^>]*>购买</);
+  assert.doesNotMatch(wxml, /gift-button[^>]+bindtap|buy-button[^>]+bindtap/);
+  assert.doesNotMatch(wxml, /hero-dots|class="dot/);
+  assert.match(wxss, /\.hero-image\s*{[^}]*width:\s*100%[^}]*height:\s*\d+rpx/is);
+  assert.match(wxss, /\.bottom-bar\s*{[^}]*position:\s*fixed/is);
+  assert.doesNotMatch(wxss, /\.hero-dots\s*{|\.dot(?:\.active)?\s*{/);
 });
 
 test("provides all four files required by the registered page", () => {
@@ -204,6 +298,8 @@ test("renders a reference-aligned two-column catalog", () => {
   assert.match(wxml, /src="{{item.imageUrl}}"/);
   assert.match(wxml, /{{item.title}}/);
   assert.match(wxml, /{{item.price}}/);
+  assert.match(wxml, /bindtap="openDemoProduct"/);
+  assert.match(wxml, /data-product-id="{{item.id}}"/);
   assert.match(wxml, /已售{{item.sales}}/);
   assert.match(wxml, /wx:if="{{!filteredProducts.length}}"/);
   assert.match(wxml, /bindtap="showCheckoutNotice"/);

@@ -111,20 +111,26 @@ Page({
 
     const title = (this.data.title || "").trim() || "旅行作品";
 
+    const payload = {
+      openid,
+      target_id: this.data.targetId,
+      card_id: this.data.cardId || "none",
+      landscape: app.globalData.task_data.landscape || "sharepool",
+      title,
+      cover_url: this.data.coverUrl || "",
+      video_url: this.data.videoUrl,
+      share_text: this.data.shareText || "",
+      location_name: (this.data.locationName || "").trim()
+    };
+
+    if (this.data.endorsementEnabled && this.data.endorsementProduct) {
+      payload.endorsement_product = { ...this.data.endorsementProduct };
+    }
+
     this.setData({ publishing: true });
 
     communityService
-      .apiCommunityPostPublish({
-        openid,
-        target_id: this.data.targetId,
-        card_id: this.data.cardId || "none",
-        landscape: app.globalData.task_data.landscape || "sharepool",
-        title,
-        cover_url: this.data.coverUrl || "",
-        video_url: this.data.videoUrl,
-        share_text: this.data.shareText || "",
-        location_name: (this.data.locationName || "").trim()
-      })
+      .apiCommunityPostPublish(payload)
       .then(() => {
         app.globalData.video_url = "";
         app.globalData.final_response = "";

@@ -1,0 +1,286 @@
+page {
+  background: #f7f7f7;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(132rpx + env(safe-area-inset-bottom));
+  background: #f7f7f7;
+  color: #111;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+
+.hero-image {
+  display: block;
+  width: 100%;
+  height: 720rpx;
+  background: #e8ecea;
+}
+
+.floating-nav {
+  position: absolute;
+  top: 48rpx;
+  right: 24rpx;
+  left: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.42);
+  color: #fff;
+  font-size: 54rpx;
+  line-height: 1;
+}
+
+.search-icon {
+  position: relative;
+}
+
+.search-icon::before {
+  width: 24rpx;
+  height: 24rpx;
+  border: 5rpx solid #fff;
+  border-radius: 50%;
+  content: "";
+}
+
+.search-icon::after {
+  position: absolute;
+  right: 19rpx;
+  bottom: 20rpx;
+  width: 18rpx;
+  height: 5rpx;
+  border-radius: 3rpx;
+  background: #fff;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.nav-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex: 1;
+  height: 70rpx;
+  border-radius: 36rpx;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 28rpx;
+}
+
+.cart-symbol {
+  font-size: 38rpx;
+  transform: rotate(2deg);
+}
+
+.store-symbol {
+  font-size: 28rpx;
+}
+
+.more-symbol {
+  font-size: 36rpx;
+}
+
+.product-panel {
+  padding: 34rpx 34rpx 28rpx;
+  background: #fff;
+}
+
+.price-row,
+.title-row,
+.info-row,
+.bottom-bar {
+  display: flex;
+  align-items: center;
+}
+
+.price-row {
+  justify-content: space-between;
+}
+
+.price {
+  color: #f45b48;
+  font-size: 58rpx;
+  font-weight: 800;
+}
+
+.sales {
+  color: #9a9a9a;
+  font-size: 28rpx;
+}
+
+.title-row {
+  align-items: flex-start;
+  margin-top: 30rpx;
+}
+
+.product-title {
+  flex: 1;
+  min-width: 0;
+  color: #111;
+  font-size: 38rpx;
+  font-weight: 700;
+  line-height: 1.42;
+}
+
+.like-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 86rpx;
+  margin-left: 22rpx;
+  color: #111;
+}
+
+.heart {
+  font-size: 58rpx;
+  line-height: 1;
+}
+
+.like-text {
+  margin-top: 4rpx;
+  font-size: 24rpx;
+}
+
+.info-row {
+  margin-top: 36rpx;
+}
+
+.info-label {
+  width: 88rpx;
+  color: #9d9d9d;
+  font-size: 31rpx;
+}
+
+.info-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-main {
+  color: #2a2a2a;
+  font-size: 32rpx;
+  font-weight: 650;
+}
+
+.info-sub {
+  margin-top: 6rpx;
+  color: #b2b2b2;
+  font-size: 25rpx;
+}
+
+.guarantee {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  color: #2a2a2a;
+  font-size: 32rpx;
+  font-weight: 650;
+}
+
+.chevron {
+  color: #bbb;
+  font-size: 58rpx;
+  line-height: 1;
+}
+
+.review-section {
+  display: flex;
+  align-items: center;
+  margin-top: 18rpx;
+  padding: 42rpx 34rpx;
+  background: #fff;
+}
+
+.review-title {
+  color: #111;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.review-empty {
+  margin-left: 28rpx;
+  color: #b7b7b7;
+  font-size: 30rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  box-sizing: border-box;
+  height: calc(118rpx + env(safe-area-inset-bottom));
+  padding: 12rpx 24rpx calc(12rpx + env(safe-area-inset-bottom));
+  gap: 18rpx;
+  background: #fff;
+  box-shadow: 0 -6rpx 22rpx rgba(0, 0, 0, 0.06);
+}
+
+.tool-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 74rpx;
+  color: #111;
+  font-size: 22rpx;
+}
+
+.tool-icon {
+  font-size: 38rpx;
+  line-height: 1;
+}
+
+.tool-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78rpx;
+  height: 78rpx;
+  border-radius: 18rpx;
+  background: #f7f7f7;
+  color: #111;
+  font-size: 42rpx;
+}
+
+.gift-button,
+.buy-button {
+  flex: 1;
+  height: 78rpx;
+  margin: 0;
+  border: 0;
+  border-radius: 18rpx;
+  font-size: 31rpx;
+  font-weight: 700;
+  line-height: 78rpx;
+}
+
+.gift-button::after,
+.buy-button::after {
+  border: 0;
+}
+
+.gift-button {
+  background: #f8efe3;
+  color: #333;
+}
+
+.buy-button {
+  background: #ff5a45;
+  color: #fff;
+}
