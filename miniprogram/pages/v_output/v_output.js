@@ -49,7 +49,12 @@ Page({
   },
 
   backToGenerate() {
-    app.globalData.task_data.count = 0;
+    if (typeof app.resetTaskData === "function") {
+      app.resetTaskData();
+    } else {
+      app.globalData.task_data.count = 0;
+    }
+
     wx.redirectTo({
       url: "/pages/mode_select/mode_select"
     });

@@ -87,6 +87,12 @@ Page({
     });
   },
 
+  goProfile() {
+    wx.reLaunch({
+      url: "/pages/profile/profile"
+    });
+  },
+
   publishPost() {
     if (this.data.publishing) {
       return;
@@ -114,7 +120,8 @@ Page({
       cover_url: this.data.coverUrl || "",
       video_url: this.data.videoUrl,
       share_text: this.data.shareText || "",
-      location_name: (this.data.locationName || "").trim()
+      location_name: (this.data.locationName || "").trim(),
+      endorsement_enabled: this.data.endorsementEnabled
     };
 
     if (this.data.endorsementEnabled && this.data.endorsementProduct) {

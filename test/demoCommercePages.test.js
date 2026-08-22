@@ -716,7 +716,7 @@ test("detail onLoad shows only the endorsed product without breaking comments", 
   });
 });
 
-test("detail hides products when a post has no endorsed product", () => {
+test("detail auto-fills a local demo product for legacy posts without endorsement metadata", () => {
   const app = {
     globalData: {
       task_data: { landscape: "001" },
@@ -724,6 +724,7 @@ test("detail hides products when a post has no endorsed product", () => {
         type: "post",
         post_id: "post-yuexiu-legacy",
         video_url: "video-yuexiu-legacy",
+        share_text: "legacy travel story",
         target: { comments: 0, List: [] }
       }
     }
@@ -738,11 +739,47 @@ test("detail hides products when a post has no endorsed product", () => {
 
     await page.onLoad({ type: "post", id: "post-yuexiu-legacy" });
 
+    assert.deepStrictEqual(page.data.demoProducts, [
+      { ...pickProduct("video-yuexiu-legacy") }
+    ]);
+    assert.strictEqual(
+      Object.prototype.hasOwnProperty.call(
+        app.globalData.community_current_item,
+        "endorsement_product"
+      ),
+      false
+    );
+  });
+});
+
+test("detail hides products for new posts explicitly published without endorsement", () => {
+  const app = {
+    globalData: {
+      task_data: { landscape: "sharepool" },
+      community_current_item: {
+        type: "post",
+        post_id: "post-new-without-endorsement",
+        video_url: "video-new-without-endorsement",
+        endorsement_enabled: false,
+        target: { comments: 0, List: [] }
+      }
+    }
+  };
+  const wxStub = {
+    cloud: null,
+    showToast() {}
+  };
+
+  return withDetailPage(app, wxStub, async (pageDefinition) => {
+    const page = createPageInstance(pageDefinition);
+
+    await page.onLoad({ type: "post", id: "post-new-without-endorsement" });
+
     assert.deepStrictEqual(page.data.demoProducts, []);
   });
 });
 
-test("detail does not add products to a video from another landscape", () => {
+test("detail keeps explicitly unendorsed posts hidden across landscapes", () => {
   const app = {
     globalData: {
       task_data: { landscape: "001" },
@@ -751,6 +788,7 @@ test("detail does not add products to a video from another landscape", () => {
         post_id: "post-campus",
         landscape: "002",
         video_url: "video-campus",
+        endorsement_enabled: false,
         target: { comments: 0, List: [] }
       }
     }
@@ -769,7 +807,7 @@ test("detail does not add products to a video from another landscape", () => {
   });
 });
 
-test("detail does not add products to an unmarked post in the public pool", () => {
+test("detail keeps explicitly unendorsed public posts hidden", () => {
   const app = {
     globalData: {
       task_data: { landscape: "sharepool" },
@@ -777,6 +815,7 @@ test("detail does not add products to an unmarked post in the public pool", () =
         type: "post",
         post_id: "post-public",
         video_url: "video-public",
+        endorsement_enabled: false,
         target: { comments: 0, List: [] }
       }
     }
@@ -965,6 +1004,7 @@ test("publish forces a generated string target_id into the payload", async () =>
     assert.deepStrictEqual(Object.keys(publishCalls[0]).sort(), [
       "card_id",
       "cover_url",
+      "endorsement_enabled",
       "endorsement_product",
       "landscape",
       "location_name",
@@ -980,6 +1020,7 @@ test("publish forces a generated string target_id into the payload", async () =>
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
     );
     assert.strictEqual(publishCalls[0].target_id, generatedTargetId);
+    assert.strictEqual(publishCalls[0].endorsement_enabled, true);
     assert.deepStrictEqual(
       publishCalls[0].endorsement_product,
       page.data.endorsementCandidate
@@ -1084,6 +1125,7 @@ test("publish uses a default title when the title input is empty", async () => {
 
     assert.strictEqual(publishCalls.length, 1);
     assert.strictEqual(publishCalls[0].title, "旅行作品");
+    assert.strictEqual(publishCalls[0].endorsement_enabled, false);
     assert.strictEqual(
       Object.prototype.hasOwnProperty.call(
         publishCalls[0],

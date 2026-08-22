@@ -1,9 +1,10 @@
 ﻿import WxRequest from "mina-request";
 
 const app = getApp();
+const serviceConfig = require("../../utils/serviceConfig.js");
 
 const wxRequest = new WxRequest({
-  baseURL: "https://ruralv.cn"
+  baseURL: serviceConfig.API_BASE_URL
 });
 
 const DEFAULT_USER_AVATAR = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";

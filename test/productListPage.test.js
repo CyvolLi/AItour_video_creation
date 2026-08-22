@@ -310,9 +310,12 @@ test("renders a reference-aligned two-column catalog", () => {
   );
   assert.match(
     wxss,
-    /\.product-grid\s*{[^}]*display:\s*flex[^}]*flex-wrap:\s*wrap/is
+    /\.product-grid\s*{[^}]*display:\s*flex[^}]*flex-wrap:\s*wrap[^}]*justify-content:\s*space-between/is
   );
-  assert.match(wxss, /\.product-card\s*{[^}]*width:\s*calc\(50%/is);
+  assert.match(wxss, /\.product-grid\s*{[^}]*row-gap:\s*20rpx/is);
+  assert.match(wxss, /\.product-card\s*{[^}]*width:\s*48%/is);
+  assert.doesNotMatch(wxss, /\.product-grid\s*{[^}]*[\r\n]\s*gap\s*:/is);
+  assert.doesNotMatch(wxss, /\.product-card\s*{[^}]*width:\s*calc\(50%/is);
   assert.match(wxss, /env\(safe-area-inset-bottom\)/);
   assert.doesNotMatch(
     wxss,

@@ -2,9 +2,10 @@
 import WxRequest from "mina-request";
 
 const app = getApp();
+const serviceConfig = require("../../utils/serviceConfig.js");
 
 const wxRequest = new WxRequest({
-  baseURL: "https://ruralv.cn"
+  baseURL: serviceConfig.API_BASE_URL
 });
 
 Page({
@@ -326,4 +327,3 @@ Page({
     }, 400);
   }
 });
-

@@ -32,15 +32,22 @@ Page({
   },
 
   onLoad() {
+    this.profileLoadedOnce = false;
     this.setData({
       userInfo: app.globalData.userInfo || {}
     });
     this.refreshCurrentUserInfo();
-    this.loadProfile();
+    return this.loadProfile();
   },
 
   onShow() {
-    this.refreshCurrentUserInfo();
+    const refreshUserInfo = this.refreshCurrentUserInfo();
+
+    if (!this.profileLoadedOnce) {
+      return refreshUserInfo;
+    }
+
+    return Promise.resolve(refreshUserInfo).then(() => this.refreshPrimaryTabs());
   },
 
   refreshCurrentUserInfo() {
@@ -80,22 +87,29 @@ Page({
   loadProfile() {
     const openid = app.globalData.task_data && app.globalData.task_data.openid;
 
+    if (!openid && app.userInfoReady && typeof app.userInfoReady.then === "function") {
+      return app.userInfoReady.then(() => this.loadProfile());
+    }
+
     if (!openid) {
       wx.showToast({
-        title: "用户未初始化",
+        title: "用户初始化失败，请稍后重试",
         icon: "none"
       });
       return;
     }
 
-    profileStore
+    return profileStore
       .ensureProfile(openid)
       .then((profile) => {
         this.setData({ profile });
-        this.loadTab(this.data.activeTab);
+        return this.refreshPrimaryTabs();
       })
       .catch((err) => {
         console.error("profile 加载失败", err);
+      })
+      .finally(() => {
+        this.profileLoadedOnce = true;
       });
   },
 
@@ -128,7 +142,106 @@ Page({
     };
     const request = map[tab];
 
-    return request ? request(payload) : Promise.resolve({ data: { list: [] } });
+    if (!request) {
+      return Promise.resolve({ data: { list: [] } });
+    }
+
+    return request(payload).then((resp) => {
+      if (tab !== "mycard") {
+        return resp;
+      }
+
+      const list = this.getResponseList(resp);
+
+      if (list.length) {
+        return resp;
+      }
+
+      return this.requestLegacyMycardList(payload && payload.openid).then(
+        (legacyList) => {
+          if (!legacyList.length) {
+            return resp;
+          }
+
+          return {
+            ...resp,
+            data: {
+              ...((resp && resp.data) || {}),
+              list: legacyList
+            }
+          };
+        }
+      );
+    });
+  },
+
+  getResponseList(resp) {
+    const data = resp && resp.data ? resp.data : {};
+    return Array.isArray(data.list) ? data.list : [];
+  },
+
+  getAuthorOpenid(item) {
+    return (
+      (item &&
+        (item.openid ||
+          item.author_openid ||
+          item.user_openid ||
+          item.creator_openid ||
+          item.creatorOpenid)) ||
+      ""
+    );
+  },
+
+  dedupeByCardId(list) {
+    const seen = {};
+    const result = [];
+
+    (Array.isArray(list) ? list : []).forEach((item) => {
+      const id = item && (item.card_id || item.target_id || item.id);
+
+      if (!id || seen[id]) {
+        return;
+      }
+
+      seen[id] = true;
+      result.push(item);
+    });
+
+    return result;
+  },
+
+  requestLegacyMycardList(openid) {
+    if (!openid || !communityService.apiCommunityCard) {
+      return Promise.resolve([]);
+    }
+
+    const taskData = app.globalData.task_data || {};
+    const currentLandscape = taskData.landscape || "sharepool";
+    const landscapes = Array.from(
+      new Set([currentLandscape, "sharepool", "001", "002"].filter(Boolean))
+    );
+
+    return Promise.all(
+      landscapes.map((landscape) =>
+        communityService
+          .apiCommunityCard({
+            page: 1,
+            page_size: 100,
+            landscape
+          })
+          .then((resp) => this.getResponseList(resp))
+          .catch((err) => {
+            console.warn("legacy mycard fallback failed", err);
+            return [];
+          })
+      )
+    ).then((groups) =>
+      this.dedupeByCardId(
+        groups
+          .reduce((all, list) => all.concat(list), [])
+          .filter((item) => this.getAuthorOpenid(item) === openid)
+      )
+    );
   },
 
   attachAuthorProfiles(list) {
@@ -200,17 +313,57 @@ Page({
     };
   },
 
+  loadProfileList(tab) {
+    const payload = this.getPayload(tab);
+
+    return this.requestProfileList(tab, payload)
+      .then((resp) => this.getResponseList(resp))
+      .then((list) => this.attachAuthorProfiles(list));
+  },
+
+  refreshPrimaryTabs() {
+    this.setData({ loading: true });
+
+    return Promise.all([
+      this.loadProfileList("mypost"),
+      this.loadProfileList("mycard")
+    ])
+      .then(([mypost, mycard]) => {
+        const nextCache = {
+          ...this.data.cache,
+          mypost,
+          mycard
+        };
+        const update = {
+          cache: nextCache
+        };
+
+        if (this.data.activeTab === "mypost") {
+          update.currentList = mypost;
+        }
+
+        if (this.data.activeTab === "mycard") {
+          update.currentList = mycard;
+        }
+
+        this.setData(update);
+      })
+      .catch((err) => {
+        console.error("profile primary tabs refresh failed", err);
+        wx.showToast({
+          title: "加载失败",
+          icon: "none"
+        });
+      })
+      .finally(() => {
+        this.setData({ loading: false });
+      });
+  },
+
   loadTab(tab) {
   this.setData({ loading: true });
 
-  const payload = this.getPayload(tab);
-
-  this.requestProfileList(tab, payload)
-    .then((resp) => {
-      const data = resp && resp.data ? resp.data : {};
-      const list = Array.isArray(data.list) ? data.list : [];
-      return this.attachAuthorProfiles(list);
-    })
+  return this.loadProfileList(tab)
     .then((list) => {
       const nextCache = {
         ...this.data.cache,
@@ -232,6 +385,23 @@ Page({
     .finally(() => {
       this.setData({ loading: false });
     });
+  },
+
+  preloadTab(tab) {
+    return this.loadProfileList(tab)
+      .then((list) => {
+        const nextCache = {
+          ...this.data.cache,
+          [tab]: list
+        };
+
+        this.setData({
+          cache: nextCache
+        });
+      })
+      .catch((err) => {
+        console.warn("profile preload failed", err);
+      });
   },
 
   openDetail(e) {

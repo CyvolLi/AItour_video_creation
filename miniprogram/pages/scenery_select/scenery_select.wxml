@@ -9,20 +9,24 @@
       </view>
     </view>
 
-<scroll-view class="feature-scroll" scroll-x>
-  <view class="feature-grid">
-    <block wx:for="{{spotList}}" wx:key="id">
-      <view
-        class="feature-card {{current === index ? 'active' : ''}}"
-        data-index="{{index}}"
-        bindtap="selectSpot"
-      >
-        <image class="feature-image" src="{{item.cover}}" mode="aspectFill"></image>
-        <view class="tag">#{{item.text}}</view>
-      </view>
-    </block>
-  </view>
-</scroll-view>
+<view class="feature-scroll-wrap">
+  <view class="feature-scroll-hint feature-scroll-hint-left">‹</view>
+  <scroll-view class="feature-scroll" scroll-x>
+    <view class="feature-grid">
+      <block wx:for="{{spotList}}" wx:key="id">
+        <view
+          class="feature-card {{current === index ? 'active' : ''}}"
+          data-index="{{index}}"
+          bindtap="selectSpot"
+        >
+          <image class="feature-image" src="{{item.cover}}" mode="aspectFill"></image>
+          <view class="tag">#{{item.text}}</view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+  <view class="feature-scroll-hint feature-scroll-hint-right">›</view>
+</view>
 
     <view class="recommend-panel">
       <view class="recommend-head">
@@ -53,4 +57,3 @@
     </view>
    <button class="confirm-btn" bindtap="confirmSelection">选好啦~就这个模板</button>
   </scroll-view>
-

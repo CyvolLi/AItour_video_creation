@@ -20,7 +20,8 @@
     "pages/demo_product/demo_product",
     "pages/publish/publish",
     "pages/card_publish/card_publish",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/profile_test/profile_test"
   ],
   "window": {
     "backgroundColor": "#F0FAFA",

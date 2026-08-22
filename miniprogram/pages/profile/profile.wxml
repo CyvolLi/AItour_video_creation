@@ -1,5 +1,4 @@
 <view class="page">
-  <!-- 发布菜单遮罩层 -->
   <view class="publish-overlay {{showPublishMenu ? 'show' : ''}}" bindtap="hidePublishMenu" catchtouchmove="preventMove"></view>
 
   <view class="delete-overlay {{deleteConfirmVisible ? 'show' : ''}}" catchtouchmove="preventMove">
@@ -12,32 +11,30 @@
       </view>
     </view>
   </view>
-  
-  <!-- 发布菜单弹出层 -->
+
   <view class="publish-menu {{showPublishMenu ? 'show' : ''}}">
-  <view class="menu-item" catchtap="goPublishPost">
-    <view class="menu-icon">
-      <view class="post-symbol">
-        <view class="post-symbol-play"></view>
+    <view class="menu-item" catchtap="goPublishPost">
+      <view class="menu-icon">
+        <view class="post-symbol">
+          <view class="post-symbol-play"></view>
+        </view>
       </view>
+      <text class="menu-text">发布视频帖子</text>
     </view>
-    <text class="menu-text">发布视频帖子</text>
-  </view>
-  <view class="menu-item" catchtap="goCreateTemplate">
-    <view class="menu-icon">
-      <view class="template-symbol">
-        <view class="template-symbol-grid"></view>
+    <view class="menu-item" catchtap="goCreateTemplate">
+      <view class="menu-icon">
+        <view class="template-symbol">
+          <view class="template-symbol-grid"></view>
+        </view>
       </view>
+      <text class="menu-text">制作视频模板</text>
     </view>
-    <text class="menu-text">制作视频模板</text>
   </view>
-</view>
 
   <view class="profile-head">
     <view class="top-user-icon"></view>
     <view class="title-row">
-      <text class="profile-title">Profile</text>
-      <view class="edit-icon"></view>
+      <text class="profile-title">个人主页</text>
     </view>
     <view class="identity-row">
       <view class="avatar-wrap">
@@ -47,15 +44,13 @@
         </view>
       </view>
       <view class="identity">
-        <view>Name: {{userInfo.nickName || '用户'}}</view>
-        <view>ID: @{{profile.openid || 'user'}}</view>
-        <view class="follow-row">Following: 10   Friends: 9</view>
+        <view class="identity-name">{{userInfo.nickName || '用户'}}</view>
+        <view class="identity-desc">记录旅途灵感与真实作品</view>
+        <view class="work-summary">
+          <text>作品 {{cache.mypost.length || 0}}</text>
+          <text>模板 {{cache.mycard.length || 0}}</text>
+        </view>
       </view>
-    </view>
-    <view class="chip-row">
-      <view class="chip">⊛ Add friends</view>
-      <view class="chip">⊛ Student</view>
-      <view class="chip">⊛ Designer</view>
     </view>
   </view>
 
@@ -68,32 +63,31 @@
     <view class="tab {{activeTab === 'card_liked' ? 'active' : ''}}" data-tab="card_liked" bindtap="switchTab">收藏模板</view>
   </view>
 
-<scroll-view class="grid-scroll" scroll-y>
-  <view class="grid">
-    <block wx:for="{{currentList}}" wx:key="target_id">
-      <view class="work-card" bindtap="openDetail" bindlongpress="showDeleteButton" data-index="{{index}}">
-        <view
-          wx:if="{{(activeTab === 'mypost' || activeTab === 'mycard') && deleteTargetIndex === index}}"
-          class="delete-badge"
-          data-index="{{index}}"
-          catchtap="deleteCurrentItem"
-        >×</view>
-        <view class="card-container">
-          <image class="thumb" src="{{item.cover_url || item.image_url}}" mode="aspectFill"></image>
-          <!-- 根据 post_id 判断类型显示标题 -->
-          <view class="card-title" wx:if="{{item.post_id && item.title}}">
-            <text class="title-text">{{item.title}}</text>
-          </view>
-          <view class="card-title" wx:elif="{{!item.post_id && item.emotion_text}}">
-            <text class="title-text">{{item.emotion_text}}</text>
+  <scroll-view class="grid-scroll" scroll-y>
+    <view class="grid">
+      <block wx:for="{{currentList}}" wx:key="target_id">
+        <view class="work-card" bindtap="openDetail" bindlongpress="showDeleteButton" data-index="{{index}}">
+          <view
+            wx:if="{{(activeTab === 'mypost' || activeTab === 'mycard') && deleteTargetIndex === index}}"
+            class="delete-badge"
+            data-index="{{index}}"
+            catchtap="deleteCurrentItem"
+          >×</view>
+          <view class="card-container">
+            <image class="thumb" src="{{item.cover_url || item.image_url}}" mode="aspectFill"></image>
+            <view class="card-title" wx:if="{{item.post_id && item.title}}">
+              <text class="title-text">{{item.title}}</text>
+            </view>
+            <view class="card-title" wx:elif="{{!item.post_id && item.emotion_text}}">
+              <text class="title-text">{{item.emotion_text}}</text>
+            </view>
           </view>
         </view>
-      </view>
-    </block>
-  </view>
-  <view class="empty" wx:if="{{!loading && currentList.length === 0}}">暂无内容</view>
-  <view class="empty" wx:if="{{loading}}">加载中...</view>
-</scroll-view>
+      </block>
+    </view>
+    <view class="empty" wx:if="{{!loading && currentList.length === 0}}">暂无内容</view>
+    <view class="empty" wx:if="{{loading}}">加载中...</view>
+  </scroll-view>
 
   <view class="bottom-dock">
     <view class="nav-icon" bindtap="goCommunity">

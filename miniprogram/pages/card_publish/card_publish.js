@@ -1,4 +1,6 @@
 const communityService = require("../../utils/communityService.js");
+const profileStore = require("../../utils/profileStore.js");
+const { createTargetId } = require("../../utils/targetId.js");
 const app = getApp();
 
 Page({
@@ -7,7 +9,14 @@ Page({
     title: "",
     emotionText: "",
     locationName: "",
+    targetId: "",
     publishing: false
+  },
+
+  onLoad() {
+    this.setData({
+      targetId: createTargetId()
+    });
   },
 
   chooseImage() {
@@ -86,15 +95,29 @@ Page({
     }
 
     this.setData({ publishing: true });
+    const targetId = this.data.targetId || createTargetId();
 
-    communityService
+    return communityService
       .apiCommunityCardPublish({
         openid,
+        target_id: targetId,
         landscape: app.globalData.task_data.landscape || "sharepool",
         image_url: this.data.imageUrl,
         emotion_text: this.data.emotionText,
         title: this.data.title || "旅行卡片",
         location_name: (this.data.locationName || "").trim()
+      })
+      .then((resp) => {
+        const data = resp && resp.data ? resp.data : {};
+        const card = data.card || {};
+        const createdCardId =
+          data.card_id || card.card_id || data.target_id || card.target_id || targetId;
+
+        return profileStore
+          .saveCreatedId(openid, "card", createdCardId)
+          .catch((err) => {
+            console.warn("模板归属记录失败，稍后可通过刷新重试", err);
+          });
       })
       .then(() => {
         wx.showToast({

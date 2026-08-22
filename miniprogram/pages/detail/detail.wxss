@@ -457,6 +457,10 @@ page {
   text-align: center;
 }
 
+.comment-error {
+  color: #9a6a34;
+}
+
 .comment-editor-bottom {
   display: flex;
   align-items: center;

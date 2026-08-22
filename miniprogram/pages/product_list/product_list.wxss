@@ -157,12 +157,13 @@ page {
 .product-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  justify-content: space-between;
+  row-gap: 20rpx;
 }
 
 .product-card {
   box-sizing: border-box;
-  width: calc(50% - 10rpx);
+  width: 48%;
   overflow: hidden;
   border: 1rpx solid rgba(85, 132, 115, 0.16);
   border-radius: 28rpx;

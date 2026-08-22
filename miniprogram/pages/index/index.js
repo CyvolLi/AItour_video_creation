@@ -57,31 +57,53 @@ Page({
     });
   },
 
-  enterCommunity() {
-    if (this.data.entering) {
-      return;
+  getReadyOpenid() {
+    const currentTaskData = app.globalData.task_data || {};
+
+    if (currentTaskData.openid) {
+      return Promise.resolve(currentTaskData.openid);
     }
 
-    const openid = app.globalData.task_data && app.globalData.task_data.openid;
+    if (app.userInfoReady && typeof app.userInfoReady.then === "function") {
+      return app.userInfoReady.then(() => {
+        const nextTaskData = app.globalData.task_data || {};
+        return nextTaskData.openid || "";
+      });
+    }
+
+    return Promise.resolve("");
+  },
+
+  enterCommunity() {
+    if (this.data.entering) {
+      return Promise.resolve();
+    }
+
     const userInfo = {
       nickName: this.data.nickName || "用户",
       avatarUrl: this.data.avatarUrl === DEFAULT_AVATAR ? "" : this.data.avatarUrl,
       avatarFileID: this.data.avatarFileID
     };
 
-    if (!openid) {
-      wx.showToast({
-        title: "用户未初始化",
-        icon: "none"
-      });
-      return;
-    }
-
     this.setData({ entering: true });
 
-    avatarStore
-      .saveUserInfo(openid, userInfo)
+    return this.getReadyOpenid()
+      .then((openid) => {
+        if (!openid) {
+          wx.showToast({
+            title: "用户初始化失败，请稍后重试",
+            icon: "none"
+          });
+          return null;
+        }
+
+        return avatarStore.saveUserInfo(openid, userInfo);
+      })
       .then((savedUserInfo) => {
+        if (!savedUserInfo) {
+          return;
+        }
+
         app.globalData.userInfo = savedUserInfo;
 
         wx.redirectTo({

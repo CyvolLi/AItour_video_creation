@@ -94,7 +94,8 @@
         </view>
       </block>
       <view class="empty" wx:if="{{commentLoading}}">评论加载中...</view>
-      <view class="empty" wx:if="{{!commentLoading && (!target.List || target.List.length === 0)}}">暂无评论</view>
+      <view class="empty comment-error" wx:if="{{commentError}}">{{commentError}}</view>
+      <view class="empty" wx:if="{{!commentLoading && !commentError && (!target.List || target.List.length === 0)}}">暂无评论</view>
 
       <view class="comment-editor-bottom">
         <textarea class="comment-input" value="{{commentInput}}" bindinput="onCommentInput" placeholder="写下你的评论" maxlength="300"></textarea>

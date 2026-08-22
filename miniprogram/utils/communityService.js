@@ -1,6 +1,7 @@
 const COMMUNITY_API = require("./communityApi.js");
+const serviceConfig = require("./serviceConfig.js");
 
-const BASE_URL = "https://ruralv.cn";
+const BASE_URL = serviceConfig.API_BASE_URL;
 
 function post(url, data) {
   return new Promise((resolve, reject) => {

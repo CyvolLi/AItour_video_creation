@@ -9,13 +9,20 @@ Page({
   },
 
   official() {
+    if (typeof app.resetTaskData === "function") {
+      app.resetTaskData();
+    }
+
     wx.navigateTo({
       url: "../scenery_select/scenery_select",
     });
   },
 
   personalize() {
-    app.globalData.task_data.card_id = "";
+    if (typeof app.resetTaskData === "function") {
+      app.resetTaskData();
+    }
+
     wx.navigateTo({
       url: "../user_custom1/user_custom1",
     });

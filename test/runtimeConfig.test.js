@@ -25,7 +25,7 @@ test("uses the competition mini program app id", () => {
 test("exports the configured cloud environment and store defaults", () => {
   assert.strictEqual(
     runtimeConfig.CLOUD_ENV_ID,
-    "cloudbase-d2g8dvtluc8d8face"
+    "cloud1-5g34ybsmbfe89727"
   );
   assert.strictEqual(runtimeConfig.STORE_APPID, "wxde7b459287c6bc1b");
   assert.strictEqual(runtimeConfig.DEFAULT_PRODUCT_ID, "10001033506602");
@@ -33,7 +33,7 @@ test("exports the configured cloud environment and store defaults", () => {
 
 test("builds cloud initialization options", () => {
   assert.deepStrictEqual(runtimeConfig.getCloudInitOptions(), {
-    env: "cloudbase-d2g8dvtluc8d8face",
+    env: "cloud1-5g34ybsmbfe89727",
     traceUser: true
   });
 });
