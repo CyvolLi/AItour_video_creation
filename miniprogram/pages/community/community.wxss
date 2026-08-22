@@ -370,10 +370,16 @@ page {
   transform: translateY(0rpx);
 }
 
-.search-img {
-  width: 65rpx;
-  height: 65rpx;
-  transform: translate(0, 0);
+.top-refresh-icon {
+  display: block;
+  width: 48rpx;
+  height: 48rpx;
+  color: #ffffff;
+  font-size: 52rpx;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  line-height: 46rpx;
+  text-align: center;
 }
 
 .masonry {

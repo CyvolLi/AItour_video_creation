@@ -78,18 +78,6 @@ Page({
     this.setData({ locationName: e.detail.value });
   },
 
-  backToCommunity() {
-    wx.redirectTo({
-      url: "/pages/community/community"
-    });
-  },
-
-  goProfile() {
-    wx.redirectTo({
-      url: "/pages/profile/profile"
-    });
-  },
-
   publishCard() {
     if (this.data.publishing) {
       return;

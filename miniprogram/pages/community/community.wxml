@@ -22,7 +22,7 @@
     <view class="dock-label-row">
       <text class="dock-label {{activeTab === 'post' ? 'active' : ''}}">帖子</text>
       <text class="dock-label {{activeTab === 'card' ? 'active' : ''}}">模板</text>
-      <text class="dock-label">搜索</text>
+      <text class="dock-label">刷新</text>
     </view>
     <view class="top-dock">
       <view class="dock-icon {{activeTab === 'post' ? 'active' : ''}}" data-tab="post" bindtap="switchTab">
@@ -32,7 +32,7 @@
         <image class="top-icon-img camera-img" src="/images/icons/top-camera-refresh.png" mode="aspectFit"></image>
       </view>
       <view class="dock-icon" bindtap="refreshCurrent">
-        <image class="top-icon-img search-img" src="/images/icons/top-search.png" mode="aspectFit"></image>
+        <view class="top-refresh-icon" aria-label="刷新">↻</view>
       </view>
     </view>
   </view>
