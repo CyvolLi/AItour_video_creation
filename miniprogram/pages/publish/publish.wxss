@@ -6,7 +6,7 @@ page {
 .page {
   position: relative;
   min-height: 100vh;
-  padding: 150rpx 32rpx 178rpx;
+  padding: 150rpx 32rpx 64rpx;
   box-sizing: border-box;
   background: linear-gradient(180deg, #e7f8e6 0%, #d5f5f2 100%);
 }
@@ -461,56 +461,4 @@ page {
   font-weight: 700;
   background: rgba(255, 255, 255, 0.78);
   box-shadow: none;
-}
-
-.bottom-dock {
-  position: fixed;
-  left: 32rpx;
-  right: 32rpx;
-  bottom: 30rpx;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  height: 128rpx;
-  padding: 0 48rpx;
-  border-radius: 66rpx;
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 12rpx 24rpx rgba(43, 60, 61, 0.2);
-  box-sizing: border-box;
-}
-
-.nav-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 84rpx;
-  height: 84rpx;
-  border-radius: 50%;
-  background: #69ccc5;
-  box-shadow: 0 8rpx 10rpx rgba(42, 61, 61, 0.28);
-}
-
-.dock-icon-img {
-  display: block;
-  width: 66rpx;
-  height: 66rpx;
-}
-
-.stack-img {
-  width: 60rpx;
-  height: 60rpx;
-}
-
-.compose-img {
-  width: 60rpx;
-  height: 60rpx;
-  transform: translate(3rpx, -4rpx);
-}
-
-.user-img {
-  width: 60rpx;
-  height: 60rpx;
-  transform: translate(-1rpx, -4rpx);
 }

@@ -87,12 +87,6 @@ Page({
     });
   },
 
-  goProfile() {
-    wx.reLaunch({
-      url: "/pages/profile/profile"
-    });
-  },
-
   publishPost() {
     if (this.data.publishing) {
       return;

@@ -21,16 +21,4 @@
 
     <button class="main-btn publish-btn" loading="{{publishing}}" disabled="{{publishing}}" bindtap="publishCard">发布笔记</button>
   </view>
-
-  <view class="bottom-dock">
-    <view class="nav-icon" bindtap="backToCommunity">
-      <image class="dock-icon-img stack-img" src="/images/icons/post-stack.png" mode="aspectFit"></image>
-    </view>
-    <view class="nav-icon compose">
-      <image class="dock-icon-img compose-img" src="/images/icons/post-compose.png" mode="aspectFit"></image>
-    </view>
-    <view class="nav-icon" bindtap="goProfile">
-      <image class="dock-icon-img user-img" src="/images/icons/post-user.png" mode="aspectFit"></image>
-    </view>
-  </view>
 </view>
