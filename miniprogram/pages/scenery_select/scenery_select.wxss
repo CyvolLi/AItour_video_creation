@@ -83,9 +83,40 @@ home-back-button {
   color: #e84a2f;
 }
 
+.feature-scroll-wrap {
+  position: relative;
+  width: 100%;
+}
+
 .feature-scroll {
   width: 100%;
   white-space: nowrap;
+}
+
+.feature-scroll-hint {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  width: 52rpx;
+  height: 96rpx;
+  color: #ffffff;
+  font-size: 60rpx;
+  font-weight: 300;
+  line-height: 96rpx;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0.28;
+  transform: translateY(-50%);
+}
+
+.feature-scroll-hint-left {
+  left: 0;
+  background: linear-gradient(90deg, rgba(29, 82, 84, 0.36), rgba(29, 82, 84, 0));
+}
+
+.feature-scroll-hint-right {
+  right: 0;
+  background: linear-gradient(270deg, rgba(29, 82, 84, 0.36), rgba(29, 82, 84, 0));
 }
 
 .feature-grid {
@@ -224,6 +255,5 @@ home-back-button {
 .confirm-btn::after {
   border: 0;
 }
-
 
 

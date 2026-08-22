@@ -63,35 +63,6 @@ page {
   font-family: Georgia, serif;
 }
 
-.edit-icon {
-  position: relative;
-  width: 34rpx;
-  height: 34rpx;
-}
-
-.edit-icon::before {
-  content: "";
-  position: absolute;
-  left: 12rpx;
-  top: 3rpx;
-  width: 7rpx;
-  height: 32rpx;
-  border-radius: 6rpx;
-  background: #17191f;
-  transform: rotate(45deg);
-}
-
-.edit-icon::after {
-  content: "";
-  position: absolute;
-  left: 3rpx;
-  bottom: 1rpx;
-  width: 28rpx;
-  height: 4rpx;
-  border-radius: 4rpx;
-  background: #17191f;
-}
-
 .identity-row {
   display: flex;
   align-items: center;
@@ -159,25 +130,25 @@ page {
   line-height: 1.42;
 }
 
-.follow-row {
-  margin-top: 22rpx;
+.identity-name {
+  color: #272a30;
+  font-size: 32rpx;
+  font-weight: 800;
 }
 
-.chip-row {
+.identity-desc {
+  margin-top: 10rpx;
+  color: rgba(69, 70, 79, 0.72);
+  font-size: 23rpx;
+}
+
+.work-summary {
   display: flex;
-  gap: 20rpx;
-  margin-top: 34rpx;
-}
-
-.chip {
-  height: 48rpx;
-  padding: 0 18rpx;
-  border: 1rpx solid rgba(70, 60, 82, 0.28);
-  border-radius: 24rpx;
-  color: #3b3c45;
-  font-size: 20rpx;
-  line-height: 48rpx;
-  background: rgba(255, 255, 255, 0.48);
+  gap: 28rpx;
+  margin-top: 20rpx;
+  color: #30313a;
+  font-size: 24rpx;
+  font-weight: 700;
 }
 
 .tab-row {

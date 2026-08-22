@@ -1,0 +1,66 @@
+<view class="page" wx:if="{{product}}">
+  <view class="hero">
+    <image class="hero-image" src="{{product.imageUrl}}" mode="aspectFill"></image>
+    <view class="floating-nav">
+      <view class="nav-icon" bindtap="goBack">‹</view>
+      <view class="nav-icon search-icon"></view>
+      <view class="nav-pill">
+        <text class="cart-symbol">□</text>
+        <text class="store-symbol">微信小店</text>
+        <text class="more-symbol">•••</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="product-panel">
+    <view class="price-row">
+      <text class="price">{{product.price}}</text>
+      <text class="sales">已售 {{product.sales}}</text>
+    </view>
+    <view class="title-row">
+      <view class="product-title">{{product.title}}</view>
+      <view class="like-box">
+        <text class="heart">♡</text>
+        <text class="like-text">赞</text>
+      </view>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">发货</text>
+      <view class="info-copy">
+        <view class="info-main">承诺48小时内发货</view>
+        <view class="info-sub">免运费｜广东广州 发货</view>
+      </view>
+      <text class="chevron">›</text>
+    </view>
+
+    <view class="info-row">
+      <text class="info-label">保障</text>
+      <view class="info-copy guarantee">
+        <text>运费险</text>
+        <text>先用后付</text>
+        <text>坏损包退</text>
+      </view>
+      <text class="chevron">›</text>
+    </view>
+  </view>
+
+  <view class="review-section">
+    <text class="review-title">商品评价</text>
+    <text class="review-empty">暂无评价</text>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="tool-item">
+      <text class="tool-icon">⌂</text>
+      <text>小店</text>
+    </view>
+    <view class="tool-item">
+      <text class="tool-icon">☏</text>
+      <text>客服</text>
+    </view>
+    <view class="tool-cart">+</view>
+    <button class="gift-button">送朋友</button>
+    <button class="buy-button">购买</button>
+  </view>
+</view>

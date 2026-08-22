@@ -233,7 +233,12 @@ Page({
       scriptContent
     ]);
 
-    taskData.request = selectedOptimization.description,
+    taskData.request = selectedOptimization.description;
+    taskData.videoConfig = {
+      styleId: this.data.selectedStyleId,
+      optimizationId: this.data.selectedOptimizationId,
+      optimizationIds: [this.data.selectedOptimizationId]
+    };
 
     app.globalData.task_data = taskData;
   },

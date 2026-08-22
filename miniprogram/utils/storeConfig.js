@@ -2,7 +2,7 @@
  * 微信小店连接配置
  * 数据来源：pages/adver/adver_id
  */
-const STORE_APPID = 'wxde7b459287c6bc1b'
+const { STORE_APPID } = require("./runtimeConfig.js")
 
 /** 商品 ID 列表（可按需增删） */
 const PRODUCT_IDS = [

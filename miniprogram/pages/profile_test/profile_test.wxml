@@ -1,0 +1,61 @@
+<view class="container">
+  <view class="title">云存储功能测试</view>
+
+  <!-- openid 输入区 -->
+  <view class="input-box">
+    <text class="label">当前 openid:</text>
+    <text class="openid-text">{{openid}}</text>
+  </view>
+  <view class="input-row">
+    <input class="openid-input" placeholder="在此粘贴你的 openid" value="{{inputOpenid}}" bindinput="onInput" />
+    <button class="btn-small" bindtap="confirmOpenid">设置</button>
+    <button class="btn-small" bindtap="tryLogin">wx.login</button>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === 'profile' ? 'active' : ''}}" data-tab="profile" bindtap="switchTab">Profile 测试</view>
+    <view class="tab {{activeTab === 'comment' ? 'active' : ''}}" data-tab="comment" bindtap="switchTab">Comment 测试</view>
+  </view>
+
+  <!-- ========== Profile 测试区 ========== -->
+  <view wx:if="{{activeTab === 'profile'}}">
+    <view class="btn-group">
+      <button class="btn" bindtap="runAllProfile" disabled="{{running}}">运行全部 Profile 测试</button>
+      <button class="btn btn-sm" bindtap="profileEnsure" disabled="{{running}}">1.确保Profile</button>
+      <button class="btn btn-sm" bindtap="profileCreatePost" disabled="{{running}}">2.创建帖子ID</button>
+      <button class="btn btn-sm" bindtap="profileCreateCard" disabled="{{running}}">3.创建卡片ID</button>
+      <button class="btn btn-sm" bindtap="profileFavPost" disabled="{{running}}">4.收藏帖子</button>
+      <button class="btn btn-sm" bindtap="profileFavCard" disabled="{{running}}">5.收藏卡片</button>
+      <button class="btn btn-sm" bindtap="profileDedup" disabled="{{running}}">6.去重测试</button>
+      <button class="btn btn-danger" bindtap="cleanupProfile" disabled="{{running}}">清理Profile数据</button>
+      <button class="btn" bindtap="createCollection" disabled="{{running}}">创建profiles集合指引</button>
+    </view>
+  </view>
+
+  <!-- ========== Comment 测试区 ========== -->
+  <view wx:if="{{activeTab === 'comment'}}">
+    <view class="btn-group">
+      <button class="btn" bindtap="runAllComment" disabled="{{running}}">运行全部 Comment 测试</button>
+      <button class="btn btn-sm" bindtap="commentCheckCollection" disabled="{{running}}">0.检查集合</button>
+      <button class="btn btn-sm" bindtap="commentAdd" disabled="{{running}}">1.新增评论</button>
+      <button class="btn btn-sm" bindtap="commentAddSecond" disabled="{{running}}">2.第二条评论</button>
+      <button class="btn btn-sm" bindtap="commentList" disabled="{{running}}">3.查询列表</button>
+      <button class="btn btn-sm" bindtap="commentNormalize" disabled="{{running}}">4.字段规范化</button>
+      <button class="btn btn-danger" bindtap="cleanupComment" disabled="{{running}}">清理Comment数据</button>
+      <button class="btn" bindtap="createCollection" disabled="{{running}}">创建comments集合指引</button>
+    </view>
+  </view>
+
+  <!-- 结果区 -->
+  <view class="result" wx:if="{{results.length > 0}}">
+    <view class="summary">通过 {{passedCount}}/{{results.length}}</view>
+    <view class="item {{item.pass ? 'pass' : 'fail'}}" wx:for="{{results}}" wx:key="index">
+      <view class="case">{{item.case}}</view>
+      <view class="status">{{item.pass ? '✅ 通过' : '❌ 失败'}}</view>
+      <view class="data">{{item.dataStr}}</view>
+    </view>
+  </view>
+
+  <view class="loading" wx:if="{{running}}">测试中...</view>
+</view>

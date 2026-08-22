@@ -1,71 +1,92 @@
-// app.js
 const profileStore = require("./utils/profileStore.js");
 const avatarStore = require("./utils/avatarStore.js");
+const runtimeConfig = require("./utils/runtimeConfig.js");
+
+function createTaskData(openid) {
+  return {
+    openid: openid || null,
+    task_id: "",
+    video_id: "",
+    count: 0,
+    card_id: "",
+    spot_url: "",
+    request: "",
+    video_request: "",
+    scriptContent: "",
+    user_potrait: "",
+    landscape: "sharepool",
+    landscape_name: "公共分享池",
+    videoConfig: {
+      styleId: "",
+      optimizationId: "",
+      optimizationIds: []
+    }
+  };
+}
 
 App({
-  onLaunch: function () {
-    // 1. 初始化全局数据
+  onLaunch() {
     this.globalData = {
-      env: "cloudbase-d2g8dvtluc8d8face", // 请确保此 ID 与你云开发控制台一致
+      env: runtimeConfig.CLOUD_ENV_ID,
       userInfo: null,
       hasNavigated: false,
       video_extend: false,
-      task_data: {
-         openid : null,
-         task_id : null,
-         video_id: null,
-         count: 0,
-         card_id: "",
-         spot_url: "",
-         request: "",
-         video_request: "",
-         scriptContent: "",
-         user_potrait: "",
-         landscape: "sharepool",
-         landscape_name: "公共分享池",
-      },
+      openidReady: false,
+      openidError: null,
+      task_data: createTaskData(null),
       video_url: null,
-      final_response: null,//存最后小红书配文
+      final_response: null
     };
 
-    // 2. 初始化云开发
     if (!wx.cloud) {
       console.error("请使用 2.2.3 或以上的基础库以使用云能力");
     } else {
-      wx.cloud.init({
-        env:
-        wx.cloud.DYNAMIC_CURRENT_ENV || this.globalData.env,
-        traceUser: true,
-      });
+      wx.cloud.init(runtimeConfig.getCloudInitOptions());
     }
 
-    // 3. 获取 OpenID
     this.userInfoReady = this.getOpenId();
   },
 
-  /** 调用云函数获取 openid */
+  resetTaskData() {
+    const currentTaskData = (this.globalData && this.globalData.task_data) || {};
+    const openid = currentTaskData.openid || null;
+
+    this.globalData.task_data = createTaskData(openid);
+    this.globalData.video_url = null;
+    this.globalData.final_response = null;
+    this.globalData.video_extend = false;
+
+    return this.globalData.task_data;
+  },
+
   getOpenId() {
-    const that = this;
-    return wx.cloud.callFunction({
-      name: "quickstartFunctions",
-      data: {
-        type: "getOpenId",
-      },
-    })
-    .then((resp) => {
-      if (resp.result && resp.result.openid) {
-        that.globalData.task_data.openid = resp.result.openid;
-        console.log("✅ OpenID 获取成功:", that.globalData.task_data.openid);
-        return that.loadUserProfile(resp.result.openid);
-      } else {
-        console.warn("⚠️ 云函数返回异常:", resp);
+    return wx.cloud
+      .callFunction({
+        name: "quickstartFunctions",
+        data: {
+          type: "getOpenId"
+        }
+      })
+      .then((resp) => {
+        if (resp.result && resp.result.openid) {
+          this.globalData.task_data.openid = resp.result.openid;
+          this.globalData.openidReady = true;
+          this.globalData.openidError = null;
+          console.log("OpenID 获取成功:", this.globalData.task_data.openid);
+          return this.loadUserProfile(resp.result.openid);
+        }
+
+        this.globalData.openidReady = false;
+        this.globalData.openidError = resp;
+        console.warn("云函数返回异常", resp);
         return null;
-      }
-    })
-    .catch((err) => {
-      console.error("❌ OpenID 获取失败:", err);
-      return null;
-    });
+      })
+      .catch((err) => {
+        this.globalData.openidReady = false;
+        this.globalData.openidError = err;
+        console.error("OpenID 获取失败:", err);
+        return null;
+      });
   },
 
   loadUserProfile(openid) {
@@ -75,14 +96,15 @@ App({
 
     return profileStore
       .ensureProfile(openid)
-      .then((profile) => avatarStore.normalizeAvatar(
-        profile.avatarUrl || "",
-        profile.avatarFileID || ""
-      ).then((avatar) => ({
-        ...profile,
-        avatarUrl: avatar.avatarUrl,
-        avatarFileID: avatar.avatarFileID
-      })))
+      .then((profile) =>
+        avatarStore
+          .normalizeAvatar(profile.avatarUrl || "", profile.avatarFileID || "")
+          .then((avatar) => ({
+            ...profile,
+            avatarUrl: avatar.avatarUrl,
+            avatarFileID: avatar.avatarFileID
+          }))
+      )
       .then((profile) => {
         const userInfo = {
           nickName: profile.nickName || "",
@@ -94,7 +116,7 @@ App({
         return userInfo;
       })
       .catch((err) => {
-        console.error("❌ 用户资料加载失败:", err);
+        console.error("用户资料加载失败:", err);
         return null;
       });
   },
@@ -113,17 +135,16 @@ App({
     return this.userInfoReady || Promise.resolve(null);
   },
 
-  // 新增方法：获取用户信息并同步到全局数据
   getUserInfo(callback) {
     wx.getUserProfile({
-      desc: '用于完善用户资料', // 必填描述，用于授权弹窗
+      desc: "用于完善用户资料",
       success: (res) => {
-        this.globalData.userInfo = res.userInfo; // 将用户信息（包括头像）存入全局数据
-        callback(res.userInfo); // 调用回调函数，传递用户信息
+        this.globalData.userInfo = res.userInfo;
+        callback(res.userInfo);
       },
       fail: (err) => {
-        console.error('获取用户信息失败', err);
+        console.error("获取用户信息失败", err);
       }
     });
-  },
+  }
 });

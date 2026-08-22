@@ -1,27 +1,73 @@
-﻿Page({
+const {
+  STORE_APPID,
+  DEFAULT_PRODUCT_ID
+} = require("../../utils/runtimeConfig.js");
+
+Page({
   data: {
-    customStyle: {
-      card: {
-        'background-color': '#FAFAFA',
-      },
-      title: {
-        color: 'rgba(0, 0, 0, 0.8)',
-      },
-      price: {
-        color: '#FF6146'
-      },
-      'buy-button': {
-        width: '100px',
-        'border-radius': '30px',
-        'background-color': 'rgba(0,0,0,0.9)',
-        color: '#FFD48D',
-      },
-      'buy-button-disabled': {
-        width: '100px',
-        'border-radius': '30px',
-        'background-color': 'rgba(0,0,0,0.9)',
-        color: '#FFD48D',
-      },
-    },
+    storeAppId: STORE_APPID,
+    productId: DEFAULT_PRODUCT_ID,
+    platform: "未知",
+    system: "未知",
+    SDKVersion: "未知",
+    storeHomeSupported: false,
+    storeProductSupported: false,
+    enterEventsSupported: false,
+    environmentNotice: "",
+    productEnterResult: "尚未触发商品跳转"
+  },
+
+  onLoad() {
+    const deviceInfo =
+      typeof wx.getDeviceInfo === "function" ? wx.getDeviceInfo() || {} : {};
+    const appBaseInfo =
+      typeof wx.getAppBaseInfo === "function" ? wx.getAppBaseInfo() || {} : {};
+    const canIUse =
+      typeof wx.canIUse === "function" ? wx.canIUse.bind(wx) : () => false;
+    const platform = deviceInfo.platform || "未知";
+    const system = deviceInfo.system || "未知";
+    const normalizedPlatform = String(deviceInfo.platform || "").toLowerCase();
+    const mobilePlatforms = ["ios", "android", "ohos"];
+    const desktopPlatforms = ["devtools", "windows", "mac", "ohos_pc"];
+    const environmentNotice = mobilePlatforms.includes(normalizedPlatform)
+      ? "当前为移动端环境，请结合手机真机上的实际结果判读。"
+      : desktopPlatforms.includes(normalizedPlatform)
+        ? "当前为开发者工具或桌面环境，微信小店结果必须使用手机真机复核。"
+        : "当前运行环境未知，请使用手机真机复核。";
+    const storeHomeSupported = canIUse("store-home");
+    const storeProductSupported = canIUse("store-product");
+    const enterSuccessSupported = canIUse(
+      "store-product.bindentersuccess"
+    );
+    const enterErrorSupported = canIUse("store-product.bindentererror");
+
+    this.setData({
+      platform,
+      system,
+      SDKVersion: appBaseInfo.SDKVersion || "未知",
+      storeHomeSupported,
+      storeProductSupported,
+      enterEventsSupported:
+        enterSuccessSupported && enterErrorSupported,
+      environmentNotice
+    });
+  },
+
+  onEnterSuccess(event) {
+    const detail = (event && event.detail) || {};
+    console.log("[store-product] 商品跳转成功", detail);
+    this.setData({
+      productEnterResult: "商品跳转成功"
+    });
+  },
+
+  onEnterError(event) {
+    const detail = (event && event.detail) || {};
+    const code = detail.code === undefined ? "未知" : detail.code;
+    const message = detail.message || detail.errMsg || "未知错误";
+    console.error("[store-product] 商品跳转失败", detail);
+    this.setData({
+      productEnterResult: `商品跳转失败（错误码：${code}，信息：${message}）`
+    });
   }
-})
+});

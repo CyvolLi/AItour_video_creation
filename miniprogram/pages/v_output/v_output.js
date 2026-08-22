@@ -1,4 +1,5 @@
 const app = getApp();
+const { pickProduct } = require("../../utils/demoProducts.js");
 
 Page({
   data: {
@@ -6,23 +7,54 @@ Page({
     script: "",
     videoUrl: "",
     coverUrl: "",
-    finalResponse: ""
+    finalResponse: "",
+    featuredProduct: null,
+    isVideoPlaying: false
   },
 
   onLoad() {
     const taskData = app.globalData.task_data || {};
+    const videoUrl = app.globalData.video_url || app.globalData.videoUrl || "";
+    const finalResponse = app.globalData.final_response || "";
 
     this.setData({
       count: taskData.count || 0,
       script: taskData.scriptContent || "",
-      videoUrl: app.globalData.video_url || app.globalData.videoUrl || "",
+      videoUrl,
       coverUrl: taskData.spot_url || "",
-      finalResponse: app.globalData.final_response || ""
+      finalResponse,
+      featuredProduct: pickProduct(
+        videoUrl || finalResponse || taskData.scriptContent || ""
+      )
     });
   },
 
+  showDemoProduct() {
+    wx.showToast({
+      title: "演示商品，暂不支持购买",
+      icon: "none"
+    });
+  },
+
+  onVideoPlay() {
+    this.setData({ isVideoPlaying: true });
+  },
+
+  onVideoPause() {
+    this.setData({ isVideoPlaying: false });
+  },
+
+  onVideoEnded() {
+    this.setData({ isVideoPlaying: false });
+  },
+
   backToGenerate() {
-    app.globalData.task_data.count = 0;
+    if (typeof app.resetTaskData === "function") {
+      app.resetTaskData();
+    } else {
+      app.globalData.task_data.count = 0;
+    }
+
     wx.redirectTo({
       url: "/pages/mode_select/mode_select"
     });

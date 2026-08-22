@@ -1,0 +1,71 @@
+<view class="page">
+  <view class="hero" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-row" style="height: {{navContentHeight}}px; padding-right: {{capsuleRightInset}}px;">
+      <view class="back-button" bindtap="goBack" hover-class="back-button-active" aria-label="返回">
+        <text class="back-icon">‹</text>
+      </view>
+      <view class="brand">
+        <text class="brand-main">好物购</text>
+        <text class="brand-sub">精选好物 · 随旅相伴</text>
+      </view>
+    </view>
+
+    <view class="search-box">
+      <view class="search-icon"></view>
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        placeholder="搜索乡村好物"
+        placeholder-class="search-placeholder"
+        confirm-type="search"
+      />
+    </view>
+
+  </view>
+
+  <view class="content">
+    <view class="catalog-head">
+      <view>
+        <text class="catalog-eyebrow">LOCAL PICKS</text>
+        <view class="catalog-title">从旅途中带一份好味道回家</view>
+      </view>
+      <text class="catalog-count">{{filteredProducts.length}} 件</text>
+    </view>
+
+    <view class="product-grid">
+      <view
+        class="product-card"
+        wx:for="{{filteredProducts}}"
+        wx:key="id"
+        data-product-id="{{item.id}}"
+        bindtap="openDemoProduct"
+        hover-class="product-card-active"
+      >
+        <view class="product-image-shell">
+          <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <text class="product-tag">{{item.tag}}</text>
+        </view>
+        <view class="product-info">
+          <view class="product-meta">
+            <text class="product-price">{{item.price}}</text>
+            <text class="product-sales">已售{{item.sales}}</text>
+          </view>
+          <view class="product-title">{{item.title}}</view>
+          <view class="product-description">{{item.description}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{!filteredProducts.length}}">
+      <view class="empty-mark">⌕</view>
+      <view class="empty-title">没有找到相关好物</view>
+      <view class="empty-copy">换一个关键词试试看</view>
+    </view>
+  </view>
+
+  <view class="bottom-actions">
+    <button class="action-secondary" bindtap="showCheckoutNotice">结算</button>
+    <button class="action-primary" bindtap="showContinueNotice">继续选购同款</button>
+  </view>
+</view>

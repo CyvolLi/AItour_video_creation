@@ -1,1 +1,49 @@
-<store-product appid="wxde7b459287c6bc1b" product-id="10001033506602" custom-style="{{customStyle}}" />
+<view class="page">
+  <view class="panel">
+    <view class="panel-title">运行环境</view>
+    <view class="info-row">平台：{{platform}}</view>
+    <view class="info-row">系统：{{system}}</view>
+    <view class="info-row">基础库：{{SDKVersion}}</view>
+    <view class="info-row">store-home 能力：{{storeHomeSupported ? '支持' : '不支持'}}</view>
+    <view class="info-row">store-product 能力：{{storeProductSupported ? '支持' : '不支持'}}</view>
+    <view class="info-row">商品跳转回调能力：{{enterEventsSupported ? '支持' : '不支持'}}</view>
+    <view class="notice">{{environmentNotice}}</view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-title">当前配置</view>
+    <view class="config-value">小店 AppID：{{storeAppId}}</view>
+    <view class="config-value">商品 ID：{{productId}}</view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-title">店铺卡</view>
+    <store-home wx:if="{{storeHomeSupported}}" appid="{{storeAppId}}" />
+    <view wx:else class="fallback">当前环境不支持店铺卡。</view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-title">商品卡</view>
+    <store-product
+      wx:if="{{storeProductSupported}}"
+      appid="{{storeAppId}}"
+      product-id="{{productId}}"
+      bindentersuccess="onEnterSuccess"
+      bindentererror="onEnterError"
+    />
+    <view wx:else class="fallback">当前环境不支持商品卡。</view>
+    <view
+      wx:if="{{storeProductSupported && !enterEventsSupported}}"
+      class="notice"
+    >商品卡组件可用，但跳转回调能力不可用。</view>
+    <view class="result">商品跳转结果：{{productEnterResult}}</view>
+    <view class="hint">这里记录的是点击商品后的跳转结果，不代表商品卡初始加载结果。</view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-title">判读说明</view>
+    <view class="guide-item">两者都失败：重点检查小店 AppID、店铺状态和当前平台。</view>
+    <view class="guide-item">店铺卡成功但商品卡失败：检查商品 ID、商品归属和上下架状态。</view>
+    <view class="guide-item">开发者工具中的结果必须使用手机真机复核。</view>
+  </view>
+</view>

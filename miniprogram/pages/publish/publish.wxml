@@ -43,6 +43,33 @@
       <text class="option-text">公开可见</text>
     </view>
 
+    <view class="option-pill endorsement-option">
+      <view class="endorsement-labels">
+        <view class="endorsement-title-line">
+          <text class="option-text endorsement-option-text">选择代言商品</text>
+          <text class="demo-badge">演示</text>
+        </view>
+        <text class="endorsement-hint">开启后智能匹配一个好物</text>
+      </view>
+      <switch class="endorsement-switch" checked="{{endorsementEnabled}}" bindchange="onEndorsementChange" color="#3d93c3" />
+    </view>
+
+    <view class="endorsement-preview" wx:if="{{endorsementEnabled && endorsementProduct}}" bindtap="showDemoProduct">
+      <image class="endorsement-image endorsement-image-large" src="{{endorsementProduct.imageUrl}}" mode="aspectFill"></image>
+      <view class="endorsement-info">
+        <view class="endorsement-tags">
+          <text class="endorsement-market">乡村市集</text>
+          <text class="match-badge">智能匹配</text>
+        </view>
+        <view class="endorsement-product-title">{{endorsementProduct.title}}</view>
+        <view class="endorsement-meta">
+          <text class="endorsement-price endorsement-price-demo">{{endorsementProduct.price}}</text>
+          <text class="endorsement-sales">已售{{endorsementProduct.sales}}</text>
+        </view>
+        <view class="endorsement-note">智能匹配，仅演示，不影响发布</view>
+      </view>
+    </view>
+
     <button class="main-btn publish-btn" loading="{{publishing}}" disabled="{{publishing}}" bindtap="publishPost">发布笔记</button>
   </view>
 
