@@ -290,6 +290,87 @@ Page({
       });
   },
 
+  getListKey(type) {
+    return type === "post" ? "postList" : "cardList";
+  },
+
+  getPageKey(type) {
+    return type === "post" ? "postPage" : "cardPage";
+  },
+
+  getHasMoreKey(type) {
+    return type === "post" ? "postHasMore" : "cardHasMore";
+  },
+
+  getListItemId(item) {
+    return item && (item.target_id || item.post_id || item.card_id || "");
+  },
+
+  setCurrentList(type, list, page) {
+    const listKey = this.getListKey(type);
+    const pageKey = this.getPageKey(type);
+    const hasMoreKey = this.getHasMoreKey(type);
+
+    this.setData({
+      [listKey]: list,
+      [pageKey]: page,
+      [hasMoreKey]: list.length >= this.data.pageSize
+    });
+    this.syncListState();
+  },
+
+  appendCurrentList(type, list, page) {
+    const listKey = this.getListKey(type);
+    const pageKey = this.getPageKey(type);
+    const hasMoreKey = this.getHasMoreKey(type);
+
+    this.setData({
+      [listKey]: (this.data[listKey] || []).concat(list),
+      [pageKey]: page,
+      [hasMoreKey]: list.length >= this.data.pageSize
+    });
+    this.syncListState();
+  },
+
+  hydrateCurrentList(type, sourceList) {
+    return this.attachAuthorProfiles(sourceList)
+      .then((enrichedList) => {
+        if (this.data.activeTab !== type) {
+          return enrichedList;
+        }
+
+        const listKey = this.getListKey(type);
+        const currentList = this.data[listKey] || [];
+        const enrichedMap = {};
+
+        enrichedList.forEach((item) => {
+          const itemId = this.getListItemId(item);
+
+          if (itemId) {
+            enrichedMap[itemId] = item;
+          }
+        });
+
+        const mergedList = currentList.map((item) => {
+          const itemId = this.getListItemId(item);
+          return (itemId && enrichedMap[itemId]) || item;
+        });
+
+        this.setData(
+          {
+            [listKey]: mergedList
+          },
+          () => this.syncListState()
+        );
+
+        return enrichedList;
+      })
+      .catch((err) => {
+        console.error("作者资料补全失败", err);
+        return sourceList;
+      });
+  },
+
   refreshCurrent() {
     const type = this.data.activeTab;
 
@@ -299,23 +380,11 @@ Page({
       .then((resp) => {
         const data = resp && resp.data ? resp.data : {};
         const list = Array.isArray(data.list) ? data.list : [];
-        return this.attachAuthorProfiles(list);
-      })
-      .then((list) => {
 
-        if (type === "post") {
-          this.setData({
-            postList: list,
-            postPage: 1,
-            postHasMore: list.length >= this.data.pageSize
-          });
-        } else {
-          this.setData({
-            cardList: list,
-            cardPage: 1,
-            cardHasMore: list.length >= this.data.pageSize
-          });
-        }
+        this.setCurrentList(type, list, 1);
+        this.setData({ loading: false });
+        this.hydrateCurrentList(type, list);
+        return list;
       })
       .catch((err) => {
         console.error("社区列表加载失败", err);
@@ -323,10 +392,9 @@ Page({
           title: "列表加载失败",
           icon: "none"
         });
-      })
-      .finally(() => {
         this.setData({ loading: false });
         this.syncListState();
+        return [];
       });
   },
 
@@ -345,23 +413,11 @@ Page({
       .then((resp) => {
         const data = resp && resp.data ? resp.data : {};
         const list = Array.isArray(data.list) ? data.list : [];
-        return this.attachAuthorProfiles(list);
-      })
-      .then((list) => {
 
-        if (type === "post") {
-          this.setData({
-            postList: this.data.postList.concat(list),
-            postPage: nextPage,
-            postHasMore: list.length >= this.data.pageSize
-          });
-        } else {
-          this.setData({
-            cardList: this.data.cardList.concat(list),
-            cardPage: nextPage,
-            cardHasMore: list.length >= this.data.pageSize
-          });
-        }
+        this.appendCurrentList(type, list, nextPage);
+        this.setData({ loading: false });
+        this.hydrateCurrentList(type, list);
+        return list;
       })
       .catch((err) => {
         console.error("更多内容加载失败", err);
@@ -369,8 +425,6 @@ Page({
           title: "加载失败",
           icon: "none"
         });
-      })
-      .finally(() => {
         this.setData({ loading: false });
         this.syncListState();
       });

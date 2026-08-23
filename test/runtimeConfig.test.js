@@ -14,12 +14,12 @@ function test(name, fn) {
   }
 }
 
-test("uses the competition mini program app id", () => {
+test("uses the cloud1 mini program app id", () => {
   const projectConfig = JSON.parse(
     fs.readFileSync(path.join(__dirname, "../project.config.json"), "utf8")
   );
 
-  assert.strictEqual(projectConfig.appid, "wx995a8e05136418fb");
+  assert.strictEqual(projectConfig.appid, "wxfca20bbcf103c59d");
 });
 
 test("exports the configured cloud environment and store defaults", () => {

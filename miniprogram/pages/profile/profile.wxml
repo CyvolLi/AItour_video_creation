@@ -74,7 +74,7 @@
             catchtap="deleteCurrentItem"
           >×</view>
           <view class="card-container">
-            <image class="thumb" src="{{item.cover_url || item.image_url}}" mode="aspectFill"></image>
+            <image class="thumb" src="{{item.cover_url || item.image_url}}" mode="aspectFill" lazy-load="{{true}}"></image>
             <view class="card-title" wx:if="{{item.post_id && item.title}}">
               <text class="title-text">{{item.title}}</text>
             </view>

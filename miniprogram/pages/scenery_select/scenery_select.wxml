@@ -19,7 +19,7 @@
           data-index="{{index}}"
           bindtap="selectSpot"
         >
-          <image class="feature-image" src="{{item.cover}}" mode="aspectFill"></image>
+          <image class="feature-image" src="{{item.cover}}" mode="aspectFill" lazy-load="{{true}}"></image>
           <view class="tag">#{{item.text}}</view>
         </view>
       </block>
@@ -49,7 +49,7 @@
               data-index="{{index}}"
               bindtap="selectTemplate"
             >
-              <image class="template-image" src="{{item.cover}}" mode="aspectFill"></image>
+              <image class="template-image" src="{{item.cover}}" mode="aspectFill" lazy-load="{{true}}"></image>
             </view>
           </block>
         </block>

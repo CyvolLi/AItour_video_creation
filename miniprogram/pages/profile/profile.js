@@ -51,37 +51,46 @@ Page({
   },
 
   refreshCurrentUserInfo() {
+    const cachedUserInfo = app.globalData && app.globalData.userInfo;
     const openid = app.globalData.task_data && app.globalData.task_data.openid;
 
-    if (openid && app.loadUserProfile) {
-      return app.loadUserProfile(openid).then((userInfo) => {
-        if (!userInfo) {
-          return null;
-        }
+    if (cachedUserInfo) {
+      this.setData({ userInfo: cachedUserInfo });
 
-        this.setData({
-          userInfo
-        });
+      if (openid && app.loadUserProfile) {
+        return app
+          .loadUserProfile(openid)
+          .then((userInfo) => {
+            if (userInfo) {
+              this.setData({ userInfo });
+            }
 
-        return userInfo;
-      });
-    }
-
-    if (!app.ensureUserInfo) {
-      return Promise.resolve(null);
-    }
-
-    return app.ensureUserInfo().then((userInfo) => {
-      if (!userInfo) {
-        return null;
+            return userInfo || cachedUserInfo;
+          })
+          .catch((err) => {
+            console.warn("当前用户资料刷新失败，继续使用缓存", err);
+            return cachedUserInfo;
+          });
       }
 
-      this.setData({
-        userInfo
-      });
+      return Promise.resolve(cachedUserInfo);
+    }
 
-      return userInfo;
-    });
+    const readyPromise = app.userInfoReady ||
+      (app.ensureUserInfo ? app.ensureUserInfo() : Promise.resolve(null));
+
+    return Promise.resolve(readyPromise)
+      .then((userInfo) => {
+        if (userInfo) {
+          this.setData({ userInfo });
+        }
+
+        return userInfo || null;
+      })
+      .catch((err) => {
+        console.warn("当前用户资料加载失败", err);
+        return null;
+      });
   },
 
   loadProfile() {

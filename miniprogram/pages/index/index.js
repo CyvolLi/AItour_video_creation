@@ -1,5 +1,6 @@
 const app = getApp();
 const avatarStore = require("../../utils/avatarStore.js");
+const profileCache = require("../../utils/profileCache.js");
 
 const DEFAULT_AVATAR = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
 
@@ -97,14 +98,20 @@ Page({
           return null;
         }
 
-        return avatarStore.saveUserInfo(openid, userInfo);
+        return avatarStore.saveUserInfo(openid, userInfo).then((savedUserInfo) => ({
+          savedUserInfo,
+          openid
+        }));
       })
-      .then((savedUserInfo) => {
+      .then((result) => {
+        const savedUserInfo = result && result.savedUserInfo;
+
         if (!savedUserInfo) {
           return;
         }
 
         app.globalData.userInfo = savedUserInfo;
+        profileCache.save(savedUserInfo, result.openid);
 
         wx.redirectTo({
           url: "../community/community"

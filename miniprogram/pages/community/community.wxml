@@ -76,10 +76,10 @@
         <view class="column">
           <block wx:for="{{leftList}}" wx:key="target_id">
             <view class="content-card {{index % 3 === 1 ? 'short' : ''}}" bindtap="openDetail" data-type="{{activeTab}}" data-index="{{item.__index}}">
-              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill"></image>
+              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill" lazy-load="{{true}}"></image>
               <view wx:if="{{activeTab === 'post'}}" class="play-dot"></view>
               <view class="caption">
-                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
+                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" lazy-load="{{true}}" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
                 <view class="caption-text">
                   <view class="title">{{activeTab === 'post' ? (item.title || '旅行作品') : (item.emotion_text || '我的旅行卡片')}}</view>
                   <view class="name">{{item.author_name || '忆景创影'}}</view>
@@ -92,10 +92,10 @@
         <view class="column offset">
           <block wx:for="{{rightList}}" wx:key="target_id">
             <view class="content-card {{index % 3 === 0 ? 'short' : ''}}" bindtap="openDetail" data-type="{{activeTab}}" data-index="{{item.__index}}">
-              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill"></image>
+              <image class="cover" src="{{activeTab === 'post' ? item.cover_url : item.image_url}}" mode="aspectFill" lazy-load="{{true}}"></image>
               <view wx:if="{{activeTab === 'post'}}" class="play-dot"></view>
               <view class="caption">
-                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
+                <image class="avatar" src="{{item.author_avatar}}" mode="aspectFill" lazy-load="{{true}}" binderror="refreshAvatarOnError" data-type="{{activeTab}}" data-index="{{item.__index}}"></image>
                 <view class="caption-text">
                   <view class="title">{{activeTab === 'post' ? (item.title || '旅行作品') : (item.emotion_text || '我的旅行卡片')}}</view>
                   <view class="name">{{item.author_name || '用户'}}</view>

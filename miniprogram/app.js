@@ -1,5 +1,6 @@
 const profileStore = require("./utils/profileStore.js");
 const avatarStore = require("./utils/avatarStore.js");
+const profileCache = require("./utils/profileCache.js");
 const runtimeConfig = require("./utils/runtimeConfig.js");
 
 function createTaskData(openid) {
@@ -73,6 +74,10 @@ App({
           this.globalData.openidReady = true;
           this.globalData.openidError = null;
           console.log("OpenID 获取成功:", this.globalData.task_data.openid);
+          const cachedUserInfo = profileCache.load(resp.result.openid);
+          if (cachedUserInfo) {
+            this.globalData.userInfo = cachedUserInfo;
+          }
           return this.loadUserProfile(resp.result.openid);
         }
 
@@ -113,6 +118,7 @@ App({
         };
 
         this.globalData.userInfo = userInfo;
+        profileCache.save(userInfo, openid);
         return userInfo;
       })
       .catch((err) => {

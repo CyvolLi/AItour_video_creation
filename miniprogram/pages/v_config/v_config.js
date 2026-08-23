@@ -279,6 +279,6 @@ Page({
       wx.redirectTo({
         url: "/pages/wait/wait"
       });
-    }, 500);
+    }, 200);
   }
 });

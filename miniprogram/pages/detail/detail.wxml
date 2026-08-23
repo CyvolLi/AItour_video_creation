@@ -35,7 +35,7 @@
       </view>
 
       <view class="author-line">
-        <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshDetailAvatarOnError"></image>
+        <image class="author-avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" lazy-load="{{true}}" binderror="refreshDetailAvatarOnError"></image>
         <view class="author-copy">
           <text class="author">{{item.author_name || '忆景创影'}}</text>
           <text class="author-badge">作者</text>
@@ -86,7 +86,7 @@
       <view class="section-title">评论</view>
       <block wx:for="{{target.List}}" wx:key="comment_id">
         <view class="comment">
-          <image class="avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" binderror="refreshCommentAvatarOnError" data-index="{{index}}"></image>
+          <image class="avatar" wx:if="{{item.author_avatar}}" src="{{item.author_avatar}}" mode="aspectFill" lazy-load="{{true}}" binderror="refreshCommentAvatarOnError" data-index="{{index}}"></image>
           <view class="comment-body">
             <view class="comment-name">{{item.author_name || '用户'}}</view>
             <view class="comment-content">{{item.content}}</view>

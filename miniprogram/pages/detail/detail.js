@@ -157,20 +157,25 @@ Page({
     const type = options.type || item.type || "post";
     const id = options.id || item.post_id || item.card_id || "";
 
-    return this.attachAuthorProfiles([item]).then((items) => {
-      const displayItem = items[0] || item;
-
-      this.setData({
-        type,
-        id,
-        targetId: options.target_id || item.target_id || "",
-        item: displayItem,
-        target: this.normalizeTarget(target),
-        demoProducts: this.getDemoProductsForPost(displayItem, type)
-      });
-
-      return this.loadComments();
+    this.setData({
+      type,
+      id,
+      targetId: options.target_id || item.target_id || "",
+      item,
+      target: this.normalizeTarget(target),
+      demoProducts: this.getDemoProductsForPost(item, type)
     });
+
+    const authorPromise = this.attachAuthorProfiles([item])
+      .then((items) => {
+        this.setData({
+          item: items[0] || item
+        });
+        return items;
+      });
+    const commentsPromise = this.loadComments();
+
+    return Promise.all([authorPromise, commentsPromise]);
   },
 
   measureNavigation() {
